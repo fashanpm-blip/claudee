@@ -166,11 +166,13 @@
   .kicker::before{ content:''; width: 22px; height: 1px; background: var(--cyan); }
   .hero h1{ font-size: clamp(40px, 5.4vw, 68px); line-height: 1.04; margin-bottom: 26px; overflow: hidden; }
   .hero h1 .row{ display:block; overflow:hidden; }
-  .hero h1 .grad{
+  .hero h1 .grad,
+  .hero h1 .hw-wrap{
     display: inline-block;
     background: linear-gradient(90deg, var(--violet-soft), var(--cyan));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
+  .hw-wrap svg{ display: inline-block; vertical-align: -0.06em; overflow: visible; }
   .split-char{
     display:inline-block; will-change: transform, opacity;
     opacity: 0; transform: translateY(26px) rotateX(-40deg);
@@ -498,7 +500,7 @@
         <div class="kicker reveal" data-reveal="fade-up">&gt; web_development</div>
         <h1 aria-label="Websites that work for your business">
           <span class="row"><span class="split-line">Websites that</span></span>
-          <span class="row"><span class="grad reveal" data-reveal="fade-up">work for your business</span></span>
+          <span class="row"><span class="hw-wrap" id="heroHandwrite" data-hw-text="work for your business">work for your business</span></span>
         </h1>
         <p class="lead reveal" data-reveal="fade-up">I'm Yehor Bunin — I design and build websites and web interfaces, end to end: landing pages, business sites, online stores.</p>
         <div class="hero-actions reveal" data-reveal="fade-up">
@@ -782,8 +784,140 @@
           el.style.transitionDelay = (450 + i * 110) + 'ms';
           el.classList.add('in-view');
         });
+        startHandwrite();
       });
     });
+  }
+
+  /* ---------------- handwriting pen-stroke effect (vanilla, no React) ----------------
+     Ports the "HandwritingText" component technique: parse a real font's glyph outlines
+     with opentype.js, draw each contour as its own animated SVG stroke, then fade in a
+     filled copy underneath. Falls back to the plain text already in the DOM if the
+     library/font can't load, or if the visitor prefers reduced motion. */
+  var OPENTYPE_CDN = 'https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js';
+  var HANDWRITE_FONT_URL = 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/homemadeapple/HomemadeApple-Regular.ttf';
+  var HW_EM = 100;
+  var opentypeLibPromise = null;
+  var handwriteFontPromise = null;
+
+  function loadOpentypeLib(){
+    if(window.opentype) return Promise.resolve(window.opentype);
+    if(!opentypeLibPromise){
+      opentypeLibPromise = new Promise(function(resolve, reject){
+        var script = document.createElement('script');
+        script.src = OPENTYPE_CDN;
+        script.async = true;
+        script.onload = function(){ window.opentype ? resolve(window.opentype) : reject(new Error('opentype.js loaded but exposed nothing')); };
+        script.onerror = function(){ reject(new Error('opentype.js failed to load')); };
+        document.head.appendChild(script);
+      });
+    }
+    return opentypeLibPromise;
+  }
+
+  function loadHandwriteFont(){
+    if(!handwriteFontPromise){
+      handwriteFontPromise = Promise.all([
+        loadOpentypeLib(),
+        fetch(HANDWRITE_FONT_URL).then(function(res){
+          if(!res.ok) throw new Error('Font request failed: ' + res.status);
+          return res.arrayBuffer();
+        })
+      ]).then(function(results){ return results[0].parse(results[1]); });
+    }
+    return handwriteFontPromise;
+  }
+
+  // Kick off the font fetch immediately so it's likely ready by the time the hero animates in.
+  if(!reduced) loadHandwriteFont().catch(function(){ /* falls back to the plain text already in the DOM */ });
+
+  function buildHandwriteSvg(font, text){
+    var path = font.getPath(text, 0, HW_EM, HW_EM);
+    var box = path.getBoundingBox();
+    var pad = HW_EM * 0.12;
+    var full = path.toPathData(2);
+    var contours = full.split(/(?=M)/).filter(function(d){ return d.trim().length > 1; });
+    var x = box.x1 - pad, y = box.y1 - pad, w = (box.x2 - box.x1) + pad * 2, h = (box.y2 - box.y1) + pad * 2;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', x + ' ' + y + ' ' + w + ' ' + h);
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', text);
+    svg.style.height = '1.15em';
+    svg.style.width = 'calc(1.15em * ' + (w / h).toFixed(4) + ')';
+
+    // The wrapping span uses background-clip:text + color:transparent for the plain-text
+    // fallback, and currentColor would inherit that transparent — so the gradient here is
+    // defined directly on the SVG instead of relying on currentColor.
+    var gradId = 'hwGrad' + Math.random().toString(36).slice(2);
+    var defs = document.createElementNS(svg.namespaceURI, 'defs');
+    var grad = document.createElementNS(svg.namespaceURI, 'linearGradient');
+    grad.setAttribute('id', gradId);
+    grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
+    grad.setAttribute('x2', '1'); grad.setAttribute('y2', '0');
+    var stop1 = document.createElementNS(svg.namespaceURI, 'stop');
+    stop1.setAttribute('offset', '0'); stop1.setAttribute('stop-color', '#B6A4FF');
+    var stop2 = document.createElementNS(svg.namespaceURI, 'stop');
+    stop2.setAttribute('offset', '1'); stop2.setAttribute('stop-color', '#22D3EE');
+    grad.appendChild(stop1); grad.appendChild(stop2);
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+    var gradRef = 'url(#' + gradId + ')';
+
+    var fillPath = document.createElementNS(svg.namespaceURI, 'path');
+    fillPath.setAttribute('d', full);
+    fillPath.setAttribute('fill', gradRef);
+    fillPath.setAttribute('stroke', 'none');
+    fillPath.style.opacity = '0';
+    svg.appendChild(fillPath);
+
+    var strokeEls = contours.map(function(d){
+      var p = document.createElementNS(svg.namespaceURI, 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', gradRef);
+      p.setAttribute('stroke-width', '1.6');
+      p.setAttribute('stroke-linecap', 'round');
+      p.setAttribute('stroke-linejoin', 'round');
+      svg.appendChild(p);
+      return p;
+    });
+
+    return { svg: svg, fillPath: fillPath, strokeEls: strokeEls };
+  }
+
+  function animateHandwrite(built, duration, delay){
+    var count = Math.max(1, built.strokeEls.length);
+    var lengths = built.strokeEls.map(function(el){ return el.getTotalLength(); });
+    built.strokeEls.forEach(function(el, i){
+      var length = lengths[i] || 1;
+      el.style.strokeDasharray = length;
+      el.style.strokeDashoffset = length;
+    });
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        built.strokeEls.forEach(function(el, i){
+          var each = (duration / count) * 2.4;
+          var start = delay + (i / count) * duration;
+          el.style.transition = 'stroke-dashoffset ' + each.toFixed(3) + 's ease-out ' + start.toFixed(3) + 's';
+          el.style.strokeDashoffset = '0';
+        });
+        built.fillPath.style.transition = 'opacity 0.45s ease-out ' + (delay + duration * 0.72).toFixed(3) + 's';
+        built.fillPath.style.opacity = '1';
+      });
+    });
+  }
+
+  function startHandwrite(){
+    var el = document.getElementById('heroHandwrite');
+    if(!el || reduced) return;
+    var text = el.dataset.hwText || el.textContent;
+    loadHandwriteFont().then(function(font){
+      var built = buildHandwriteSvg(font, text);
+      el.textContent = '';
+      el.appendChild(built.svg);
+      animateHandwrite(built, 1.5, 0);
+    }).catch(function(){ /* the plain text already in the DOM stays as-is */ });
   }
 
   /* ---------------- scroll-triggered reveals (IntersectionObserver, no dependencies) ---------------- */
