@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flyleaf — Free Classic Books in English &amp; Russian</title>
+<meta name="description" content="Read public-domain classics free, in English and Russian: Austen, Tolstoy, Dostoevsky, Pushkin, Twain, plus early stock-market and trading classics. No signup, direct links to Project Gutenberg and Lib.ru.">
+<meta property="og:title" content="Flyleaf — Free Classic Books in English &amp; Russian">
+<meta property="og:description" content="A searchable shelf of public-domain classics — fiction and trading & markets — free to read in English and Russian.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0c0e13">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23caa24c' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 6.2c-1.9-1.4-4.4-1.9-6.8-1.5-.5.1-.9.5-.9 1v11.7c0 .6.5 1.1 1.1 1 2.1-.3 4.3.1 6 1.3.4.3.9.3 1.2 0 1.7-1.2 3.9-1.6 6-1.3.6.1 1.1-.4 1.1-1V5.7c0-.5-.4-.9-.9-1-2.4-.4-4.9.1-6.8 1.5Z'/%3E%3Cpath d='M12 6.2v13.4'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,400..600&family=Literata:ital,opsz,wght@0,7..72,400..500;1,7..72,400..500&display=swap">
+<style>
+  html, body { background: #0c0e13 !important; color: #ece7d8; }
+
+  :root{
+    --ink-950:#0c0e13;
+    --ink-900:#12141b;
+    --ink-800:#1c1f29;
+    --ink-700:#282c39;
+    --ink-600:#343a4a;
+    --parchment:#ece7d8;
+    --parchment-dim:#c9c4b3;
+    --muted:#928f83;
+    --brass:#caa24c;
+    --brass-bright:#e6c876;
+    --ribbon:#a1453f;
+    --ribbon-bright:#c9776f;
+    --border:rgba(236,231,216,0.14);
+    --border-soft:rgba(236,231,216,0.08);
+  }
+
+  html, body{ background: var(--ink-950); color: var(--parchment); }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:"Literata","Iowan Old Style","Georgia",serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    position:relative;
+  }
+  a{ color:inherit; text-decoration:none; }
+  button, input{ font-family:inherit; }
+  ul{ list-style:none; }
+  .sr-only{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  :focus-visible{ outline:2px solid var(--brass-bright); outline-offset:3px; }
+
+  /* ---------- decorative layers ---------- */
+  .grain{ position:fixed; inset:0; z-index:100; pointer-events:none; opacity:.05; mix-blend-mode:overlay; }
+  .glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 900px 560px at 50% 30%, rgba(202,162,76,0.14), transparent 60%),
+      radial-gradient(ellipse 1200px 700px at 50% 0%, rgba(120,110,150,0.10), transparent 55%);
+  }
+  .hero-quote{
+    position:absolute; left:50%; top:6%; z-index:0; pointer-events:none;
+    transform:translate(-50%,0) rotate(-4deg);
+    font-family:"Fraunces", serif; font-style:italic; font-weight:300;
+    font-size:clamp(180px, 26vw, 420px); line-height:1;
+    color:var(--parchment); opacity:.045; user-select:none;
+  }
+  .spotlight{
+    position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0;
+    background:radial-gradient(320px circle at var(--mx,50%) var(--my,20%), rgba(230,200,118,0.10), transparent 70%);
+    transition:opacity .4s ease;
+  }
+  .hero:hover .spotlight{ opacity:1; }
+
+  /* ---------- page shell ---------- */
+  .page{ position:relative; z-index:1; }
+
+  /* ---------- header ---------- */
+  .header{
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+    gap:12px; padding:20px clamp(20px,4vw,48px);
+    position:sticky; top:0; z-index:50;
+    background:rgba(12,14,19,0.6);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .header.is-scrolled{ border-bottom-color:var(--border-soft); background:rgba(12,14,19,0.86); }
+
+  .logo{
+    display:inline-flex; align-items:center; gap:10px; justify-self:start;
+    font-family:"Fraunces", serif; font-style:italic; font-weight:500;
+    font-size:18px; letter-spacing:-0.01em; color:var(--parchment);
+  }
+  .logo-mark{ width:22px; height:22px; color:var(--brass); flex:none; }
+  #site-nav{ display:flex; align-items:center; gap:8px; justify-self:center; font-family:"Archivo", sans-serif; }
+  .pill{
+    position:relative; overflow:hidden; isolation:isolate;
+    height:40px; padding:0 17px; border-radius:7px; display:inline-flex; align-items:center;
+    border:1px solid var(--border-soft);
+    background:linear-gradient(150deg, rgba(28,31,41,0.5) 0%, rgba(18,20,27,0.75) 100%);
+    color:var(--parchment-dim); font-size:13.5px; font-weight:400; letter-spacing:-0.005em;
+    white-space:nowrap; cursor:pointer; border-width:1px; border-style:solid;
+    transition:background .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease;
+  }
+  .pill::before{
+    content:""; position:absolute; inset:0; z-index:-1;
+    background:linear-gradient(115deg, transparent 30%, rgba(230,200,118,0.16) 50%, transparent 70%);
+    transform:translateX(-120%); transition:transform .6s ease;
+  }
+  .pill:hover{ color:var(--parchment); border-color:rgba(202,162,76,0.45); box-shadow:0 0 18px rgba(202,162,76,0.14); }
+  .pill:hover::before{ transform:translateX(120%); }
+  .pill.is-active{ color:var(--ink-950); background:linear-gradient(180deg, var(--brass-bright), var(--brass)); border-color:var(--brass-bright); }
+  .header-right{ display:flex; align-items:center; gap:10px; justify-self:end; }
+
+  .burger{
+    display:none; width:40px; height:40px; border-radius:6px;
+    border:1px solid var(--border); background:rgba(12,14,19,0.6);
+    cursor:pointer; z-index:60; position:relative;
+    align-items:center; justify-content:center; flex-direction:column; gap:5px;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .burger span{ width:16px; height:1.5px; background:var(--parchment); border-radius:1px; transition:transform .25s ease, opacity .2s ease; }
+  .burger:hover{ border-color:rgba(236,231,216,0.32); background:rgba(236,231,216,0.05); }
+  body.menu-open .burger span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+  body.menu-open .burger span:nth-child(2){ opacity:0; }
+  body.menu-open .burger span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    position:relative; isolation:isolate; overflow:hidden;
+    display:inline-flex; align-items:center; justify-content:center;
+    height:42px; padding:0 18px; border-radius:6px;
+    font-family:"Archivo", sans-serif; font-size:13.5px; font-weight:500; letter-spacing:-0.01em;
+    line-height:1; white-space:nowrap; cursor:pointer; border:0;
+    transition:background .35s ease, border-color .35s ease, box-shadow .35s ease, color .35s ease;
+  }
+  .btn::after{
+    content:""; position:absolute; inset:0; z-index:1;
+    background:linear-gradient(115deg, transparent 20%, rgba(255,247,225,0.5) 48%, transparent 76%);
+    transform:translateX(-130%); transition:transform .65s ease; pointer-events:none;
+  }
+  .btn:hover::after{ transform:translateX(130%); }
+  .btn-solid{
+    background:linear-gradient(180deg, var(--brass-bright) 0%, var(--brass) 55%, #a5813a 100%);
+    color:#211605; border:1px solid var(--brass-bright);
+    box-shadow:inset 0 1px 0 rgba(255,244,214,0.6);
+  }
+  .btn-solid:hover{
+    background:linear-gradient(180deg, #f0d78e 0%, #d9b25c 55%, #b38f43 100%);
+    box-shadow:inset 0 1px 0 rgba(255,246,220,0.75), 0 0 22px rgba(202,162,76,0.35), 0 8px 18px rgba(202,162,76,0.14);
+  }
+  .header-cta{ height:40px; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative; overflow:hidden;
+    padding:56px 24px 40px;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .hero-copy{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; max-width:720px; width:100%; }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    margin-bottom:18px; padding:8px 15px; border-radius:99px;
+    border:1px solid var(--border);
+    background:linear-gradient(90deg, rgba(202,162,76,0.16) 0%, rgba(28,31,41,0.4) 60%);
+    color:var(--parchment-dim); font-family:"Archivo", sans-serif;
+    font-size:12.5px; font-weight:500; letter-spacing:0.01em;
+  }
+  .badge-star{ width:14px; height:14px; color:var(--brass-bright); flex:none; }
+
+  h1{
+    font-family:"Fraunces", serif; font-weight:450; letter-spacing:-0.02em; line-height:1.14;
+    color:var(--parchment); display:flex; flex-direction:column; align-items:center;
+    font-size:clamp(30px, 4.4vw, 50px); text-wrap:balance;
+  }
+  .headline-line{ display:block; overflow:hidden; padding:0.06em 0.1em 0.16em; }
+  h1 em{ font-style:italic; font-weight:400; color:var(--brass-bright); }
+
+  .lede{ max-width:480px; margin-top:14px; color:var(--muted); font-size:15.5px; font-weight:400; line-height:1.6; }
+
+  /* ---------- search ---------- */
+  .search-wrap{ width:100%; max-width:560px; margin-top:28px; position:relative; }
+  .search-shell{
+    position:relative; display:flex; align-items:center; gap:10px;
+    height:54px; padding:0 18px; border-radius:99px;
+    background:linear-gradient(180deg, rgba(28,31,41,0.7), rgba(18,20,27,0.85));
+    border:1px solid var(--border);
+    box-shadow:inset 0 1px 0 rgba(236,231,216,0.05), 0 12px 30px rgba(0,0,0,0.3);
+    transition:border-color .3s ease, box-shadow .3s ease;
+  }
+  .search-shell:focus-within{ border-color:rgba(202,162,76,0.6); box-shadow:0 0 0 4px rgba(202,162,76,0.12), 0 12px 30px rgba(0,0,0,0.35); }
+  .search-icon{ width:18px; height:18px; color:var(--muted); flex:none; }
+  #search{
+    flex:1; background:none; border:0; outline:0; color:var(--parchment);
+    font-family:"Literata", serif; font-size:16px;
+  }
+  #search::placeholder{ color:var(--muted); }
+  .search-clear{
+    display:none; width:26px; height:26px; border-radius:50%; flex:none;
+    align-items:center; justify-content:center; color:var(--muted); cursor:pointer;
+    background:rgba(236,231,216,0.06); border:0;
+  }
+  .search-clear.is-visible{ display:inline-flex; }
+  .search-clear:hover{ color:var(--parchment); background:rgba(236,231,216,0.12); }
+  .search-hint{
+    margin-top:12px; font-family:"Archivo", sans-serif; font-size:12.5px; color:var(--muted); letter-spacing:0.01em;
+  }
+  .search-hint a{ color:var(--brass-bright); border-bottom:1px solid rgba(230,200,118,0.35); cursor:pointer; }
+  .search-hint a:hover{ border-color:var(--brass-bright); }
+
+  /* ---------- library ---------- */
+  .library{ position:relative; z-index:1; padding:16px clamp(20px,5vw,64px) 8px; max-width:1180px; margin:0 auto; }
+  .library-head{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--border-soft);
+  }
+  .library-title{ font-family:"Fraunces", serif; font-style:italic; font-size:22px; font-weight:500; color:var(--parchment); }
+  .lang-tabs{ display:flex; gap:8px; font-family:"Archivo", sans-serif; }
+  .lang-tab{
+    height:34px; padding:0 14px; border-radius:99px; font-size:12.5px; font-weight:500;
+    display:inline-flex; align-items:center; border:1px solid var(--border-soft);
+    color:var(--muted); background:rgba(28,31,41,0.5); cursor:pointer;
+    transition:all .25s ease;
+  }
+  .lang-tab:hover{ color:var(--parchment); border-color:var(--border); }
+  .lang-tab.is-active{ color:var(--ink-950); background:var(--brass-bright); border-color:var(--brass-bright); }
+  .result-count{ font-family:"Archivo", sans-serif; font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px; padding-bottom:12px; }
+
+  .book-card{
+    position:relative; display:flex; gap:14px; padding:16px;
+    border-radius:12px; border:1px solid var(--border-soft);
+    background:linear-gradient(160deg, rgba(28,31,41,0.55), rgba(15,17,23,0.7));
+    opacity:0; transform:translateY(16px);
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .5s ease, translate .1s ease;
+    transform-style:preserve-3d; will-change:transform;
+  }
+  .book-card.in-view{ opacity:1; transform:translateY(0); }
+  .book-card:hover{ border-color:rgba(202,162,76,0.35); box-shadow:0 14px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(202,162,76,0.08); }
+
+  .spine{
+    flex:none; width:44px; height:64px; border-radius:3px 6px 6px 3px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:inset 2px 0 0 rgba(255,255,255,0.18), inset -1px 0 0 rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.3);
+    font-family:"Fraunces", serif; font-style:italic; font-size:15px; color:rgba(255,255,255,0.85);
+  }
+  .book-meta{ min-width:0; flex:1; }
+  .book-title{ font-family:"Literata", serif; font-size:15.5px; font-weight:500; color:var(--parchment); line-height:1.3; }
+  .book-title mark{ background:rgba(202,162,76,0.3); color:inherit; border-radius:2px; }
+  .book-author{ font-family:"Archivo", sans-serif; font-size:12px; color:var(--muted); margin-top:3px; }
+  .book-blurb{ font-family:"Literata", serif; font-size:13px; color:var(--parchment-dim); line-height:1.5; margin-top:8px; }
+  .book-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; }
+  .book-lang{
+    font-family:"Archivo", sans-serif; font-size:10.5px; font-weight:600; letter-spacing:0.05em;
+    padding:3px 8px; border-radius:99px; text-transform:uppercase;
+  }
+  .book-lang.en{ color:#bcd4c9; background:rgba(140,190,160,0.14); }
+  .book-lang.ru{ color:#e3b7b0; background:rgba(161,69,63,0.18); }
+  .book-badges{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .book-cat{
+    font-family:"Archivo", sans-serif; font-size:10.5px; font-weight:600; letter-spacing:0.05em;
+    padding:3px 8px; border-radius:99px; text-transform:uppercase;
+    color:var(--brass-bright); background:rgba(202,162,76,0.14);
+  }
+  .book-link{
+    font-family:"Archivo", sans-serif; font-size:12.5px; font-weight:600; color:var(--brass-bright);
+    display:inline-flex; align-items:center; gap:5px;
+  }
+  .book-link svg{ width:12px; height:12px; transition:transform .2s ease; }
+  .book-card:hover .book-link svg{ transform:translate(2px,-2px); }
+
+  .empty-state{
+    display:none; text-align:center; padding:56px 20px; color:var(--muted);
+    font-family:"Literata", serif; font-size:15px;
+  }
+  .empty-state.is-visible{ display:block; }
+
+  .library-note{
+    margin-top:20px; padding-top:16px; border-top:1px solid var(--border-soft);
+    font-family:"Archivo", sans-serif; font-size:11.5px; color:var(--muted); line-height:1.6;
+  }
+
+  /* ---------- stats ---------- */
+  .stats{
+    position:relative; z-index:1;
+    display:flex; align-items:center; justify-content:center; gap:clamp(24px,5vw,56px);
+    flex-wrap:wrap; padding:48px clamp(20px,5vw,64px) 56px;
+    padding-bottom:max(56px, env(safe-area-inset-bottom));
+    font-family:"Archivo", sans-serif;
+  }
+  .stat{ display:inline-flex; align-items:center; gap:12px; font-size:13.5px; color:var(--parchment-dim); white-space:nowrap; }
+  .stat strong{ color:var(--parchment); font-weight:600; font-variant-numeric:tabular-nums; }
+  .stat-icon{ width:22px; height:22px; flex:none; }
+  .stat-icon-trio{ width:40px; height:22px; flex:none; }
+
+  /* ---------- entrance motion ---------- */
+  .appear{ opacity:1; animation-duration:1.05s; animation-fill-mode:both; animation-timing-function:cubic-bezier(0.16,1,0.3,1); animation-delay:var(--d, 0.08s); }
+  .appear.is-in{ animation:none; opacity:1; transform:none; clip-path:none; filter:none; }
+  .appear--scale{ animation-name:in-scale; }
+  .appear--soft{ animation-name:in-soft; }
+  .appear--mask{ animation-name:in-mask; }
+  .appear--pop{ animation-name:in-pop; }
+  .appear--side{ animation-name:in-side; }
+  .lede.appear--soft{ animation-duration:1.25s; }
+
+  @keyframes in-scale{ from{ opacity:0; transform:scale(0.86); } to{ opacity:1; transform:none; } }
+  @keyframes in-soft{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+  @keyframes in-mask{ from{ opacity:0; transform:translateY(42%); } to{ opacity:1; transform:none; } }
+  @keyframes in-pop{ 0%{ opacity:0; transform:scale(0.9); } 70%{ opacity:1; transform:scale(1.03); } 100%{ transform:scale(1); } }
+  @keyframes in-side{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ transition:none !important; animation:none !important; }
+    .appear{ opacity:1; transform:none; clip-path:none; filter:none; }
+    .book-card{ opacity:1; transform:none; }
+  }
+
+  /* ---------- mobile menu ---------- */
+  .menu-backdrop{ display:none; }
+
+  @media (max-width:900px){
+    .burger{ display:flex; }
+    .header{ grid-template-columns:1fr auto auto; padding:calc(14px + env(safe-area-inset-top)) 20px 14px; }
+    .logo, .header-right{ z-index:80; }
+    #site-nav{ display:none; }
+
+    .menu-backdrop{
+      display:block; position:fixed; inset:0; z-index:40; background:rgba(8,9,12,0.5);
+      opacity:0; visibility:hidden; transition:opacity .28s ease;
+    }
+    body.menu-open .menu-backdrop{ opacity:1; visibility:visible; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); }
+    body.menu-open #site-nav{
+      display:flex; flex-direction:column; align-items:stretch; justify-content:center;
+      gap:12px; position:fixed; inset:0; z-index:45;
+      padding:max(96px, calc(env(safe-area-inset-top) + 88px)) 22px 32px; background:transparent;
+    }
+    body.menu-open .pill{ width:100%; height:56px; font-size:18px; border-radius:10px; justify-content:center; }
+    body.menu-open{ overflow:hidden; }
+
+    .hero{ padding:36px 20px 32px; }
+    h1{ font-size:clamp(28px, 8vw, 38px); }
+    .hero-quote{ font-size:clamp(140px, 55vw, 260px); top:2%; }
+    .library-head{ flex-direction:column; align-items:flex-start; }
+    .stats{ gap:20px 32px; }
+  }
+</style>
+
+</head>
+<body>
+<svg class="grain" aria-hidden="true">
+  <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"/></filter>
+  <rect width="100%" height="100%" filter="url(#noise)"/>
+</svg>
+<div class="glow" aria-hidden="true"></div>
+
+<div class="page">
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+
+  <header class="header" id="siteHeader">
+    <a class="logo appear appear--scale" href="#top" aria-label="Flyleaf" style="--d:.08s">
+      <svg class="logo-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 6.2c-1.9-1.4-4.4-1.9-6.8-1.5-.5.1-.9.5-.9 1v11.7c0 .6.5 1.1 1.1 1 2.1-.3 4.3.1 6 1.3.4.3.9.3 1.2 0 1.7-1.2 3.9-1.6 6-1.3.6.1 1.1-.4 1.1-1V5.7c0-.5-.4-.9-.9-1-2.4-.4-4.9.1-6.8 1.5Z"/>
+        <path d="M12 6.2v13.4"/>
+      </svg>
+      <span>Flyleaf</span>
+    </a>
+
+    <nav id="site-nav" aria-label="Primary">
+      <a class="pill appear appear--scale" style="--d:.16s" href="#library" data-lang-link="all">All books</a>
+      <a class="pill appear appear--soft" style="--d:.28s" href="#library" data-lang-link="en">English</a>
+      <a class="pill appear appear--scale" style="--d:.40s" href="#library" data-lang-link="ru">Русский</a>
+    </nav>
+
+    <div class="header-right">
+      <a class="btn btn-solid header-cta appear appear--scale" style="--d:.34s" href="#top" id="headerSearchCta">Find a book</a>
+      <button class="burger" id="burger" aria-controls="site-nav" aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="hero" id="top">
+    <div class="hero-quote" aria-hidden="true">&ldquo;</div>
+    <div class="spotlight" aria-hidden="true"></div>
+
+    <div class="hero-copy">
+      <p class="badge appear appear--pop" style="--d:.22s">
+        <svg class="badge-star" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5c.5 0 .7.4.9 1.5.5 3.6 1.2 4.3 4.8 4.8 1.1.1 1.5.4 1.5.9s-.4.7-1.5.9c-3.6.5-4.3 1.2-4.8 4.8-.1 1.1-.4 1.5-.9 1.5s-.7-.4-.9-1.5c-.5-3.6-1.2-4.3-4.8-4.8C3.1 9.7 2.7 9.4 2.7 8.9s.4-.7 1.5-.9c3.6-.5 4.3-1.2 4.8-4.8.1-1.1.4-1.5.9-1.5Z"/></svg>
+        Free classics, in English and in Russian
+      </p>
+
+      <h1>
+        <span class="headline-line appear appear--mask" style="--d:.42s">Never lose your place</span>
+        <span class="headline-line appear appear--mask" style="--d:.62s">in a book &mdash; or a <em>habit</em>.</span>
+      </h1>
+
+      <p class="lede appear appear--soft" style="--d:.82s">
+        Type a title or an author below. Every book here is a public-domain classic you can open and read right now, free, on its original library.
+      </p>
+
+      <div class="search-wrap appear appear--side" style="--d:.96s">
+        <div class="search-shell">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.7-4.7"/></svg>
+          <input type="text" id="search" autocomplete="off" spellcheck="false" placeholder="Try “Onegin”, “Reminiscences”, or Chekhov…" />
+          <button type="button" class="search-clear" id="searchClear" aria-label="Clear search">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <p class="search-hint">Or just <a id="browseAll">browse the whole shelf</a> below.</p>
+      </div>
+    </div>
+  </main>
+
+  <section class="library" id="library" aria-label="Library">
+    <div class="library-head">
+      <h2 class="library-title">The shelf</h2>
+      <div class="lang-tabs" role="tablist" aria-label="Filter by language">
+        <button class="lang-tab is-active" data-lang="all" role="tab" aria-selected="true">All languages</button>
+        <button class="lang-tab" data-lang="en" role="tab" aria-selected="false">English</button>
+        <button class="lang-tab" data-lang="ru" role="tab" aria-selected="false">Русский</button>
+      </div>
+      <div class="lang-tabs cat-tabs" role="tablist" aria-label="Filter by category">
+        <button class="lang-tab is-active" data-cat="all" role="tab" aria-selected="true">All shelves</button>
+        <button class="lang-tab" data-cat="fiction" role="tab" aria-selected="false">Fiction</button>
+        <button class="lang-tab" data-cat="trading" role="tab" aria-selected="false">Trading &amp; Markets</button>
+      </div>
+      <span class="result-count" id="resultCount"></span>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <p class="empty-state" id="emptyState">No book matches that yet &mdash; try an author's name, or clear the search.</p>
+
+    <p class="library-note">
+      Every title links to its host library's own reading page (Project Gutenberg or Lib.ru/Классика) &mdash; nothing is copied here, and nothing to sign up for. The Trading &amp; Markets shelf is old speculation and finance writing that's fully out of copyright, not modern bestsellers like Market Wizards or The Intelligent Investor &mdash; those are still copyrighted, so no legal source can give them away free.
+    </p>
+  </section>
+
+  <footer class="stats">
+    <div class="stat">
+      <svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="3" y="15" width="18" height="3.4" rx="1" transform="rotate(-2 12 16.7)" fill="#caa24c"/>
+        <rect x="4" y="10.8" width="16" height="3.4" rx="1" transform="rotate(1.5 12 12.5)" fill="#c9c4b3"/>
+        <rect x="3.5" y="6.6" width="17" height="3.4" rx="1" fill="#282c39" stroke="#8b897f" stroke-width="0.6" transform="rotate(-1 12 8.3)"/>
+      </svg>
+      <span><strong data-count="29">0</strong> free books on the shelf</span>
+    </div>
+    <div class="stat">
+      <svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 3h12v18l-6-4.2L6 21V3Z" fill="#a1453f" stroke="#c9776f" stroke-width="0.6" stroke-linejoin="round"/>
+      </svg>
+      <span><strong data-count="2">0</strong> languages, one search bar</span>
+    </div>
+    <div class="stat">
+      <svg class="stat-icon-trio" viewBox="0 0 40 22" aria-hidden="true">
+        <circle cx="10.5" cy="11" r="9.2" fill="#1c1f29" stroke="#3a3f4e" stroke-width="0.6"/>
+        <text x="10.5" y="15" font-family="Archivo, sans-serif" font-size="10" font-weight="600" fill="#c9c4b3" text-anchor="middle">R</text>
+        <circle cx="20" cy="11" r="9.2" fill="#caa24c"/>
+        <text x="20" y="15" font-family="Archivo, sans-serif" font-size="10" font-weight="600" fill="#211605" text-anchor="middle">F</text>
+        <circle cx="29.5" cy="11" r="9.2" fill="#a1453f" stroke="#c9776f" stroke-width="0.6"/>
+        <text x="29.5" y="15" font-family="Archivo, sans-serif" font-size="10" font-weight="600" fill="#f3e4e2" text-anchor="middle">M</text>
+      </svg>
+      <span><strong data-count="0">0</strong> signups required</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var BOOKS = [
+    { title:"Pride and Prejudice", author:"Jane Austen", year:1813, lang:"en", category:"fiction",
+      blurb:"Wit, pride, and the Bennet sisters navigate love and money in Regency England.",
+      url:"https://www.gutenberg.org/ebooks/1342" },
+    { title:"Alice's Adventures in Wonderland", author:"Lewis Carroll", year:1865, lang:"en", category:"fiction",
+      blurb:"A girl follows a hurried rabbit into a world where logic bends and grins float free.",
+      url:"https://www.gutenberg.org/ebooks/11" },
+    { title:"Frankenstein", author:"Mary Shelley", year:1818, lang:"en", category:"fiction",
+      blurb:"A scientist's creation asks who is truly the monster.",
+      url:"https://www.gutenberg.org/ebooks/84" },
+    { title:"Dracula", author:"Bram Stoker", year:1897, lang:"en", category:"fiction",
+      blurb:"Letters and diaries piece together an ancient terror's arrival in London.",
+      url:"https://www.gutenberg.org/ebooks/345" },
+    { title:"The Adventures of Sherlock Holmes", author:"Arthur Conan Doyle", year:1892, lang:"en", category:"fiction",
+      blurb:"Twelve cases for London's sharpest, strangest detective.",
+      url:"https://www.gutenberg.org/ebooks/1661" },
+    { title:"Moby-Dick", author:"Herman Melville", year:1851, lang:"en", category:"fiction",
+      blurb:"A one-legged captain hunts the whale that took his leg &mdash; and maybe his mind.",
+      url:"https://www.gutenberg.org/ebooks/2701" },
+    { title:"The Picture of Dorian Gray", author:"Oscar Wilde", year:1890, lang:"en", category:"fiction",
+      blurb:"A portrait ages so its subject never has to.",
+      url:"https://www.gutenberg.org/ebooks/174" },
+    { title:"Jane Eyre", author:"Charlotte Brontë", year:1847, lang:"en", category:"fiction",
+      blurb:"An orphan's plain-spoken account of growing up unloved, and refusing to stay that way.",
+      url:"https://www.gutenberg.org/ebooks/1260" },
+    { title:"The Adventures of Huckleberry Finn", author:"Mark Twain", year:1884, lang:"en", category:"fiction",
+      blurb:"A boy and a raft down the Mississippi, questioning everything he's been taught.",
+      url:"https://www.gutenberg.org/ebooks/76" },
+    { title:"War and Peace", author:"Leo Tolstoy · tr. Maude", year:1869, lang:"en", category:"fiction",
+      blurb:"Five Russian families live through Napoleon's invasion, in war rooms and ballrooms alike.",
+      url:"https://www.gutenberg.org/ebooks/2600" },
+    { title:"Crime and Punishment", author:"Fyodor Dostoevsky · tr. Garnett", year:1866, lang:"en", category:"fiction",
+      blurb:"A poor student commits a murder he's sure he can justify &mdash; and can't stop thinking about it.",
+      url:"https://www.gutenberg.org/ebooks/2554" },
+    { title:"Евгений Онегин", author:"Александр Пушкин", year:1833, lang:"ru", category:"fiction",
+      blurb:"Роман в стихах о скуке, дружбе и письме, прочитанном слишком поздно.",
+      url:"http://az.lib.ru/p/pushkin_a_s/text_0170.shtml" },
+    { title:"Мёртвые души", author:"Николай Гоголь", year:1842, lang:"ru", category:"fiction",
+      blurb:"Чичиков объезжает уездных помещиков, скупая имена умерших крестьян.",
+      url:"http://az.lib.ru/g/gogolx_n_w/text_0140.shtml" },
+    { title:"Дама с собачкой", author:"Антон Чехов", year:1899, lang:"ru", category:"fiction",
+      blurb:"Курортный роман, который оказывается совсем не таким лёгким, как начинался.",
+      url:"http://az.lib.ru/c/chehow_a_p/text_1899_dama_s_sobachkoy.shtml" },
+    { title:"Отцы и дети", author:"Иван Тургенев", year:1862, lang:"ru", category:"fiction",
+      blurb:"Нигилист Базаров сталкивается с миром, который не готов от него отказаться.",
+      url:"http://az.lib.ru/t/turgenew_i_s/text_0040.shtml" },
+    { title:"Герой нашего времени", author:"Михаил Лермонтов", year:1840, lang:"ru", category:"fiction",
+      blurb:"Печорин скучает по Кавказу так, что вокруг него почти никто не выживает.",
+      url:"http://az.lib.ru/l/lermontow_m_j/text_0410.shtml" },
+    { title:"Анна Каренина", author:"Лев Толстой", year:1877, lang:"ru", category:"fiction",
+      blurb:"Одна фраза о счастливых и несчастных семьях &mdash; и роман, который её опровергает.",
+      url:"http://az.lib.ru/t/tolstoj_lew_nikolaewich/text_0080.shtml" },
+
+    { title:"Reminiscences of a Stock Operator", author:"Edwin Lefèvre", year:1923, lang:"en", category:"trading",
+      blurb:"A fictionalized account of a trader modeled on Jesse Livermore &mdash; probably the most quoted trading book ever written.",
+      url:"https://www.gutenberg.org/ebooks/60979" },
+    { title:"Memoirs of Extraordinary Popular Delusions and the Madness of Crowds", author:"Charles Mackay", year:1841, lang:"en", category:"trading",
+      blurb:"Tulip mania and the South Sea Bubble: how crowds talk themselves into believing a price can only go up.",
+      url:"https://www.gutenberg.org/ebooks/24518" },
+    { title:"Psychology of the Stock Market", author:"G. C. Selden", year:1912, lang:"en", category:"trading",
+      blurb:"An early argument that prices move on fear and hope as much as on facts.",
+      url:"https://www.gutenberg.org/ebooks/75570" },
+    { title:"Frenzied Finance", author:"Thomas W. Lawson", year:1905, lang:"en", category:"trading",
+      blurb:"A Boston financier's inside account of a stock manipulation scheme he helped run.",
+      url:"https://www.gutenberg.org/ebooks/26330" },
+    { title:"The Stock Exchange From Within", author:"W. C. Van Antwerp", year:1913, lang:"en", category:"trading",
+      blurb:"A member's tour of how the New York Stock Exchange actually worked, floor by floor.",
+      url:"https://www.gutenberg.org/ebooks/60082" },
+    { title:"Chronicles and Characters of the Stock Exchange", author:"John Francis", year:1849, lang:"en", category:"trading",
+      blurb:"A history of the London Stock Exchange, from its coffee-house origins to its Victorian characters.",
+      url:"https://www.gutenberg.org/ebooks/70656" },
+    { title:"The Theory of Stock Exchange Speculation", author:"Arthur Crump", year:1874, lang:"en", category:"trading",
+      blurb:"An early attempt to treat speculation as a discipline with rules, not just nerve.",
+      url:"https://www.gutenberg.org/ebooks/59518" },
+    { title:"Successful Stock Speculation", author:"J. J. Butler", year:"early 1900s", lang:"en", category:"trading",
+      blurb:"A trader's plainspoken rules for reading a tape and managing a position.",
+      url:"https://www.gutenberg.org/ebooks/26841" },
+    { title:"The Psychology of Speculation", author:"Henry Howard Harper", year:1926, lang:"en", category:"trading",
+      blurb:"On the emotional habits &mdash; hope, fear, regret &mdash; that undo otherwise sound traders.",
+      url:"https://www.gutenberg.org/ebooks/73647" },
+    { title:"Profitable Stock Exchange Investments", author:"H. V. Brandenburg &amp; Co.", year:"early 1900s", lang:"en", category:"trading",
+      blurb:"A period guide to picking and holding stocks for income rather than a quick flip.",
+      url:"https://www.gutenberg.org/ebooks/44052" },
+    { title:"The Cycles of Speculation", author:"Thomas Gibson", year:1907, lang:"en", category:"trading",
+      blurb:"An early look at how markets move in recurring waves of optimism and panic.",
+      url:"https://www.gutenberg.org/ebooks/75687" },
+    { title:"The Stock Exchange", author:"Charles Duguid", year:"early 1900s", lang:"en", category:"trading",
+      blurb:"A primer on how exchanges, brokers, and settlement actually function.",
+      url:"https://www.gutenberg.org/ebooks/59042" }
+  ];
+
+  var SPINE_COLORS = ["#7a3b3b","#3b5a4a","#3b4a6b","#6b4a2c","#4a3b6b","#6b3b58","#3b6b63","#5c5230"];
+  function spineColor(str){
+    var h = 0;
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return SPINE_COLORS[h % SPINE_COLORS.length];
+  }
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c];
+    });
+  }
+  function highlight(text, query){
+    if(!query) return escapeHtml(text);
+    var idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if(idx === -1) return escapeHtml(text);
+    return escapeHtml(text.slice(0, idx)) + "<mark>" + escapeHtml(text.slice(idx, idx + query.length)) + "</mark>" + escapeHtml(text.slice(idx + query.length));
+  }
+
+  var grid = document.getElementById("grid");
+  var emptyState = document.getElementById("emptyState");
+  var resultCount = document.getElementById("resultCount");
+  var searchInput = document.getElementById("search");
+  var searchClear = document.getElementById("searchClear");
+  var langTabs = document.querySelectorAll(".lang-tabs:not(.cat-tabs) .lang-tab");
+  var catTabs = document.querySelectorAll(".cat-tabs .lang-tab");
+  var state = { query:"", lang:"all", cat:"all" };
+
+  var revealObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add("in-view");
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.12 });
+
+  function render(){
+    var q = state.query.trim().toLowerCase();
+    var list = BOOKS.filter(function(b){
+      var matchesLang = state.lang === "all" || b.lang === state.lang;
+      var matchesCat = state.cat === "all" || b.category === state.cat;
+      var matchesQuery = !q || b.title.toLowerCase().indexOf(q) !== -1 || b.author.toLowerCase().indexOf(q) !== -1;
+      return matchesLang && matchesCat && matchesQuery;
+    });
+
+    grid.innerHTML = list.map(function(b){
+      var initial = b.title.trim().charAt(0).toUpperCase();
+      return (
+        '<article class="book-card" data-tilt>' +
+          '<div class="spine" style="background:linear-gradient(160deg,' + spineColor(b.title) + ',' + spineColor(b.title + "x") + ')">' + initial + '</div>' +
+          '<div class="book-meta">' +
+            '<div class="book-title">' + highlight(b.title, state.query) + '</div>' +
+            '<div class="book-author">' + highlight(b.author, state.query) + ' &middot; ' + b.year + '</div>' +
+            '<div class="book-blurb">' + b.blurb + '</div>' +
+            '<div class="book-foot">' +
+              '<div class="book-badges">' +
+                '<span class="book-lang ' + b.lang + '">' + (b.lang === "en" ? "English" : "Русский") + '</span>' +
+                '<span class="book-cat">' + (b.category === "trading" ? "Trading" : "Fiction") + '</span>' +
+              '</div>' +
+              '<a class="book-link" href="' + b.url + '" target="_blank" rel="noopener noreferrer">Read free' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>' +
+              '</a>' +
+            '</div>' +
+          '</div>' +
+        '</article>'
+      );
+    }).join("");
+
+    document.querySelectorAll(".book-card").forEach(function(card, i){
+      card.style.transitionDelay = Math.min(i * 40, 320) + "ms";
+      revealObserver.observe(card);
+      setTimeout(function(){ card.classList.add("in-view"); }, 1500);
+    });
+
+    emptyState.classList.toggle("is-visible", list.length === 0);
+    resultCount.textContent = list.length + (list.length === 1 ? " book" : " books");
+    searchClear.classList.toggle("is-visible", q.length > 0);
+  }
+
+  searchInput.addEventListener("input", function(){
+    state.query = searchInput.value;
+    render();
+  });
+  searchClear.addEventListener("click", function(){
+    searchInput.value = "";
+    state.query = "";
+    render();
+    searchInput.focus();
+  });
+  langTabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      langTabs.forEach(function(t){ t.classList.remove("is-active"); t.setAttribute("aria-selected","false"); });
+      tab.classList.add("is-active"); tab.setAttribute("aria-selected","true");
+      state.lang = tab.getAttribute("data-lang");
+      render();
+    });
+  });
+  catTabs.forEach(function(tab){
+    tab.addEventListener("click", function(){
+      catTabs.forEach(function(t){ t.classList.remove("is-active"); t.setAttribute("aria-selected","false"); });
+      tab.classList.add("is-active"); tab.setAttribute("aria-selected","true");
+      state.cat = tab.getAttribute("data-cat");
+      render();
+    });
+  });
+  document.querySelectorAll("[data-lang-link]").forEach(function(link){
+    link.addEventListener("click", function(){
+      var lang = link.getAttribute("data-lang-link");
+      langTabs.forEach(function(t){
+        var active = t.getAttribute("data-lang") === lang;
+        t.classList.toggle("is-active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      state.lang = lang;
+      render();
+    });
+  });
+  document.getElementById("browseAll").addEventListener("click", function(){
+    document.getElementById("library").scrollIntoView({ behavior:"smooth" });
+  });
+  document.getElementById("headerSearchCta").addEventListener("click", function(){
+    setTimeout(function(){ searchInput.focus(); }, 350);
+  });
+
+  render();
+
+  /* card tilt */
+  grid.addEventListener("mousemove", function(e){
+    var card = e.target.closest(".book-card");
+    if(!card) return;
+    var r = card.getBoundingClientRect();
+    var px = (e.clientX - r.left) / r.width - 0.5;
+    var py = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = "translateY(0) rotateX(" + (py * -6) + "deg) rotateY(" + (px * 8) + "deg)";
+  });
+  grid.addEventListener("mouseleave", function(e){
+    document.querySelectorAll(".book-card").forEach(function(c){ c.style.transform = ""; });
+  }, true);
+
+  /* hero cursor spotlight */
+  var hero = document.querySelector(".hero");
+  hero.addEventListener("mousemove", function(e){
+    var r = hero.getBoundingClientRect();
+    hero.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
+    hero.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100) + "%");
+  });
+
+  /* sticky header shadow */
+  var header = document.getElementById("siteHeader");
+  window.addEventListener("scroll", function(){
+    header.classList.toggle("is-scrolled", window.scrollY > 8);
+  }, { passive:true });
+
+  /* count-up stats */
+  var countObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(!entry.isIntersecting) return;
+      countObserver.unobserve(entry.target);
+      var el = entry.target;
+      var target = parseInt(el.getAttribute("data-count"), 10) || 0;
+      var start = null;
+      var duration = 900;
+      function step(ts){
+        if(start === null) start = ts;
+        var p = Math.min((ts - start) / duration, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }, { threshold:0.4 });
+  document.querySelectorAll("[data-count]").forEach(function(el){ countObserver.observe(el); });
+
+  /* entrance appear system */
+  document.querySelectorAll(".appear").forEach(function(el){
+    el.addEventListener("animationend", function(){ el.classList.add("is-in"); }, { once:true });
+  });
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.querySelectorAll(".appear").forEach(function(el){
+        var anims = el.getAnimations ? el.getAnimations() : [];
+        var active = anims.some(function(a){ return a.playState === "running" || a.playState === "finished"; });
+        if(!active) el.classList.add("is-in");
+      });
+    });
+  });
+
+  /* mobile menu */
+  var burger = document.getElementById("burger");
+  var nav = document.getElementById("site-nav");
+  var backdrop = document.getElementById("menuBackdrop");
+  function closeMenu(){
+    document.body.classList.remove("menu-open");
+    burger.setAttribute("aria-expanded", "false");
+    burger.setAttribute("aria-label", "Open menu");
+  }
+  function openMenu(){
+    document.body.classList.add("menu-open");
+    burger.setAttribute("aria-expanded", "true");
+    burger.setAttribute("aria-label", "Close menu");
+  }
+  burger.addEventListener("click", function(){
+    document.body.classList.contains("menu-open") ? closeMenu() : openMenu();
+  });
+  nav.addEventListener("click", function(e){ if(e.target.tagName === "A") closeMenu(); });
+  backdrop.addEventListener("click", closeMenu);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeMenu(); });
+  window.addEventListener("resize", function(){
+    if(window.matchMedia("(min-width: 901px)").matches) closeMenu();
+  });
+})();
+</script>
+</body>
+</html>
