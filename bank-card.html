@@ -360,7 +360,89 @@ button{ font-family:inherit; }
   border-top:1px solid var(--line-soft); font-size:12px; color:var(--ink-faint);
 }
 
-/* ---------- scroll reveal ---------- */
+/* ---------- marquee ---------- */
+.marquee{
+  overflow:hidden; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
+  padding:16px 0; background:var(--bg-1);
+}
+.marquee-track{ display:flex; gap:44px; width:max-content; animation:marquee 26s linear infinite; will-change:transform; }
+.marquee-track span{
+  font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); white-space:nowrap;
+  display:inline-flex; align-items:center; gap:44px;
+}
+.marquee-track span::after{ content:'\2726'; margin-left:44px; color:var(--accent); font-size:10px; transition:color .5s var(--ease); }
+@keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+
+/* ---------- compare ---------- */
+.proof-row{ margin-top:clamp(28px,4vw,44px); display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.proof{
+  border:1px solid var(--line); border-radius:var(--radius-md); background:var(--bg-1); padding:20px 22px;
+}
+.proof b{ display:block; font-size:clamp(22px,2.8vw,30px); letter-spacing:-.02em; color:var(--accent); transition:color .5s var(--ease); }
+.proof span{ display:block; margin-top:8px; font-size:13px; color:var(--ink-soft); line-height:1.5; }
+
+.compare-table-wrap{ margin-top:clamp(28px,4vw,44px); overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius-md); }
+.compare-table{ width:100%; min-width:640px; border-collapse:collapse; }
+.compare-table th, .compare-table td{ text-align:left; padding:16px 20px; font-size:13.5px; border-bottom:1px solid var(--line-soft); vertical-align:top; }
+.compare-table thead th{
+  font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); font-weight:600;
+  background:var(--bg-1); border-bottom:1px solid var(--line);
+}
+.compare-table tbody th{ font-weight:600; color:var(--ink); white-space:nowrap; }
+.compare-table td{ color:var(--ink-soft); }
+.compare-table tbody tr:last-child th, .compare-table tbody tr:last-child td{ border-bottom:none; }
+.compare-table .is-noir{ color:var(--accent); transition:color .5s var(--ease); }
+.compare-table td.is-noir{
+  color:var(--ink); font-weight:600; background:var(--accent-soft); transition:background .5s var(--ease), color .5s var(--ease);
+}
+.compare-table td.is-noir svg{ width:14px; height:14px; margin-right:6px; vertical-align:-2px; color:var(--accent); transition:color .5s var(--ease); }
+.compare-note{ margin-top:16px; font-size:11.5px; color:var(--ink-faint); line-height:1.5; max-width:70ch; }
+
+/* ---------- faq ---------- */
+.faq-list{ margin-top:clamp(28px,4vw,44px); border-top:1px solid var(--line-soft); max-width:78ch; }
+.faq-item{ border-bottom:1px solid var(--line-soft); }
+.faq-q{
+  width:100%; text-align:left; background:none; border:none; color:var(--ink); padding:20px 4px;
+  font-size:15.5px; font-weight:600; letter-spacing:-.008em; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+}
+.faq-q .chev{ width:18px; height:18px; flex-shrink:0; color:var(--ink-faint); transition:transform .35s var(--ease); }
+.faq-item[aria-expanded="true"] .faq-q .chev{ transform:rotate(180deg); color:var(--accent); }
+.faq-a-wrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s var(--ease); }
+.faq-item[aria-expanded="true"] .faq-a-wrap{ grid-template-rows:1fr; }
+.faq-a-inner{ overflow:hidden; }
+.faq-a{ padding:0 4px 20px; font-size:14px; color:var(--ink-soft); line-height:1.6; max-width:62ch; }
+
+/* ---------- flying mini card ---------- */
+.mini-card{
+  position:fixed; right:clamp(14px,4vw,28px); bottom:clamp(14px,4vw,28px); z-index:45;
+  display:flex; align-items:center; gap:8px;
+  background:var(--bg-1); border:1px solid var(--line); border-radius:999px;
+  padding:8px 8px 8px 16px; box-shadow:0 18px 40px -16px rgba(0,0,0,.65);
+  transform:translateY(28px) scale(.92); opacity:0; pointer-events:none;
+  transition:transform .5s var(--ease), opacity .45s var(--ease), border-color .5s var(--ease);
+}
+.mini-card.show{ transform:translateY(0) scale(1); opacity:1; pointer-events:auto; }
+.mini-card-inner{ display:flex; align-items:center; gap:10px; animation:miniFloat 4s ease-in-out infinite; }
+@keyframes miniFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-3px); } }
+.mini-chip{
+  width:24px; height:17px; border-radius:4px; flex-shrink:0;
+  background:linear-gradient(155deg, var(--card-chip-a,#c9c9cf), var(--card-chip-b,#5a5a60));
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset;
+}
+.mini-card-info{ display:flex; flex-direction:column; line-height:1.3; }
+.mini-card-tier{ font-size:10.5px; font-weight:800; letter-spacing:.08em; color:var(--ink); }
+.mini-card-num{ font-size:9.5px; font-family:'JetBrains Mono',ui-monospace,monospace; color:var(--ink-faint); }
+.mini-card-btn{
+  width:34px; height:34px; border-radius:50%; border:none; background:var(--accent); color:#0a0a0b;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;
+  transition:background .5s var(--ease), transform .3s var(--ease);
+}
+.mini-card-btn svg{ width:16px; height:16px; }
+.mini-card-btn:hover{ transform:translateY(-2px); }
+.mini-card-btn:focus-visible{ outline:2px solid var(--ink); outline-offset:2px; }
+
+/* ---------- scroll reveal (CSS) ---------- */
 [data-reveal]{ opacity:0; transform:translateY(18px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
 [data-reveal].in{ opacity:1; transform:translateY(0); }
 
@@ -380,6 +462,9 @@ button{ font-family:inherit; }
   .stats{ grid-template-columns:repeat(2,1fr); }
   .apply-form{ flex-direction:column; }
   .apply-form .btn{ width:100%; }
+  .proof-row{ grid-template-columns:1fr; }
+  .mini-card-info{ display:none; }
+  .mini-card{ padding:8px; gap:0; }
 }
 @media (max-width:560px){
   .tier-grid{ grid-template-columns:1fr; }
@@ -388,6 +473,7 @@ button{ font-family:inherit; }
 }
 @media (max-width:420px){
   .card-field b{ max-width:15vw; }
+  .faq-q{ font-size:14.5px; }
 }
 </style>
 </head>
@@ -399,8 +485,10 @@ button{ font-family:inherit; }
   <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>NOIR</a>
   <nav class="nav-links" aria-label="Primary">
     <a href="#cards">Cards</a>
+    <a href="#compare">Compare</a>
     <a href="#benefits">Benefits</a>
     <a href="#security">Security</a>
+    <a href="#faq">FAQ</a>
   </nav>
   <a class="btn btn-primary nav-cta" href="#apply">Get NOIR</a>
   <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
@@ -410,8 +498,10 @@ button{ font-family:inherit; }
 
 <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
   <a href="#cards">Cards</a>
+  <a href="#compare">Compare</a>
   <a href="#benefits">Benefits</a>
   <a href="#security">Security</a>
+  <a href="#faq">FAQ</a>
   <a class="btn btn-primary" href="#apply">Get NOIR</a>
 </nav>
 
@@ -476,10 +566,40 @@ button{ font-family:inherit; }
     </div>
   </section>
 
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+
   <section class="section" id="cards">
     <h2 data-reveal>Four finishes. One standard.</h2>
     <p class="section-lede" data-reveal>Same zero-fee backbone underneath, different tiers of "more" on top. Pick the one that fits — swap any time, no new card number.</p>
     <div class="tier-grid" id="tierGrid" data-reveal></div>
+  </section>
+
+  <section class="section" id="compare">
+    <h2 data-reveal>Why NOIR, and not the rest.</h2>
+    <p class="section-lede" data-reveal>We put NOIR next to a typical bank card and the other "premium" metal cards on the market. Same categories, no fine print hidden below the fold.</p>
+
+    <div class="proof-row" data-reveal>
+      <div class="proof"><b>3.2×</b><span>more cashback than the industry average</span></div>
+      <div class="proof"><b>0%</b><span>FX markup, versus ~3% at most banks</span></div>
+      <div class="proof"><b>&lt;10 min</b><span>to approval, versus 2–3 weeks industry-wide</span></div>
+    </div>
+
+    <div class="compare-table-wrap" data-reveal>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th scope="col">What matters</th>
+            <th scope="col">Typical bank card</th>
+            <th scope="col">Other metal cards</th>
+            <th scope="col" class="is-noir">NOIR</th>
+          </tr>
+        </thead>
+        <tbody id="compareBody"></tbody>
+      </table>
+    </div>
+    <p class="compare-note" data-reveal>Comparison reflects publicly listed terms typical of mainstream retail cards and premium metal cards as a category, illustrative for this concept design.</p>
   </section>
 
   <section class="section" id="benefits">
@@ -519,10 +639,10 @@ button{ font-family:inherit; }
   </section>
 
   <section class="stats" data-reveal>
-    <div class="stat"><b>180+</b><span>countries</span></div>
+    <div class="stat"><b data-count="180" data-suffix="+">0</b><span>countries</span></div>
     <div class="stat"><b>0%</b><span>FX fees</span></div>
     <div class="stat"><b>24/7</b><span>concierge</span></div>
-    <div class="stat"><b>4.9</b><span>app store rating</span></div>
+    <div class="stat"><b data-count="4.9">0.0</b><span>app store rating</span></div>
   </section>
 
   <section class="section security" id="security">
@@ -552,6 +672,12 @@ button{ font-family:inherit; }
     </div>
   </section>
 
+  <section class="section" id="faq">
+    <h2 data-reveal>Questions, answered plainly.</h2>
+    <p class="section-lede" data-reveal>The short version of everything people ask before they apply.</p>
+    <div class="faq-list" id="faqList" data-reveal></div>
+  </section>
+
   <section class="section cta" id="apply" data-reveal>
     <h2>Choose your NOIR.</h2>
     <p class="section-lede">Leave your email and we'll send the finish you picked — <span id="ctaTierName">Onyx</span> — straight to your inbox with next steps.</p>
@@ -572,8 +698,10 @@ button{ font-family:inherit; }
       <div>
         <h4>Product</h4>
         <a href="#cards">Cards</a>
+        <a href="#compare">Compare</a>
         <a href="#benefits">Benefits</a>
         <a href="#security">Security</a>
+        <a href="#faq">FAQ</a>
       </div>
       <div>
         <h4>Company</h4>
@@ -593,6 +721,19 @@ button{ font-family:inherit; }
     <p>&copy; 2026 NOIR Financial. Concept design for demonstration purposes — not a real bank or card issuer.</p>
   </div>
 </footer>
+
+<div class="mini-card" id="miniCard" aria-hidden="true">
+  <div class="mini-card-inner">
+    <div class="mini-chip" id="miniChip" aria-hidden="true"></div>
+    <div class="mini-card-info">
+      <span class="mini-card-tier" id="miniCardTier">ONYX</span>
+      <span class="mini-card-num">•••• 4471</span>
+    </div>
+  </div>
+  <button type="button" class="mini-card-btn" id="miniCardBtn" aria-label="Back to card preview">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+</div>
 
 <script>
 (function(){
@@ -644,6 +785,12 @@ button{ font-family:inherit; }
   var brandMarks = qsa('.brand-mark');
   var eyebrowDots = qsa('.eyebrow');
   var ctaTierName = qs('#ctaTierName');
+  var miniCard = qs('#miniCard');
+  var miniChip = qs('#miniChip');
+  var miniCardTier = qs('#miniCardTier');
+  var miniCardBtn = qs('#miniCardBtn');
+  var heroSection = qs('#hero');
+  var applySection = qs('#apply');
 
   var state = { tier:'onyx', flipped:false };
 
@@ -669,6 +816,11 @@ button{ font-family:inherit; }
     document.documentElement.style.setProperty('--accent', t.accent);
     document.documentElement.style.setProperty('--accent-soft', hexToRgba(t.accent, .16));
     if (ctaTierName) ctaTierName.textContent = t.name;
+    if (miniChip){
+      miniChip.style.setProperty('--card-chip-a', t.chipA);
+      miniChip.style.setProperty('--card-chip-b', t.chipB);
+    }
+    if (miniCardTier) miniCardTier.textContent = t.name.toUpperCase();
   }
 
   function hexToRgba(hex, a){
@@ -751,6 +903,129 @@ button{ font-family:inherit; }
       card.querySelector('.tier-select').addEventListener('click', activate);
       tierGrid.appendChild(card);
     });
+  }
+
+  /* ---------- marquee ---------- */
+  function buildMarquee(){
+    var track = qs('#marqueeTrack');
+    if (!track) return;
+    var claims = [
+      'Zero FX fees', 'Up to 4% cashback', 'Metal, four finishes', 'Instant virtual card',
+      'Carbon-neutral body', '24/7 concierge', 'No hidden markup', 'Approved in minutes'
+    ];
+    var html = claims.map(function(c){ return '<span>' + c + '</span>'; }).join('');
+    track.innerHTML = html + html; // duplicated once for a seamless -50% loop
+  }
+
+  /* ---------- compare table ---------- */
+  function checkNoirIcon(){
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  }
+  var COMPARE_ROWS = [
+    ['Annual fee', 'Often $0 to hide a worse rate elsewhere', '$450–$695, flat', 'From $0, capped at $295'],
+    ['Foreign transaction fee', '~3% on every purchase abroad', '1%–2.7%, varies by merchant', '0%, always, everywhere'],
+    ['Baseline cashback', '0%–1%, many exclusions', '1%–2%, often capped', 'Up to 4%, uncapped'],
+    ['Card material', 'Plastic', 'Metal', 'Metal, in four finishes'],
+    ['Time to first spend', '1–3 weeks by mail', '3–5 business days', 'Minutes, with a virtual card'],
+    ['Airport lounge access', 'Not included', 'Limited partner network', 'Global elite network'],
+    ['Concierge support', 'Not included', 'Business hours only', '24/7, dedicated'],
+    ['Switching tiers', 'Requires a new card', 'Requires a new card', 'Same card, same number'],
+    ['Carbon footprint', 'Not addressed', 'Rarely addressed', 'Offset automatically']
+  ];
+  function buildCompareTable(){
+    var body = qs('#compareBody');
+    if (!body) return;
+    body.innerHTML = COMPARE_ROWS.map(function(row){
+      return '<tr>' +
+        '<th scope="row">' + row[0] + '</th>' +
+        '<td>' + row[1] + '</td>' +
+        '<td>' + row[2] + '</td>' +
+        '<td class="is-noir">' + checkNoirIcon() + row[3] + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  /* ---------- faq accordion ---------- */
+  var FAQS = [
+    ['Is NOIR a real bank?', 'No — this site is a concept design built to demonstrate an interactive product page. NOIR Financial is not a real bank, and no card is actually issued.'],
+    ['Can I switch finishes after I get the card?', 'In the concept, yes — switching from, say, Onyx to Amethyst keeps the same card number and account, so there is nothing to reissue.'],
+    ['How does the cashback rate work?', 'Each finish sets a flat cashback rate on every purchase, with no rotating categories or quarterly caps to track.'],
+    ['What does "by invitation" mean for Aurum?', 'Aurum is framed as the top tier, extended to existing NOIR holders who cross a spending threshold rather than sold directly.'],
+    ['Is there really no foreign transaction fee?', 'In the concept, correct — 0% markup on purchases in any of the 150+ currencies mentioned, on every finish.'],
+    ['What happens if the card is lost?', 'The idea is a one-tap freeze from the app, followed by instant reissue with the same number once you confirm the loss.']
+  ];
+  function buildFaq(){
+    var list = qs('#faqList');
+    if (!list) return;
+    list.innerHTML = FAQS.map(function(item, i){
+      return (
+        '<div class="faq-item" id="faqItem' + i + '" aria-expanded="false">' +
+          '<button type="button" class="faq-q" aria-controls="faqAnswer' + i + '" aria-expanded="false">' +
+            '<span>' + item[0] + '</span>' +
+            '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>' +
+          '</button>' +
+          '<div class="faq-a-wrap" id="faqAnswer' + i + '"><div class="faq-a-inner"><p class="faq-a">' + item[1] + '</p></div></div>' +
+        '</div>'
+      );
+    }).join('');
+    qsa('.faq-item', list).forEach(function(item){
+      var btn = qs('.faq-q', item);
+      btn.addEventListener('click', function(){
+        var opening = item.getAttribute('aria-expanded') !== 'true';
+        qsa('.faq-item', list).forEach(function(other){
+          other.setAttribute('aria-expanded', 'false');
+          qs('.faq-q', other).setAttribute('aria-expanded', 'false');
+        });
+        if (opening){
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
+
+  /* ---------- animated stat counters ---------- */
+  function animateCount(el){
+    var raw = el.getAttribute('data-count');
+    if (raw === null) return;
+    var target = parseFloat(raw);
+    var decimals = raw.indexOf('.') > -1 ? raw.split('.')[1].length : 0;
+    var suffix = el.getAttribute('data-suffix') || '';
+    if (prefersReducedMotion){
+      el.textContent = target.toFixed(decimals) + suffix;
+      return;
+    }
+    var start = null;
+    var duration = 1100;
+    function tick(ts){
+      if (start === null) start = ts;
+      var p = Math.min(1, (ts - start) / duration);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* ---------- flying mini card ---------- */
+  function updateMiniCard(){
+    if (!miniCard || !heroSection || !applySection) return;
+    var heroBottom = heroSection.getBoundingClientRect().bottom;
+    var ctaTop = applySection.getBoundingClientRect().top;
+    var shouldShow = heroBottom < 40 && ctaTop > window.innerHeight * 0.25;
+    miniCard.classList.toggle('show', shouldShow);
+  }
+
+  /* ---------- hero exit parallax ---------- */
+  function updateHeroParallax(){
+    if (prefersReducedMotion || !heroSection || !stage) return;
+    var rect = heroSection.getBoundingClientRect();
+    var progress = rect.height > 0 ? (-rect.top / rect.height) : 0;
+    progress = Math.max(0, Math.min(1, progress));
+    var ty = progress * -34;
+    var rot = progress * -5;
+    var scale = 1 - progress * 0.05;
+    stage.style.transform = 'translate3d(0,' + ty.toFixed(2) + 'px,0) rotate(' + rot.toFixed(2) + 'deg) scale(' + scale.toFixed(3) + ')';
   }
 
   /* ---------- tilt + flip ---------- */
@@ -858,10 +1133,42 @@ button{ font-family:inherit; }
     qsa('[data-reveal]').forEach(function(el){ el.classList.add('in'); });
   }
 
+  /* ---------- stat counters (trigger once, on reveal) ---------- */
+  if ('IntersectionObserver' in window){
+    var countIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          animateCount(entry.target);
+          countIo.unobserve(entry.target);
+        }
+      });
+    }, { threshold:.5 });
+    qsa('[data-count]').forEach(function(el){ countIo.observe(el); });
+  } else {
+    qsa('[data-count]').forEach(function(el){ animateCount(el); });
+  }
+
+  /* ---------- flying card: scroll-driven mini card + hero parallax ---------- */
+  function onScroll(){
+    updateMiniCard();
+    updateHeroParallax();
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', onScroll);
+  if (miniCardBtn){
+    miniCardBtn.addEventListener('click', function(){
+      heroSection.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block:'start' });
+    });
+  }
+
   /* ---------- init ---------- */
   buildSwatches();
   buildTierGrid();
+  buildMarquee();
+  buildCompareTable();
+  buildFaq();
   selectTier(state.tier, { crossfade:false });
+  onScroll();
 })();
 </script>
 
