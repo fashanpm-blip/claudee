@@ -170,6 +170,12 @@ button{ font-family:inherit; }
 .section h2{ margin-top:14px; font-size:clamp(28px,3.6vw,42px); letter-spacing:-.02em; max-width:18ch; text-wrap:balance; }
 .section-lede{ margin-top:14px; font-size:15px; color:var(--beige-faint); max-width:48ch; line-height:1.6; }
 
+/* ---------- real photo slot (falls back to illustration in-place) ---------- */
+.art-wrap{ position:relative; width:100%; height:100%; }
+.art-wrap img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.art-wrap .art-fallback{ position:absolute; inset:0; }
+.art-wrap .art-fallback svg{ width:100%; height:100%; display:block; }
+
 /* ---------- gallery ribbon ---------- */
 .gallery-arrows{ display:flex; gap:8px; }
 .gallery-arrow{
@@ -229,11 +235,24 @@ button{ font-family:inherit; }
 .story-stats div{ display:flex; flex-direction:column; gap:4px; }
 .story-stats b{ font-family:'Fraunces',serif; font-size:26px; font-weight:600; }
 .story-stats span{ font-size:11.5px; color:var(--beige-ghost); letter-spacing:.03em; text-transform:uppercase; }
+.chef-duo{ display:flex; gap:28px; margin-top:28px; flex-wrap:wrap; }
+.chef-card{ display:flex; align-items:center; gap:12px; }
+.chef-avatar{ width:44px; height:44px; border-radius:50%; overflow:hidden; flex-shrink:0; box-shadow:0 0 0 2px var(--line); }
+.chef-avatar svg{ width:100%; height:100%; display:block; }
+.chef-card > div:last-child{ display:flex; flex-direction:column; }
+.chef-card b{ font-size:14px; font-weight:600; }
+.chef-card span{ font-size:11.5px; color:var(--beige-ghost); }
 .story-panel{
   position:relative; aspect-ratio:4/5; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--line);
-  background:var(--bg-1); display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center;
+  background: repeating-linear-gradient(90deg, var(--wood-a) 0 34px, var(--wood-b) 34px 68px);
+  box-shadow:0 30px 60px -28px rgba(0,0,0,.6);
 }
-.story-panel svg{ width:66%; height:66%; }
+.story-panel::after{
+  content:''; position:absolute; inset:0; opacity:.16; mix-blend-mode:overlay; pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.55'/></svg>");
+}
+.story-panel svg{ position:relative; z-index:1; width:100%; height:100%; }
 
 /* ---------- steps ---------- */
 .steps-grid{ margin-top:clamp(32px,4vw,48px); display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
@@ -242,13 +261,25 @@ button{ font-family:inherit; }
 .step h3{ margin-top:14px; font-size:19px; font-weight:600; }
 .step p{ margin-top:10px; font-size:13.5px; color:var(--beige-faint); line-height:1.55; }
 
-/* ---------- testimonial ---------- */
-.testimonial{ text-align:center; }
-.testimonial blockquote{
-  margin:0 auto; max-width:62ch; font-family:'Fraunces',serif; font-style:italic; font-weight:500;
-  font-size:clamp(22px,2.8vw,32px); line-height:1.42; color:var(--beige); text-wrap:balance;
+/* ---------- reviews ---------- */
+.reviews-grid{ margin-top:clamp(28px,4vw,44px); display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.review{
+  padding:26px 24px; border:1px solid var(--line); border-radius:var(--radius-md); background:var(--bg-1);
+  display:flex; flex-direction:column; gap:14px;
 }
-.testimonial cite{ display:block; margin-top:22px; font-style:normal; font-size:13.5px; color:var(--beige-ghost); }
+.review-stars{ color:var(--red-text); font-size:13px; letter-spacing:.12em; }
+.review blockquote{ margin:0; font-size:14.5px; line-height:1.6; color:var(--beige); font-family:'Fraunces',serif; font-weight:500; }
+.review cite{ font-style:normal; font-size:12px; color:var(--beige-ghost); }
+
+/* ---------- visit ---------- */
+.visit{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,5vw,64px); align-items:center; }
+.hours-table{ margin:24px 0 0; display:flex; flex-direction:column; gap:10px; max-width:280px; }
+.hours-table div{ display:flex; justify-content:space-between; gap:16px; padding-bottom:10px; border-bottom:1px solid var(--line-soft); }
+.hours-table dt{ font-size:13.5px; color:var(--beige-faint); font-weight:500; }
+.hours-table dd{ margin:0; font-family:'Space Mono',monospace; font-size:13px; color:var(--beige); }
+.visit-address{ margin-top:20px; font-size:13.5px; color:var(--beige-faint); }
+.visit-map{ border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--line); aspect-ratio:4/3; }
+.visit-map svg{ width:100%; height:100%; display:block; }
 
 /* ---------- CTA band ---------- */
 .cta-band{
@@ -261,6 +292,37 @@ button{ font-family:inherit; }
 .cta-band p{ margin-top:10px; color:rgba(244,233,216,.86); font-size:14.5px; max-width:42ch; }
 .cta-band .btn-primary{ background:var(--beige); color:var(--red-deep); }
 .cta-band .btn-primary:hover{ background:#fff; }
+
+/* ---------- faq ---------- */
+.faq-list{ margin-top:clamp(28px,4vw,44px); border-top:1px solid var(--line-soft); max-width:78ch; }
+.faq-item{ border-bottom:1px solid var(--line-soft); }
+.faq-q{
+  width:100%; text-align:left; background:none; border:none; color:var(--beige); padding:20px 4px;
+  font-size:15.5px; font-weight:600; letter-spacing:-.006em; cursor:pointer; font-family:inherit;
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+}
+.faq-q .chev{ width:18px; height:18px; flex-shrink:0; color:var(--beige-ghost); transition:transform .35s var(--ease); }
+.faq-item[aria-expanded="true"] .faq-q .chev{ transform:rotate(180deg); color:var(--red-text); }
+.faq-a-wrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s var(--ease); }
+.faq-item[aria-expanded="true"] .faq-a-wrap{ grid-template-rows:1fr; }
+.faq-a-inner{ overflow:hidden; }
+.faq-a{ padding:0 4px 20px; font-size:14px; color:var(--beige-faint); line-height:1.6; max-width:62ch; }
+
+/* ---------- interactive polish: spotlight hover + tap-to-locate ---------- */
+.gallery-tile, .dish-thumb, .carousel3d-item{ position:relative; }
+.gallery-tile::before, .dish-thumb::before, .carousel3d-item::before{
+  content:''; position:absolute; inset:0; z-index:2; opacity:0; pointer-events:none;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.28), transparent 60%);
+  transition:opacity .3s var(--ease); mix-blend-mode:overlay;
+}
+.gallery-tile:hover::before, .dish-thumb:hover::before{ opacity:1; }
+.carousel3d-item{ cursor:pointer; }
+.dish.flash{ animation:dishFlash 1.3s var(--ease); }
+@keyframes dishFlash{
+  0%{ box-shadow:inset 0 0 0 2px var(--red-text); }
+  70%{ box-shadow:inset 0 0 0 2px var(--red-text); }
+  100%{ box-shadow:inset 0 0 0 0 rgba(224,80,63,0); }
+}
 
 /* ---------- footer ---------- */
 .foot{ border-top:1px solid var(--line-soft); }
@@ -307,6 +369,10 @@ button{ font-family:inherit; }
 [data-reveal].in{ opacity:1; transform:translateY(0); }
 
 /* ---------- responsive ---------- */
+@media (max-width:1020px){
+  .nav-links{ gap:18px; }
+  .nav-links a{ font-size:13.5px; }
+}
 @media (max-width:980px){
   .hero{ grid-template-columns:1fr; }
   .hero-visual{ order:-1; aspect-ratio:5/4; }
@@ -314,16 +380,21 @@ button{ font-family:inherit; }
   .story-panel{ order:-1; aspect-ratio:16/9; }
   .menu-grid{ grid-template-columns:repeat(2,1fr); }
   .steps-grid{ grid-template-columns:1fr; }
+  .reviews-grid{ grid-template-columns:1fr; }
+  .visit{ grid-template-columns:1fr; }
+  .visit-map{ order:-1; aspect-ratio:16/9; }
 }
 @media (max-width:720px){
   .nav-links, .nav-cta{ display:none; }
   .nav-toggle{ display:flex; }
   .hero-meta{ gap:16px 24px; }
   .cta-band{ flex-direction:column; align-items:flex-start; text-align:left; }
+  .chef-duo{ gap:18px; }
 }
 @media (max-width:560px){
   .menu-grid{ grid-template-columns:1fr; }
   .foot-top{ flex-direction:column; }
+  .chef-duo{ flex-direction:column; gap:14px; }
 }
 </style>
 </head>
@@ -335,7 +406,9 @@ button{ font-family:inherit; }
     <a href="#gallery">Gallery</a>
     <a href="#menu">Menu</a>
     <a href="#story">Story</a>
-    <a href="#delivery">Delivery</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#visit">Visit</a>
+    <a href="#faq">FAQ</a>
   </nav>
   <div class="nav-right">
     <button class="cart-btn" id="cartBtn" type="button" aria-label="Open order cart" aria-haspopup="dialog">
@@ -353,7 +426,9 @@ button{ font-family:inherit; }
   <a href="#gallery">Gallery</a>
   <a href="#menu">Menu</a>
   <a href="#story">Story</a>
-  <a href="#delivery">Delivery</a>
+  <a href="#reviews">Reviews</a>
+  <a href="#visit">Visit</a>
+  <a href="#faq">FAQ</a>
   <a class="btn btn-primary" href="#menu">Order Now</a>
 </nav>
 
@@ -418,17 +493,73 @@ button{ font-family:inherit; }
         <div><b>11</b><span>Dishes on the menu</span></div>
         <div><b>2</b><span>Head chefs, one pass</span></div>
       </div>
+      <div class="chef-duo" data-reveal>
+        <div class="chef-card">
+          <div class="chef-avatar" style="--ca:#241812;--cb:#efe2c9;">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="var(--ca)"/><circle cx="50" cy="68" r="32" fill="var(--cb)"/><circle cx="50" cy="37" r="21" fill="var(--cb)"/></svg>
+          </div>
+          <div><b>Kenji</b><span>Sushi, Tokyo-trained</span></div>
+        </div>
+        <div class="chef-card">
+          <div class="chef-avatar" style="--ca:#8a271d;--cb:#f4e9d8;">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="var(--ca)"/><circle cx="50" cy="68" r="32" fill="var(--cb)"/><circle cx="50" cy="37" r="21" fill="var(--cb)"/></svg>
+          </div>
+          <div><b>Lucia</b><span>Cucina, Roman-trained</span></div>
+        </div>
+      </div>
     </div>
     <div class="story-panel" data-reveal aria-hidden="true">
-      <svg viewBox="0 0 200 200">
-        <g fill="none" stroke="#c1392b" stroke-width="1.4" opacity=".55">
-          <path d="M0 40 Q25 20 50 40 T100 40 T150 40 T200 40"/>
-          <path d="M0 70 Q25 50 50 70 T100 70 T150 70 T200 70"/>
-          <path d="M0 100 Q25 80 50 100 T100 100 T150 100 T200 100"/>
-          <path d="M0 130 Q25 110 50 130 T100 130 T150 130 T200 130"/>
-          <path d="M0 160 Q25 140 50 160 T100 160 T150 160 T200 160"/>
+      <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="storyVg" cx="50%" cy="36%" r="80%">
+            <stop offset="0%" stop-color="#3c2a1e"/><stop offset="100%" stop-color="#140d0a"/>
+          </radialGradient>
+        </defs>
+        <rect width="300" height="300" fill="url(#storyVg)"/>
+        <g transform="translate(150,168)">
+          <g fill="none" stroke="#f4e9d8" stroke-width="3" stroke-linecap="round" opacity=".3">
+            <path d="M -30 -90 Q -40 -120 -25 -145 Q -12 -165 -22 -190"/>
+            <path d="M 10 -95 Q 0 -122 15 -148 Q 26 -168 14 -195"/>
+          </g>
+          <g transform="translate(-10,10) rotate(-6)">
+            <circle r="86" fill="#241812"/>
+            <circle r="86" fill="none" stroke="#3a281d" stroke-width="4"/>
+            <circle r="74" fill="#efe2c9"/>
+            <g transform="rotate(12)">
+              <path d="M -74 0 A74 74 0 0 1 -37 -64 L -16 -28 A35 35 0 0 0 -35 0 Z" fill="#c1392b"/>
+              <path d="M -37 -64 A74 74 0 0 1 37 -64 L 16 -28 A35 35 0 0 0 -16 -28 Z" fill="#7a8f4d"/>
+              <path d="M 37 -64 A74 74 0 0 1 74 0 L 35 0 A35 35 0 0 0 16 -28 Z" fill="#e8973a"/>
+              <path d="M 74 0 A74 74 0 0 1 37 64 L 16 28 A35 35 0 0 0 35 0 Z" fill="#8a271d"/>
+              <path d="M 37 64 A74 74 0 0 1 -37 64 L -16 28 A35 35 0 0 0 16 28 Z" fill="#d8c9a3"/>
+              <path d="M -37 64 A74 74 0 0 1 -74 0 L -35 0 A35 35 0 0 0 -16 28 Z" fill="#4f6b3a"/>
+            </g>
+            <circle r="33" fill="#f4e9d8"/>
+          </g>
+          <g transform="translate(-118,-60) rotate(10)">
+            <circle r="34" fill="#241812"/><circle r="27" fill="#efe2c9"/><circle r="12" fill="#c1392b"/>
+          </g>
+          <g transform="translate(108,-72) rotate(-8)">
+            <circle r="30" fill="#241812"/><circle r="24" fill="#efe2c9"/><circle r="11" fill="#e8973a"/>
+          </g>
+          <g transform="translate(120,54) rotate(16)">
+            <circle r="28" fill="#241812"/><circle r="22" fill="#efe2c9"/><circle r="10" fill="#7a8f4d"/>
+          </g>
+          <g transform="translate(-90,70) rotate(28)">
+            <rect x="-3" y="-100" width="6" height="200" rx="3" fill="#d8c9a3"/>
+          </g>
+          <g transform="translate(-70,70) rotate(28)">
+            <rect x="-3" y="-100" width="6" height="200" rx="3" fill="#c7b593"/>
+          </g>
+          <g transform="translate(96,102)">
+            <rect x="-16" y="-12" width="32" height="22" rx="4" fill="#efe2c9" opacity=".92"/>
+          </g>
+          <g transform="translate(-100,110) rotate(-20)" fill="#4f6b3a">
+            <ellipse cx="0" cy="0" rx="16" ry="10"/>
+          </g>
+          <g fill="#f4e9d8" opacity=".7">
+            <circle cx="40" cy="130" r="2"/><circle cx="55" cy="140" r="2"/><circle cx="-140" cy="20" r="2"/>
+          </g>
         </g>
-        <circle cx="100" cy="100" r="14" fill="#c1392b"/>
       </svg>
     </div>
   </section>
@@ -455,9 +586,63 @@ button{ font-family:inherit; }
     </div>
   </section>
 
-  <section class="section testimonial" data-reveal>
-    <blockquote>"Never thought carbonara and uni belonged in the same sentence. Now I order the Uni Carbonara every Friday, no menu required."</blockquote>
-    <cite>— Dana R., Fort Greene · verified order</cite>
+  <section class="section" id="reviews">
+    <p class="eyebrow" data-reveal>Word of mouth</p>
+    <h2 data-reveal>What the regulars say.</h2>
+    <div class="reviews-grid">
+      <article class="review" data-reveal>
+        <div class="review-stars">★★★★★</div>
+        <blockquote>"Never thought carbonara and uni belonged in the same sentence. Now I order the Uni Carbonara every Friday, no menu required."</blockquote>
+        <cite>Dana R. · Fort Greene</cite>
+      </article>
+      <article class="review" data-reveal>
+        <div class="review-stars">★★★★★</div>
+        <blockquote>"The Negroni Maki sounds like a gimmick until it isn't. Ordered it three times this month already."</blockquote>
+        <cite>Marcus T. · Clinton Hill</cite>
+      </article>
+      <article class="review" data-reveal>
+        <div class="review-stars">★★★★☆</div>
+        <blockquote>"Delivery actually hits the 32-minute mark. The tiramisu survives the trip better than it has any right to."</blockquote>
+        <cite>Priya S. · Fort Greene</cite>
+      </article>
+    </div>
+  </section>
+
+  <section class="section visit" id="visit">
+    <div class="visit-text">
+      <p class="eyebrow" data-reveal>Visit or order in</p>
+      <h2 data-reveal>Fort Greene, most nights.</h2>
+      <p class="section-lede" data-reveal>Walk-ins welcome at the pass — most people order ahead, but the counter seats six if you'd rather watch both kitchens work at once.</p>
+      <dl class="hours-table" data-reveal>
+        <div><dt>Tue – Thu</dt><dd>5pm – 10pm</dd></div>
+        <div><dt>Fri – Sat</dt><dd>5pm – 11pm</dd></div>
+        <div><dt>Sun</dt><dd>5pm – 9pm</dd></div>
+        <div><dt>Mon</dt><dd>Closed</dd></div>
+      </dl>
+      <p class="visit-address" data-reveal>176 Myrtle Avenue, Fort Greene, Brooklyn</p>
+    </div>
+    <div class="visit-map" data-reveal aria-hidden="true">
+      <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="220" fill="#1c1310"/>
+        <g stroke="#3a281d" stroke-width="2">
+          <line x1="0" y1="58" x2="300" y2="52"/>
+          <line x1="0" y1="132" x2="300" y2="142"/>
+          <line x1="72" y1="0" x2="60" y2="220"/>
+          <line x1="205" y1="0" x2="216" y2="220"/>
+        </g>
+        <g transform="translate(150,102)">
+          <circle r="34" fill="#e0503f" opacity=".14"/>
+          <path d="M0 -34 C18 -34 30 -20 30 -4 C30 16 0 46 0 46 C0 46 -30 16 -30 -4 C-30 -20 -18 -34 0 -34 Z" fill="#e0503f"/>
+          <circle r="8" fill="#1c1310"/>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <p class="eyebrow" data-reveal>Before you order</p>
+    <h2 data-reveal>Questions, answered plainly.</h2>
+    <div class="faq-list" id="faqList" data-reveal></div>
   </section>
 
   <section class="cta-band" data-reveal>
@@ -486,13 +671,15 @@ button{ font-family:inherit; }
       <div>
         <h4>Info</h4>
         <a href="#story">Our story</a>
+        <a href="#reviews">Reviews</a>
         <a href="#delivery">Delivery area</a>
-        <a href="#">Catering</a>
+        <a href="#faq">FAQ</a>
       </div>
       <div>
         <h4>Contact</h4>
         <p>hello@koirosso.example</p>
         <p>(718) 555-0176</p>
+        <a href="#visit">Visit us</a>
       </div>
     </div>
   </div>
@@ -613,9 +800,27 @@ button{ font-family:inherit; }
       '</g>';
     return artFrame(inner, uid);
   }
+  /* ---------- real photo slot ----------
+     Fill in a dish id -> image URL below the moment a real, rights-cleared
+     photo is available (an uploaded file saved locally, or a direct image
+     URL on a domain the user controls). Nothing else needs to change: every
+     tile that uses dishArt() picks it up automatically, and if the photo
+     ever fails to load, it falls back to the illustrated tile in place. */
+  var PHOTOS = {
+    // 'negroni-maki': 'https://example.com/photos/negroni-maki.jpg',
+  };
+
   function dishArt(d, ctx){
     var uid = d.id + '-' + ctx;
-    return d.art.template === 'roll' ? rollArt(d.art.colors, uid) : bowlArt(d.art.colors, uid);
+    var fallback = d.art.template === 'roll' ? rollArt(d.art.colors, uid) : bowlArt(d.art.colors, uid);
+    var url = PHOTOS[d.id];
+    if (!url) return fallback;
+    return (
+      '<div class="art-wrap">' +
+        '<img src="' + url + '" alt="' + d.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+        '<div class="art-fallback">' + fallback + '</div>' +
+      '</div>'
+    );
   }
 
   var menuGrid = qs('#menuGrid');
@@ -661,6 +866,7 @@ button{ font-family:inherit; }
     qsa('.add-btn', menuGrid).forEach(function(btn){
       btn.addEventListener('click', function(){ addToCart(btn.dataset.id, btn); });
     });
+    attachSpotlight('.dish-thumb', menuGrid);
   }
 
   function filterDishes(){
@@ -795,6 +1001,7 @@ button{ font-family:inherit; }
     var rotation = 0;
     var isDragging = false;
     var lastX = 0;
+    var dragDistance = 0;
     var speed = 0.014; // deg per ms
 
     function applyRotation(){
@@ -823,6 +1030,7 @@ button{ font-family:inherit; }
     stageEl.addEventListener('pointerdown', function(e){
       isDragging = true;
       lastX = e.clientX;
+      dragDistance = 0;
       stageEl.classList.add('grabbing');
       try { stageEl.setPointerCapture(e.pointerId); } catch (err) {}
     });
@@ -830,6 +1038,7 @@ button{ font-family:inherit; }
       if (!isDragging) return;
       var dx = e.clientX - lastX;
       lastX = e.clientX;
+      dragDistance += Math.abs(dx);
       rotation += dx * 0.45;
     });
     function endDrag(){
@@ -842,6 +1051,26 @@ button{ font-family:inherit; }
     stageEl.addEventListener('keydown', function(e){
       if (e.key === 'ArrowLeft'){ e.preventDefault(); rotation -= 18; applyRotation(); }
       if (e.key === 'ArrowRight'){ e.preventDefault(); rotation += 18; applyRotation(); }
+    });
+
+    // Listening on the stage (not each item) is required: stageEl calls
+    // setPointerCapture on drag start, which retargets the synthetic click
+    // to stageEl itself rather than letting it bubble from the item under
+    // the cursor. Resolve the actual item via elementFromPoint instead.
+    stageEl.addEventListener('click', function(e){
+      if (dragDistance > 6) return; // a drag, not a tap
+      var hit = document.elementFromPoint(e.clientX, e.clientY);
+      var itemEl = hit && hit.closest ? hit.closest('.carousel3d-item') : null;
+      if (!itemEl) return;
+      var idx = itemEls.indexOf(itemEl);
+      if (idx === -1) return;
+      var dish = items[idx];
+      var card = qs('.dish[data-id="' + dish.id + '"]');
+      if (!card) return;
+      card.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block:'center' });
+      card.classList.remove('flash');
+      void card.offsetWidth; // restart the animation if it's already mid-flash
+      card.classList.add('flash');
     });
 
     window.addEventListener('resize', sizeCarousel);
@@ -874,6 +1103,58 @@ button{ font-family:inherit; }
     });
     if (nextBtn) nextBtn.addEventListener('click', function(){
       ribbon.scrollBy({ left: scrollAmount(), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
+    attachSpotlight('.gallery-tile', ribbon);
+  }
+
+  /* ---------- cursor-follow spotlight on flat tiles ---------- */
+  function attachSpotlight(selector, ctx){
+    if (prefersReducedMotion) return;
+    qsa(selector, ctx).forEach(function(el){
+      el.addEventListener('pointermove', function(e){
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+        el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+      });
+    });
+  }
+
+  /* ---------- faq accordion ---------- */
+  var FAQS = [
+    ['Do you list allergens?', 'Every dish notes shellfish, gluten, and sesame on the menu card. Ask in the order notes for a full ingredient breakdown before you check out.'],
+    ['Can I customize a roll?', 'Swap proteins or drop an ingredient at no charge — extra nori, sauce, or spice is a small add-on.'],
+    ['Is the fish actually sushi-grade?', 'Yes. Our supplier ships flash-frozen, sushi-grade fish daily, and nothing sits in the kitchen longer than 48 hours.'],
+    ['Do you deliver outside the 3-mile radius?', 'Not yet. Past that radius the ride time compromises the cold rolls, so we’d rather say no than serve it wrong.'],
+    ['Can I order a tray for a party?', 'Yes — catering trays serve 8–10 people and need 24 hours’ notice. Email hello@koirosso.example to set it up.'],
+    ['What if something arrives wrong?', 'Message us within 30 minutes of delivery and we’ll remake or refund the dish, no questions asked.']
+  ];
+  function buildFaq(){
+    var list = qs('#faqList');
+    if (!list) return;
+    list.innerHTML = FAQS.map(function(item, i){
+      return (
+        '<div class="faq-item" id="faqItem' + i + '" aria-expanded="false">' +
+          '<button type="button" class="faq-q" aria-controls="faqAnswer' + i + '" aria-expanded="false">' +
+            '<span>' + item[0] + '</span>' +
+            '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>' +
+          '</button>' +
+          '<div class="faq-a-wrap" id="faqAnswer' + i + '"><div class="faq-a-inner"><p class="faq-a">' + item[1] + '</p></div></div>' +
+        '</div>'
+      );
+    }).join('');
+    qsa('.faq-item', list).forEach(function(item){
+      var btn = qs('.faq-q', item);
+      btn.addEventListener('click', function(){
+        var opening = item.getAttribute('aria-expanded') !== 'true';
+        qsa('.faq-item', list).forEach(function(other){
+          other.setAttribute('aria-expanded', 'false');
+          qs('.faq-q', other).setAttribute('aria-expanded', 'false');
+        });
+        if (opening){
+          item.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
     });
   }
 
@@ -912,6 +1193,7 @@ button{ font-family:inherit; }
   buildMenu();
   buildCarousel();
   buildGallery();
+  buildFaq();
   renderCart();
 })();
 </script>
