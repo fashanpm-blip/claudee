@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RollHouse — суші-роли з доставкою</title>
+<title>Haru Rolls — суші-роли з доставкою</title>
 <style>
   :root{
     --ink:#171412;
@@ -175,6 +175,13 @@
     display:inline-flex;width:38px;height:38px;border-radius:50%;background:var(--accent);
     color:#fff;align-items:center;justify-content:center;font-weight:700;margin-bottom:.6em;
   }
+  .founder{display:flex;align-items:center;gap:14px;margin:1.4em 0;}
+  .founder-avatar{
+    flex:none;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:17px;
+  }
+  .founder strong{display:block;font-size:15px;}
+  .founder p{margin:0;font-size:13px;opacity:.6;}
 
   /* ---------- footer ---------- */
   footer{padding:6vh 5vw 4vh;background:var(--ink);color:#fff;}
@@ -235,7 +242,7 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <a class="logo" href="#top">Roll<span>House</span></a>
+    <a class="logo" href="#top">Haru<span>Rolls</span></a>
     <nav class="nav">
       <a href="#menu">Меню</a>
       <a href="#about">Про нас</a>
@@ -267,7 +274,7 @@
   </div>
   <div class="hero-3d" id="hero3d">
     <div class="hero-3d__stage" id="heroStage">
-      <img class="hero-3d__back" src="https://commons.wikimedia.org/wiki/Special:FilePath/Dragon_Roll_(16213715013).jpg" alt="">
+      <img class="hero-3d__back" src="https://commons.wikimedia.org/wiki/Special:FilePath/Nigiri_Sushi_(25966163204).jpg" alt="">
       <img class="hero-3d__front" src="https://commons.wikimedia.org/wiki/Special:FilePath/Three_California_rolls.jpg" alt="Асорті з ролів">
     </div>
   </div>
@@ -290,13 +297,28 @@
 <section class="about" id="about">
   <div class="about-inner">
     <div>
-      <h2>Про RollHouse</h2>
+      <h2>Історія Haru Rolls</h2>
       <p style="opacity:.75;line-height:1.7;max-width:48ch;">
-        Ми готуємо роли невеликими партіями, тому рис завжди теплий, а риба — щойно нарізана.
-        Замінюємо будь-який інгредієнт на прохання й пакуємо соуси окремо, щоб роли не розмокли в дорозі.
+        «Haru» — по-японськи «весна»: сезон, коли риба щойно з холодної води, а овочі — найсоковитіші.
+        Саме з цим відчуттям свіжості ми хотіли, щоб асоціювався кожен рол, тому й лишили це слово в назві.
+      </p>
+      <div class="founder">
+        <div class="founder-avatar">ЯК</div>
+        <div>
+          <strong>Ярина Кравець</strong>
+          <p>засновниця й шеф-кухарка</p>
+        </div>
+      </div>
+      <p style="opacity:.75;line-height:1.7;max-width:48ch;">
+        Ярина почала готувати ще підлітком, допомагаючи мамі на кухні сімейного кафе.
+        Кулінарну освіту здобула у Львові, а потім рік стажувалася в невеликому сімейному суші-барі в Кіото —
+        там навчилася варити рис «на слух» і різати рибу так, щоб шматок танув, а не жувався.
+        Повернувшись додому навесні, відкрила перший столик Haru Rolls на ринку — лише вона, холодильник і замовлення з голосу.
+        За кілька років столик виріс у кухню з доставкою, але правило лишилось те саме: жодних заготовок на завтра,
+        тільки те, що можна приготувати й з'їсти сьогодні.
       </p>
     </div>
-    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sunny_Sushi_rainbow_roll.JPG" alt="Rainbow roll крупним планом" style="border-radius:var(--radius);box-shadow:var(--shadow);">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Salmon_Sushi_and_Sashimi_Platter_-_W_Sushi.jpg" alt="Сет із суші та сашимі з лососем" style="border-radius:var(--radius);box-shadow:var(--shadow);">
   </div>
 </section>
 
@@ -324,10 +346,10 @@
 <footer id="contact">
   <div class="footer-inner">
     <div class="footer-col">
-      <h3>RollHouse</h3>
+      <h3>Haru Rolls</h3>
       <p>вул. Прикладна, 1, твоє місто</p>
       <a href="tel:+380000000000">+38 (000) 000-00-00</a>
-      <a href="mailto:hello@rollhouse.example">hello@rollhouse.example</a>
+      <a href="mailto:hello@harurolls.example">hello@harurolls.example</a>
     </div>
     <div class="footer-col">
       <h3>Графік роботи</h3>
@@ -340,7 +362,7 @@
       <a href="#">Facebook</a>
     </div>
   </div>
-  <p class="footer-note">Це демо-сайт із заглушками замість реальних даних магазину — заміни адресу, телефон, ціни й фото на власні.</p>
+  <p class="footer-note">Адреса, телефон і ціни поки заглушки — заміни на реальні дані магазину.</p>
 </footer>
 
 <div class="cart-scrim" id="cartScrim"></div>
@@ -380,13 +402,13 @@
     { id:"rainbow", cat:"classic", name:"Рейнбоу", desc:"Асорті риби зверху, авокадо та огірок всередині", price:259,
       img:"https://commons.wikimedia.org/wiki/Special:FilePath/Sunny_Sushi_rainbow_roll.JPG" },
     { id:"dragon", cat:"special", name:"Дракон", desc:"Запечений вугор, огірок, соус унагі", price:249,
-      img:"https://commons.wikimedia.org/wiki/Special:FilePath/Dragon_Roll_(16213715013).jpg" },
+      img:"https://commons.wikimedia.org/wiki/Special:FilePath/Shiki_unagi_roll.JPG" },
     { id:"49ers", cat:"special", name:"49ers Спешл", desc:"Гострий тунець, темпура-крихта, спайсі-соус", price:239,
-      img:"https://commons.wikimedia.org/wiki/Special:FilePath/Sunny_Sushi_49ers_roll.JPG" },
+      img:"https://commons.wikimedia.org/wiki/Special:FilePath/Spicy_tuna_rolls_(3273982724).jpg" },
     { id:"veggie-dragon", cat:"special", name:"Веган Дракон", desc:"Авокадо, огірок, солодкий перець, унагі-соус без риби", price:199,
       img:"https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Maki_Vegetarian_Dragon_sushi_roll.jpg" },
     { id:"nigiri-set", cat:"nigiri", name:"Сет Нігірі", desc:"Асорті нігірі з лососем і тунцем, 8 шт.", price:279,
-      img:"https://commons.wikimedia.org/wiki/Special:FilePath/Nigiri_Sushi_(26478725732).jpg" },
+      img:"https://commons.wikimedia.org/wiki/Special:FilePath/Nigiri_Sushi_(25966163204).jpg" },
     { id:"temaki", cat:"nigiri", name:"Темакі", desc:"Ручний конус з рисом, лососем і авокадо", price:159,
       img:"https://commons.wikimedia.org/wiki/Special:FilePath/Temaki-zushi.jpg" }
   ];
