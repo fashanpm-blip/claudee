@@ -17,12 +17,14 @@
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
+  html,body{overflow-x:hidden;}
   body{
     margin:0;
     font-family:"Segoe UI", Arial, Helvetica, sans-serif;
     background:var(--paper);
     color:var(--ink);
     -webkit-font-smoothing:antialiased;
+    width:100%;
   }
   img{max-width:100%;display:block;}
   a{color:inherit;}
@@ -92,6 +94,7 @@
     padding:8vh 5vw 6vh;
     max-width:1180px;margin:0 auto;
   }
+  .hero > *{min-width:0;}
   .eyebrow{
     text-transform:uppercase;letter-spacing:.12em;font-size:13px;
     color:var(--accent);font-weight:700;margin:0 0 .8em;
@@ -169,6 +172,7 @@
   /* ---------- about / delivery ---------- */
   .about,.delivery{padding:6vh 5vw;background:var(--paper-soft);}
   .about-inner,.delivery-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:center;}
+  .about-inner > *,.delivery-inner > *{min-width:0;}
   .delivery-inner{grid-template-columns:repeat(3,1fr);text-align:center;}
   .delivery-step{background:#fff;border-radius:var(--radius);padding:2em 1.4em;box-shadow:var(--shadow);}
   .delivery-step .num{
@@ -394,6 +398,27 @@
 (function(){
   "use strict";
 
+  /* ---------- graceful fallback if a photo fails to load on a device ---------- */
+  function svgPlaceholder(label){
+    var safeLabel = String(label || '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">' +
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0" stop-color="#f1e9df"/><stop offset="1" stop-color="#e8b4ab"/>' +
+      '</linearGradient></defs>' +
+      '<rect width="100%" height="100%" fill="url(#g)"/>' +
+      '<text x="50%" y="44%" font-size="54" text-anchor="middle" dominant-baseline="middle">🍣</text>' +
+      (safeLabel ? '<text x="50%" y="68%" font-size="22" font-family="Georgia, serif" fill="#171412" text-anchor="middle" dominant-baseline="middle">' + safeLabel + '</text>' : '') +
+      '</svg>';
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  }
+  function attachImgFallback(img, label){
+    img.addEventListener('error', function once(){
+      img.removeEventListener('error', once);
+      img.src = svgPlaceholder(label);
+    });
+  }
+
   var MENU = [
     { id:"california", cat:"classic", name:"Каліфорнія", desc:"Краб, авокадо, огірок, ікра тобіко", price:189,
       img:"https://images.pexels.com/photos/4725574/pexels-photo-4725574.jpeg?auto=compress&cs=tinysrgb&w=1200" },
@@ -441,7 +466,7 @@
       var qty = cart[item.id] || 0;
 
       card.innerHTML =
-        '<div class="card-tilt"><img src="' + item.img + '" alt="' + item.name + '"></div>' +
+        '<div class="card-tilt"><img src="' + item.img + '" alt="' + item.name + '" loading="lazy"></div>' +
         '<div class="card-body">' +
           '<h3>' + item.name + '</h3>' +
           '<p>' + item.desc + '</p>' +
@@ -475,6 +500,7 @@
       });
 
       var tilt = card.querySelector('.card-tilt');
+      attachImgFallback(tilt.querySelector('img'), item.name);
       tilt.addEventListener('mousemove', function(e){
         var r = tilt.getBoundingClientRect();
         var px = (e.clientX - r.left) / r.width - 0.5;
@@ -607,6 +633,10 @@
   });
   hero3d.addEventListener('mouseleave', function(){
     heroStage.style.transform = 'rotateX(0) rotateY(0)';
+  });
+
+  document.querySelectorAll('.hero-3d__back, .hero-3d__front, .about-inner img').forEach(function(img){
+    attachImgFallback(img, 'Haru Rolls');
   });
 
   loadCart();
