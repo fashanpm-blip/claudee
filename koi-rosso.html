@@ -139,18 +139,56 @@ button{ font-family:inherit; }
   background:
     repeating-linear-gradient(90deg, var(--wood-a) 0 34px, var(--wood-b) 34px 68px);
   box-shadow:0 40px 80px -30px rgba(0,0,0,.65), 0 1px 0 rgba(244,233,216,.06) inset;
+  cursor:grab; touch-action:pan-y; -webkit-tap-highlight-color:transparent;
 }
+.hero-visual:active, .hero-visual.grabbing{ cursor:grabbing; }
+.hero-visual:focus-visible{ outline:2px solid var(--red-text); outline-offset:3px; }
 .hero-visual::after{
-  content:''; position:absolute; inset:0; opacity:.16; mix-blend-mode:overlay; pointer-events:none;
+  content:''; position:absolute; inset:0; opacity:.16; mix-blend-mode:overlay; pointer-events:none; z-index:3;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.55'/></svg>");
 }
-.hero-visual svg{ position:relative; z-index:1; width:100%; height:100%; display:block; }
+
+/* ---------- 3D dish carousel ---------- */
+.carousel3d-stage{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; perspective:900px; }
+.carousel3d-ring{ position:relative; transform-style:preserve-3d; will-change:transform; }
+.carousel3d-item{
+  position:absolute; top:0; left:0; border-radius:16px; overflow:hidden;
+  box-shadow:0 18px 34px -16px rgba(0,0,0,.65), 0 1px 0 rgba(255,255,255,.08) inset;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+}
+.carousel3d-item svg{ width:100%; height:100%; display:block; }
+.carousel3d-hint{
+  position:absolute; left:50%; bottom:16px; transform:translateX(-50%); z-index:2;
+  font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--beige-faint); background:rgba(20,13,10,.55); border:1px solid var(--line-soft);
+  padding:6px 13px; border-radius:999px; pointer-events:none; white-space:nowrap;
+}
 
 /* ---------- sections ---------- */
 .section{ padding:clamp(64px,9vw,112px) clamp(20px,5vw,56px); max-width:var(--maxw); margin:0 auto; }
 .section-head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:24px; }
 .section h2{ margin-top:14px; font-size:clamp(28px,3.6vw,42px); letter-spacing:-.02em; max-width:18ch; text-wrap:balance; }
 .section-lede{ margin-top:14px; font-size:15px; color:var(--beige-faint); max-width:48ch; line-height:1.6; }
+
+/* ---------- gallery ribbon ---------- */
+.gallery-arrows{ display:flex; gap:8px; }
+.gallery-arrow{
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--beige);
+  font-size:18px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:border-color .3s var(--ease), transform .3s var(--ease);
+}
+.gallery-arrow:hover{ border-color:var(--beige-dim); transform:translateY(-2px); }
+.gallery-arrow:focus-visible{ outline:2px solid var(--red-text); outline-offset:2px; }
+.gallery-ribbon{
+  margin-top:clamp(24px,3vw,36px); display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory;
+  padding:2px 2px 10px; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.gallery-ribbon::-webkit-scrollbar{ display:none; }
+.gallery-item{ flex:0 0 auto; width:clamp(150px,21vw,210px); scroll-snap-align:start; }
+.gallery-tile{ aspect-ratio:1/1; border-radius:var(--radius-md); overflow:hidden; box-shadow:0 14px 30px -18px rgba(0,0,0,.6); }
+.gallery-tile svg{ width:100%; height:100%; display:block; }
+.gallery-item figcaption{ margin-top:10px; font-size:13.5px; font-weight:600; letter-spacing:-.006em; }
+.gallery-item .g-price{ font-family:'Space Mono',monospace; font-size:11.5px; color:var(--red-text); margin-top:2px; }
 
 /* ---------- menu ---------- */
 .menu-tabs{ display:flex; flex-wrap:wrap; gap:8px; }
@@ -162,9 +200,11 @@ button{ font-family:inherit; }
 .menu-tab[aria-pressed="true"]{ background:var(--red); border-color:var(--red); color:var(--beige); }
 
 .menu-grid{ margin-top:clamp(28px,4vw,44px); display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); border-radius:var(--radius-md); overflow:hidden; }
-.dish{ background:var(--bg); padding:26px 24px; display:flex; flex-direction:column; gap:14px; transition:background .3s var(--ease); }
+.dish{ background:var(--bg); padding:20px 24px 26px; display:flex; flex-direction:column; gap:14px; transition:background .3s var(--ease); }
 .dish:hover{ background:var(--bg-1); }
 .dish.is-hidden{ display:none; }
+.dish-thumb{ aspect-ratio:16/10; border-radius:12px; overflow:hidden; margin:0 -2px; }
+.dish-thumb svg{ width:100%; height:100%; display:block; }
 .dish-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
 .dish-name{ font-size:18px; font-weight:600; letter-spacing:-.008em; }
 .dish-price{ font-family:'Space Mono',monospace; font-size:15px; color:var(--red-text); flex-shrink:0; font-variant-numeric:tabular-nums; }
@@ -292,6 +332,7 @@ button{ font-family:inherit; }
 <header class="nav">
   <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>Koi Rosso</a>
   <nav class="nav-links" aria-label="Primary">
+    <a href="#gallery">Gallery</a>
     <a href="#menu">Menu</a>
     <a href="#story">Story</a>
     <a href="#delivery">Delivery</a>
@@ -309,6 +350,7 @@ button{ font-family:inherit; }
 </header>
 
 <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+  <a href="#gallery">Gallery</a>
   <a href="#menu">Menu</a>
   <a href="#story">Story</a>
   <a href="#delivery">Delivery</a>
@@ -332,71 +374,26 @@ button{ font-family:inherit; }
         <div><b>Fort&nbsp;Greene</b><span>Brooklyn, NY</span></div>
       </div>
     </div>
-    <div class="hero-visual" role="img" aria-label="Flat lay of maki rolls and a poke bowl on a dark wood table">
-      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-        <g transform="translate(300,300)">
-          <!-- poke bowl -->
-          <g transform="translate(-40,30) rotate(-4)">
-            <circle r="168" fill="#241812"/>
-            <circle r="168" fill="none" stroke="#3a281d" stroke-width="6"/>
-            <circle r="148" fill="#efe2c9"/>
-            <g transform="rotate(10)">
-              <path d="M -148 0 A148 148 0 0 1 -74 -128 L -30 -55 A70 70 0 0 0 -70 0 Z" fill="#c1392b"/>
-              <path d="M -74 -128 A148 148 0 0 1 74 -128 L 34 -55 A70 70 0 0 0 -30 -55 Z" fill="#7a8f4d"/>
-              <path d="M 74 -128 A148 148 0 0 1 148 0 L 70 0 A70 70 0 0 0 34 -55 Z" fill="#e8973a"/>
-              <path d="M 148 0 A148 148 0 0 1 74 128 L 34 55 A70 70 0 0 0 70 0 Z" fill="#8a271d"/>
-              <path d="M 74 128 A148 148 0 0 1 -74 128 L -30 55 A70 70 0 0 0 34 55 Z" fill="#d8c9a3"/>
-              <path d="M -74 128 A148 148 0 0 1 -148 0 L -70 0 A70 70 0 0 0 -30 55 Z" fill="#4f6b3a"/>
-            </g>
-            <circle r="66" fill="#f4e9d8"/>
-            <g fill="#291d16" opacity=".5">
-              <circle cx="-18" cy="-10" r="1.6"/><circle cx="6" cy="-22" r="1.6"/><circle cx="20" cy="4" r="1.6"/>
-              <circle cx="-8" cy="16" r="1.6"/><circle cx="14" cy="20" r="1.6"/><circle cx="-24" cy="10" r="1.6"/>
-            </g>
-          </g>
-          <!-- maki rolls scattered -->
-          <g transform="translate(150,-140) rotate(8)">
-            <circle r="46" fill="#241812"/><circle r="38" fill="#efe2c9"/><circle r="17" fill="#c1392b"/>
-          </g>
-          <g transform="translate(206,-72) rotate(-6)">
-            <circle r="42" fill="#241812"/><circle r="34" fill="#efe2c9"/><circle r="15" fill="#7a8f4d"/>
-          </g>
-          <g transform="translate(158,-4) rotate(14)">
-            <circle r="44" fill="#241812"/><circle r="36" fill="#efe2c9"/><circle r="16" fill="#e8973a"/>
-          </g>
-          <g transform="translate(190,58) rotate(-10)">
-            <circle r="40" fill="#241812"/><circle r="32" fill="#efe2c9"/><circle r="14" fill="#c1392b"/>
-          </g>
-          <g transform="translate(-190,150) rotate(5)">
-            <circle r="42" fill="#241812"/><circle r="34" fill="#efe2c9"/><circle r="15" fill="#8a271d"/>
-          </g>
-          <g transform="translate(-130,190) rotate(-12)">
-            <circle r="38" fill="#241812"/><circle r="30" fill="#efe2c9"/><circle r="13" fill="#4f6b3a"/>
-          </g>
-          <!-- chopsticks -->
-          <g transform="translate(-40,-190) rotate(24)">
-            <rect x="-4" y="-150" width="8" height="300" rx="4" fill="#d8c9a3"/>
-          </g>
-          <g transform="translate(10,-190) rotate(24)">
-            <rect x="-4" y="-150" width="8" height="300" rx="4" fill="#c7b593"/>
-          </g>
-          <!-- soy sauce dish -->
-          <g transform="translate(-186,-70)">
-            <circle r="30" fill="#1a120e"/><circle r="22" fill="#3a1c12"/>
-          </g>
-          <!-- ginger -->
-          <g transform="translate(-140,-130)" fill="#e7a9a0">
-            <ellipse cx="-8" cy="0" rx="12" ry="7" transform="rotate(20 -8 0)"/>
-            <ellipse cx="8" cy="6" rx="12" ry="7" transform="rotate(-15 8 6)"/>
-          </g>
-          <!-- scattered sesame -->
-          <g fill="#efe2c9" opacity=".8">
-            <circle cx="60" cy="120" r="2.4"/><circle cx="80" cy="140" r="2.4"/><circle cx="-220" cy="20" r="2.4"/>
-            <circle cx="230" cy="120" r="2.4"/><circle cx="-100" cy="-160" r="2.4"/>
-          </g>
-        </g>
-      </svg>
+    <div class="hero-visual" id="carousel3d" tabindex="0" aria-label="Interactive 3D showcase of tonight's dishes. Drag, swipe, or use the arrow keys to spin it.">
+      <div class="carousel3d-stage">
+        <div class="carousel3d-ring" id="carouselRing"></div>
+      </div>
+      <p class="carousel3d-hint">Drag to spin</p>
     </div>
+  </section>
+
+  <section class="section" id="gallery">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow" data-reveal>From the pass</p>
+        <h2 data-reveal>Every dish,<br>up close.</h2>
+      </div>
+      <div class="gallery-arrows" data-reveal>
+        <button type="button" class="gallery-arrow" id="galleryPrev" aria-label="Scroll gallery left">‹</button>
+        <button type="button" class="gallery-arrow" id="galleryNext" aria-label="Scroll gallery right">›</button>
+      </div>
+    </div>
+    <div class="gallery-ribbon" id="galleryRibbon" data-reveal></div>
   </section>
 
   <section class="section" id="menu">
@@ -525,17 +522,28 @@ button{ font-family:inherit; }
   "use strict";
 
   var DISHES = [
-    { id:'negroni-maki', name:'Negroni Maki', cat:'rolls', desc:'Cured salmon, Campari-cured citrus, shiso, sesame', price:16, tags:['8 pz'] },
-    { id:'poke-caprese', name:'Poke Caprese', cat:'rolls', desc:'Ahi tuna, heirloom tomato, burrata, ponzu, basil', price:17, tags:['GF'] },
-    { id:'salmon-crudo', name:'Salmon Crudo Nigiri', cat:'rolls', desc:'Torched salmon, nduja butter, yuzu kosho', price:15, tags:['6 pz'] },
-    { id:'uni-carbonara', name:'Uni Carbonara', cat:'piatti', desc:'Sea urchin, guanciale, egg yolk, nori dust, black pepper', price:24, tags:[] },
-    { id:'miso-cacio', name:'Miso Cacio e Pepe', cat:'piatti', desc:'Udon noodles, miso butter, pecorino, cracked pepper', price:18, tags:['V'] },
-    { id:'wagyu-panino', name:'Wagyu Katsu Panino', cat:'piatti', desc:'Panko-fried wagyu, tonkatsu aioli, arugula, ciabatta', price:19, tags:[] },
-    { id:'katsu-milanese', name:'Katsu alla Milanese', cat:'piatti', desc:'Panko pork cutlet, tonkatsu demi-glace, parmesan, lemon', price:22, tags:[] },
-    { id:'edamame-arancini', name:'Edamame Arancini', cat:'stuzzichini', desc:'Crispy rice balls, edamame purée, truffle shoyu', price:12, tags:['V'] },
-    { id:'shishito-bruschetta', name:'Shishito Bruschetta', cat:'stuzzichini', desc:'Blistered shishito, burrata, charred tomato, sesame oil', price:13, tags:['V','GF'] },
-    { id:'yuzu-tiramisu', name:'Yuzu Tiramisu', cat:'dolci', desc:'Mascarpone, matcha ladyfingers, yuzu curd, cocoa-nori dust', price:11, tags:['V'] },
-    { id:'sesame-pannacotta', name:'Black Sesame Panna Cotta', cat:'dolci', desc:'Silken panna cotta, black sesame, honey-soy caramel', price:10, tags:['V','GF'] }
+    { id:'negroni-maki', name:'Negroni Maki', cat:'rolls', desc:'Cured salmon, Campari-cured citrus, shiso, sesame', price:16, tags:['8 pz'],
+      art:{ template:'roll', colors:{ nori:'#241812', rice:'#efe2c9', filling:'#c1392b', fleck:'#e8973a' } } },
+    { id:'poke-caprese', name:'Poke Caprese', cat:'rolls', desc:'Ahi tuna, heirloom tomato, burrata, ponzu, basil', price:17, tags:['GF'],
+      art:{ template:'bowl', colors:['#c1392b','#f4e9d8','#4f6b3a','#8a271d','#efe2c9','#3d5029'] } },
+    { id:'salmon-crudo', name:'Salmon Crudo Nigiri', cat:'rolls', desc:'Torched salmon, nduja butter, yuzu kosho', price:15, tags:['6 pz'],
+      art:{ template:'roll', colors:{ nori:'#241812', rice:'#efe2c9', filling:'#e0704a', fleck:'#c1392b' } } },
+    { id:'uni-carbonara', name:'Uni Carbonara', cat:'piatti', desc:'Sea urchin, guanciale, egg yolk, nori dust, black pepper', price:24, tags:[],
+      art:{ template:'bowl', colors:['#e8973a','#efe2c9','#3a281d','#c98a6b','#f4e9d8','#291d16'] } },
+    { id:'miso-cacio', name:'Miso Cacio e Pepe', cat:'piatti', desc:'Udon noodles, miso butter, pecorino, cracked pepper', price:18, tags:['V'],
+      art:{ template:'bowl', colors:['#efe2c9','#f4e9d8','#c9a15a','#e8e0c8','#3a281d','#f0ead8'] } },
+    { id:'wagyu-panino', name:'Wagyu Katsu Panino', cat:'piatti', desc:'Panko-fried wagyu, tonkatsu aioli, arugula, ciabatta', price:19, tags:[],
+      art:{ template:'bowl', colors:['#d9a55c','#6b4226','#4f6b3a','#f4e9d8','#c98a3f','#52301b'] } },
+    { id:'katsu-milanese', name:'Katsu alla Milanese', cat:'piatti', desc:'Panko pork cutlet, tonkatsu demi-glace, parmesan, lemon', price:22, tags:[],
+      art:{ template:'bowl', colors:['#d9a552','#e8c93a','#f0ead8','#5a3420','#c98a3f','#e0b96a'] } },
+    { id:'edamame-arancini', name:'Edamame Arancini', cat:'stuzzichini', desc:'Crispy rice balls, edamame purée, truffle shoyu', price:12, tags:['V'],
+      art:{ template:'bowl', colors:['#d9a552','#7a8f4d','#efe2c9','#c98a3f','#4f6b3a','#f4e9d8'] } },
+    { id:'shishito-bruschetta', name:'Shishito Bruschetta', cat:'stuzzichini', desc:'Blistered shishito, burrata, charred tomato, sesame oil', price:13, tags:['V','GF'],
+      art:{ template:'bowl', colors:['#a9743f','#6b8a4d','#f4e9d8','#c1392b','#8a5a30','#4f6b3a'] } },
+    { id:'yuzu-tiramisu', name:'Yuzu Tiramisu', cat:'dolci', desc:'Mascarpone, matcha ladyfingers, yuzu curd, cocoa-nori dust', price:11, tags:['V'],
+      art:{ template:'bowl', colors:['#4a2f1f','#f4e9d8','#6b8a4d','#e8c93a','#3a2418','#efe2c9'] } },
+    { id:'sesame-pannacotta', name:'Black Sesame Panna Cotta', cat:'dolci', desc:'Silken panna cotta, black sesame, honey-soy caramel', price:10, tags:['V','GF'],
+      art:{ template:'bowl', colors:['#f4e9d8','#241812','#b8752e','#efe2c9','#1a120e','#9a5f22'] } }
   ];
   var TABS = [
     { id:'all', label:'All' },
@@ -547,6 +555,68 @@ button{ font-family:inherit; }
 
   var qs = function(s, ctx){ return (ctx||document).querySelector(s); };
   var qsa = function(s, ctx){ return [].slice.call((ctx||document).querySelectorAll(s)); };
+
+  /* ---------- illustrated dish art (no photo asset pipeline available, so every ---------- */
+  /* ---------- "photo" tile below is a lit, shaded SVG built from the dish's own art config ---------- */
+  function artFrame(inner, uid){
+    var vg = 'vg-' + uid, sh = 'sh-' + uid;
+    return (
+      '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">' +
+        '<defs>' +
+          '<radialGradient id="' + vg + '" cx="50%" cy="38%" r="75%">' +
+            '<stop offset="0%" stop-color="#3c2a1e"/><stop offset="100%" stop-color="#140d0a"/>' +
+          '</radialGradient>' +
+          '<radialGradient id="' + sh + '" cx="50%" cy="50%" r="55%">' +
+            '<stop offset="60%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity=".5"/>' +
+          '</radialGradient>' +
+        '</defs>' +
+        '<rect width="200" height="200" fill="url(#' + vg + ')"/>' +
+        '<ellipse cx="100" cy="152" rx="66" ry="13" fill="#000" opacity=".4"/>' +
+        inner +
+        '<rect width="200" height="200" fill="url(#' + sh + ')"/>' +
+      '</svg>'
+    );
+  }
+  function rollArt(c, uid){
+    var inner =
+      '<g transform="translate(100,94)">' +
+        '<circle r="72" fill="' + c.nori + '"/>' +
+        '<circle r="58" fill="' + c.rice + '"/>' +
+        '<circle r="26" fill="' + c.filling + '"/>' +
+        '<circle cx="-9" cy="-31" r="2.1" fill="' + c.fleck + '" opacity=".9"/>' +
+        '<circle cx="15" cy="-23" r="1.6" fill="#f4e9d8" opacity=".75"/>' +
+        '<circle cx="-23" cy="11" r="1.6" fill="#f4e9d8" opacity=".75"/>' +
+        '<circle cx="21" cy="19" r="1.6" fill="#f4e9d8" opacity=".75"/>' +
+        '<circle cx="-2" cy="26" r="1.4" fill="#f4e9d8" opacity=".6"/>' +
+        '<ellipse cx="-20" cy="-36" rx="36" ry="15" fill="#fff" opacity=".16" transform="rotate(-18 -20 -36)"/>' +
+      '</g>';
+    return artFrame(inner, uid);
+  }
+  function bowlArt(colors, uid){
+    var wedges = [
+      'M -64 0 A64 64 0 0 1 -32 -55 L -14 -24 A30 30 0 0 0 -30 0 Z',
+      'M -32 -55 A64 64 0 0 1 32 -55 L 14 -24 A30 30 0 0 0 -14 -24 Z',
+      'M 32 -55 A64 64 0 0 1 64 0 L 30 0 A30 30 0 0 0 14 -24 Z',
+      'M 64 0 A64 64 0 0 1 32 55 L 14 24 A30 30 0 0 0 30 0 Z',
+      'M 32 55 A64 64 0 0 1 -32 55 L -14 24 A30 30 0 0 0 14 24 Z',
+      'M -32 55 A64 64 0 0 1 -64 0 L -30 0 A30 30 0 0 0 -14 24 Z'
+    ];
+    var paths = wedges.map(function(d, i){
+      return '<path d="' + d + '" fill="' + colors[i % colors.length] + '"/>';
+    }).join('');
+    var inner =
+      '<g transform="translate(100,94) rotate(8)">' +
+        '<circle r="72" fill="#241812"/>' +
+        paths +
+        '<circle r="20" fill="#efe2c9" opacity=".92"/>' +
+        '<ellipse cx="-22" cy="-42" rx="38" ry="15" fill="#fff" opacity=".13" transform="rotate(-18 -22 -42)"/>' +
+      '</g>';
+    return artFrame(inner, uid);
+  }
+  function dishArt(d, ctx){
+    var uid = d.id + '-' + ctx;
+    return d.art.template === 'roll' ? rollArt(d.art.colors, uid) : bowlArt(d.art.colors, uid);
+  }
 
   var menuGrid = qs('#menuGrid');
   var menuTabs = qs('#menuTabs');
@@ -580,6 +650,7 @@ button{ font-family:inherit; }
       var tagsHtml = d.tags.map(function(t){ return '<span class="dish-tag">' + t + '</span>'; }).join('');
       return (
         '<article class="dish" data-cat="' + d.cat + '" data-id="' + d.id + '">' +
+          '<div class="dish-thumb">' + dishArt(d, 'menu') + '</div>' +
           '<div class="dish-top"><span class="dish-name">' + d.name + '</span><span class="dish-price">$' + d.price + '</span></div>' +
           '<p class="dish-desc">' + d.desc + '</p>' +
           '<div class="dish-tags">' + tagsHtml + '</div>' +
@@ -694,6 +765,118 @@ button{ font-family:inherit; }
     renderCart();
   });
 
+  /* ---------- 3D dish carousel ---------- */
+  function buildCarousel(){
+    var stageEl = qs('#carousel3d');
+    var ring = qs('#carouselRing');
+    if (!stageEl || !ring) return;
+    var items = DISHES.slice(0, 8);
+    var n = items.length;
+    ring.innerHTML = items.map(function(d, i){
+      var angle = Math.round((360 / n) * i);
+      return '<div class="carousel3d-item" data-angle="' + angle + '">' + dishArt(d, 'car' + i) + '</div>';
+    }).join('');
+    var itemEls = qsa('.carousel3d-item', ring);
+
+    function sizeCarousel(){
+      var box = stageEl.getBoundingClientRect();
+      var base = Math.min(box.width, box.height);
+      var itemSize = Math.max(64, Math.min(150, base * 0.34));
+      var radius = itemSize * 1.5;
+      ring.style.width = itemSize + 'px';
+      ring.style.height = itemSize + 'px';
+      itemEls.forEach(function(el){
+        el.style.width = itemSize + 'px';
+        el.style.height = itemSize + 'px';
+        el.style.transform = 'rotateY(' + el.dataset.angle + 'deg) translateZ(' + radius + 'px)';
+      });
+    }
+
+    var rotation = 0;
+    var isDragging = false;
+    var lastX = 0;
+    var speed = 0.014; // deg per ms
+
+    function applyRotation(){
+      ring.style.transform = 'rotateY(' + rotation.toFixed(2) + 'deg)';
+      itemEls.forEach(function(el){
+        var a = (parseFloat(el.dataset.angle) + rotation) * Math.PI / 180;
+        var facing = Math.cos(a);
+        var t = (facing + 1) / 2;
+        el.style.filter = 'brightness(' + (0.55 + 0.55 * t).toFixed(2) + ')';
+        el.style.opacity = (0.6 + 0.4 * t).toFixed(2);
+      });
+    }
+
+    var lastTs = null;
+    function loop(ts){
+      if (lastTs === null) lastTs = ts;
+      var dt = ts - lastTs;
+      lastTs = ts;
+      if (!isDragging && !prefersReducedMotion){
+        rotation += speed * dt;
+      }
+      applyRotation();
+      requestAnimationFrame(loop);
+    }
+
+    stageEl.addEventListener('pointerdown', function(e){
+      isDragging = true;
+      lastX = e.clientX;
+      stageEl.classList.add('grabbing');
+      try { stageEl.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    stageEl.addEventListener('pointermove', function(e){
+      if (!isDragging) return;
+      var dx = e.clientX - lastX;
+      lastX = e.clientX;
+      rotation += dx * 0.45;
+    });
+    function endDrag(){
+      isDragging = false;
+      stageEl.classList.remove('grabbing');
+    }
+    stageEl.addEventListener('pointerup', endDrag);
+    stageEl.addEventListener('pointerleave', endDrag);
+    stageEl.addEventListener('pointercancel', endDrag);
+    stageEl.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); rotation -= 18; applyRotation(); }
+      if (e.key === 'ArrowRight'){ e.preventDefault(); rotation += 18; applyRotation(); }
+    });
+
+    window.addEventListener('resize', sizeCarousel);
+    sizeCarousel();
+    applyRotation();
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------- gallery ribbon ---------- */
+  function buildGallery(){
+    var ribbon = qs('#galleryRibbon');
+    if (!ribbon) return;
+    ribbon.innerHTML = DISHES.map(function(d){
+      return (
+        '<div class="gallery-item">' +
+          '<div class="gallery-tile">' + dishArt(d, 'gal') + '</div>' +
+          '<figcaption>' + d.name + '</figcaption>' +
+          '<div class="g-price">$' + d.price + '</div>' +
+        '</div>'
+      );
+    }).join('');
+    function scrollAmount(){
+      var item = qs('.gallery-item', ribbon);
+      return item ? item.getBoundingClientRect().width + 16 : 200;
+    }
+    var prevBtn = qs('#galleryPrev');
+    var nextBtn = qs('#galleryNext');
+    if (prevBtn) prevBtn.addEventListener('click', function(){
+      ribbon.scrollBy({ left: -scrollAmount(), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
+    if (nextBtn) nextBtn.addEventListener('click', function(){
+      ribbon.scrollBy({ left: scrollAmount(), behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
+  }
+
   /* ---------- mobile nav ---------- */
   var navToggle = qs('#navToggle');
   var mobileNav = qs('#mobileNav');
@@ -727,6 +910,8 @@ button{ font-family:inherit; }
   /* ---------- init ---------- */
   buildTabs();
   buildMenu();
+  buildCarousel();
+  buildGallery();
   renderCart();
 })();
 </script>
