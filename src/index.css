@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --font-tight: "Inter Tight", system-ui, sans-serif;
+  --font-display: "Fraunces", "Georgia", serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: var(--font-tight);
+}
+
+.bp-card {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-card {
+    will-change: auto;
+  }
+}
