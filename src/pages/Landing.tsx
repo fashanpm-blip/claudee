@@ -344,7 +344,6 @@ export default function Landing() {
           className="flex flex-col items-start"
           style={{
             width: isMobile ? 252 : "100%",
-            marginBottom: isMobile ? 12 : 32,
           }}
         >
           <div
@@ -378,22 +377,6 @@ export default function Landing() {
             >
               {circleSymbol}
             </span>
-          </div>
-          <div
-            style={{
-              fontFamily: "var(--font-tight)",
-              fontWeight: 500,
-              fontSize: isMobile ? 20 : 30,
-              lineHeight: "100%",
-              textAlign: "center",
-              letterSpacing: "-0.04em",
-              textTransform: "uppercase",
-              color: "#fff",
-            }}
-          >
-            ARCHIVE COLLECTION
-            <br />
-            &quot;PROMPT&quot;
           </div>
         </div>
       </motion.div>
