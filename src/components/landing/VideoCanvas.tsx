@@ -16,11 +16,21 @@ export const VideoCanvas = forwardRef<HTMLDivElement, VideoCanvasProps>(
     const rightRef = useRef<HTMLVideoElement>(null);
     const [loadedLeft, setLoadedLeft] = useState(false);
     const [loadedRight, setLoadedRight] = useState(false);
+    const [videoFailed, setVideoFailed] = useState(false);
     const activeSideRef = useRef<"left" | "right">("right");
     const mouseXRef = useRef<number | null>(null);
     const rafRef = useRef<number>(0);
 
     const bothLoaded = loadedLeft && loadedRight;
+    const visible = bothLoaded || videoFailed;
+
+    // If the videos can't load (blocked network, offline, bad connection),
+    // fall back to a static illustrated poster instead of staying blank.
+    useEffect(() => {
+      if (bothLoaded) return;
+      const timer = window.setTimeout(() => setVideoFailed(true), 4000);
+      return () => window.clearTimeout(timer);
+    }, [bothLoaded]);
 
     // Desktop: cursor-driven scrubbing
     useEffect(() => {
@@ -140,7 +150,7 @@ export const VideoCanvas = forwardRef<HTMLDivElement, VideoCanvasProps>(
                 width: "100vw",
                 height: "calc(100vh - 220px)",
                 zIndex: 0,
-                opacity: bothLoaded ? 1 : 0,
+                opacity: visible ? 1 : 0,
                 transition: "opacity 0.3s ease",
               }
             : {
@@ -148,7 +158,7 @@ export const VideoCanvas = forwardRef<HTMLDivElement, VideoCanvasProps>(
                 width: "100%",
                 height: "100%",
                 zIndex: 0,
-                opacity: bothLoaded ? 1 : 0,
+                opacity: visible ? 1 : 0,
                 transition: "opacity 0.3s ease",
               }
         }
@@ -160,6 +170,7 @@ export const VideoCanvas = forwardRef<HTMLDivElement, VideoCanvasProps>(
           playsInline
           preload="auto"
           onLoadedData={() => setLoadedLeft(true)}
+          onError={() => setVideoFailed(true)}
           className="absolute inset-0 h-full w-full object-cover"
           style={{ display: "none" }}
         />
@@ -170,9 +181,28 @@ export const VideoCanvas = forwardRef<HTMLDivElement, VideoCanvasProps>(
           playsInline
           preload="auto"
           onLoadedData={() => setLoadedRight(true)}
+          onError={() => setVideoFailed(true)}
           className="absolute inset-0 h-full w-full object-cover"
           style={{ display: "block" }}
         />
+
+        {videoFailed && !bothLoaded && (
+          <div
+            className="absolute inset-0 flex items-end justify-start p-8"
+            style={{
+              background:
+                "linear-gradient(160deg, #1a1a1a 0%, #3a2418 55%, #7a4a2a 100%)",
+              opacity: 1,
+            }}
+          >
+            <p
+              className="max-w-sm text-sm leading-relaxed text-white/70"
+              style={{ fontFamily: "var(--font-tight)" }}
+            >
+              Відео колекції тимчасово недоступне в цьому перегляді.
+            </p>
+          </div>
+        )}
       </div>
     );
   }

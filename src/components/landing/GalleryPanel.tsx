@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import PortraitSilhouette from "../site/PortraitSilhouette";
 
 export const GALLERY_IMAGES = [
   "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260629_104530_521b2f85-c0f3-4d0e-9704-b578315b4cb9.png&w=1920&q=85",
@@ -76,19 +77,26 @@ export const GalleryPanel = forwardRef<HTMLDivElement, GalleryPanelProps>(
                 <div
                   key={i}
                   ref={(el) => registerCard(`${cols}-${i}`, el)}
-                  className="bp-card overflow-hidden"
+                  className="bp-card relative overflow-hidden"
                   style={{
                     aspectRatio: "2 / 3",
                     transform: "scale(0)",
                     transformOrigin: origin,
                   }}
                 >
+                  <PortraitSilhouette
+                    index={cell.imgIndex}
+                    className="absolute inset-0 h-full w-full"
+                  />
                   <img
                     src={src}
                     alt=""
                     loading="lazy"
-                    className="h-full w-full object-cover"
                     draggable={false}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
                 </div>
               );

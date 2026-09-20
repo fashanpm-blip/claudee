@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import SiteNav from "../components/site/SiteNav";
 import SiteFooter from "../components/site/SiteFooter";
 import { GALLERY_IMAGES } from "../components/landing/GalleryPanel";
+import PortraitSilhouette from "../components/site/PortraitSilhouette";
 
 type Category = "casual" | "business" | "evening";
 type Season = "summer" | "winter" | "demi";
@@ -14,11 +15,25 @@ type Look = {
   category: Category;
   season: Season;
   budget: Budget;
+  tip: string;
 };
 
 const CATEGORIES: Category[] = ["casual", "business", "evening"];
 const SEASONS: Season[] = ["summer", "winter", "demi"];
 const BUDGETS: Budget[] = ["$", "$$", "$$$"];
+
+const TIPS = [
+  "Нейтральна база + один акцентний шар зверху — працює для будь-якої фігури.",
+  "Структурований верх урівноважує вільний низ — і навпаки.",
+  "Один темний та один світлий тон поруч додають образу глибини без зусиль.",
+  "Аксесуар одного кольору з взуттям візуально «закриває» образ.",
+  "Шар, який можна зняти — це гнучкість для перепадів температури і настрою.",
+  "Фактура (трикотаж, шкіра, вовна) додає інтересу навіть монохромному образу.",
+  "Довжина рукава чи низу, підігнана під зріст, змінює сприйняття сильніше за колір.",
+  "Один яскравий елемент читається як стиль, три — як випадковість.",
+  "Класичний крій + сучасна деталь (взуття, сумка) — образ одразу не застарілий.",
+  "Пряма лінія плеча дисциплінує будь-який вільний силует знизу.",
+];
 
 const LOOKS: Look[] = GALLERY_IMAGES.map((src, i) => ({
   id: i,
@@ -27,6 +42,7 @@ const LOOKS: Look[] = GALLERY_IMAGES.map((src, i) => ({
   category: CATEGORIES[i % CATEGORIES.length],
   season: SEASONS[Math.floor(i / 3) % SEASONS.length],
   budget: BUDGETS[i % BUDGETS.length],
+  tip: TIPS[i % TIPS.length],
 }));
 
 const CATEGORY_LABEL: Record<Category, string> = {
@@ -110,8 +126,9 @@ export default function Lookbook() {
           Lookbook
         </h1>
         <p className="mt-2 max-w-xl text-black/60">
-          Архівна колекція образів. Фільтруй за поводом, сезоном та бюджетом
-          — або опиши свій запит AI-стилісту у чаті.
+          Архівна колекція образів. Кожен лук — з поясненням, чому саме ця
+          комбінація працює. Фільтруй за поводом, сезоном та бюджетом — або
+          опиши свій запит AI-стилісту у чаті.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-8 border-b border-black/10 pb-8">
@@ -130,14 +147,21 @@ export default function Lookbook() {
           {filtered.map((look) => (
             <div key={look.id} className="group">
               <div
-                className="overflow-hidden rounded-xl bg-black/5"
+                className="relative overflow-hidden rounded-xl bg-black/5"
                 style={{ aspectRatio: "2 / 3" }}
               >
+                <PortraitSilhouette
+                  index={look.id}
+                  className="absolute inset-0 h-full w-full"
+                />
                 <img
                   src={look.src}
                   alt={look.title}
                   loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="mt-2 flex items-center justify-between text-sm">
@@ -147,6 +171,7 @@ export default function Lookbook() {
               <span className="text-xs text-black/40">
                 {CATEGORY_LABEL[look.category]} · {look.season}
               </span>
+              <p className="mt-1 text-xs leading-relaxed text-black/50">{look.tip}</p>
             </div>
           ))}
           {filtered.length === 0 && (
