@@ -14,9 +14,24 @@ const WELCOME: Message = {
 };
 
 const QUICK_PROMPTS = [
-  "Подобрать образ на работу",
-  "Что носить на свидание",
-  "Обновить гардероб",
+  "Підібрати образ на роботу",
+  "Що вдягнути на побачення",
+  "Оновити гардероб",
+];
+
+const VALUE_PROPS = [
+  {
+    title: "Без осуду",
+    text: "Жодних коментарів про вагу чи фігуру — лише про одяг і привід.",
+  },
+  {
+    title: "Конкретні поради",
+    text: "2-4 чіткі рекомендації з поясненням, чому саме вони підходять.",
+  },
+  {
+    title: "Твоєю мовою",
+    text: "Стиліст відповідає тією мовою, якою ти йому пишеш.",
+  },
 ];
 
 export default function Chat() {
@@ -53,7 +68,7 @@ export default function Chat() {
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply as string }]);
     } catch {
       setError(
-        "Не вдалося зв'язатися зі стилістом. Перевір, що заданий ANTHROPIC_API_KEY і запущений сервер (npm run server)."
+        "Стиліст зараз недоступний. Спробуй, будь ласка, ще раз за хвилину."
       );
     } finally {
       setLoading(false);
@@ -100,8 +115,14 @@ export default function Chat() {
           ))}
           {loading && (
             <div className="flex justify-start">
-              <div className="rounded-2xl bg-[#f1ece2] px-4 py-3 text-sm text-black/50">
-                стиліст друкує…
+              <div className="flex items-center gap-1 rounded-2xl bg-[#f1ece2] px-4 py-3">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-black/40"
+                    style={{ animationDelay: `${i * 0.15}s` }}
+                  />
+                ))}
               </div>
             </div>
           )}
@@ -148,6 +169,15 @@ export default function Chat() {
             Надіслати
           </button>
         </form>
+
+        <div className="mt-10 grid grid-cols-1 gap-4 border-t border-black/10 pt-10 sm:grid-cols-3">
+          {VALUE_PROPS.map((v) => (
+            <div key={v.title}>
+              <h3 className="text-sm font-semibold text-black">{v.title}</h3>
+              <p className="mt-1 text-xs leading-relaxed text-black/50">{v.text}</p>
+            </div>
+          ))}
+        </div>
       </main>
 
       <SiteFooter />
