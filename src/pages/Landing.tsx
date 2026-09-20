@@ -396,19 +396,6 @@ export default function Landing() {
             &quot;PROMPT&quot;
           </div>
         </div>
-        <div
-          style={{
-            fontFamily: "var(--font-tight)",
-            fontWeight: 500,
-            fontSize: isMobile ? 60 : 80,
-            lineHeight: "100%",
-            textAlign: "center",
-            letterSpacing: "-0.04em",
-            color: "#fff",
-          }}
-        >
-          $97,33
-        </div>
       </motion.div>
 
       {/* View button */}
