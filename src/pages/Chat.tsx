@@ -1,10 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import SiteNav from "../components/site/SiteNav";
 import SiteFooter from "../components/site/SiteFooter";
+import { STYLIST_SYSTEM_PROMPT } from "../data/stylistPrompt";
 
 type Message = {
   role: "user" | "assistant";
   content: string;
+};
+
+type SampleFn = (
+  input: { role: "user" | "assistant"; content: string }[],
+  options?: {
+    modelTier?: "default" | "complex" | "quick";
+    cache?: boolean;
+    signal?: AbortSignal;
+    onText?: (update: { text: string; delta: string }) => void;
+  }
+) => Promise<{ text: string; truncated: boolean }>;
+
+const SAMPLE_ERROR_COPY: Record<string, string> = {
+  not_granted:
+    "Щоб отримати відповідь тут, дозволь цій сторінці використовувати Claude (з'явиться запит доступу).",
+  rate_limited: "Забагато запитів поспіль. Спробуй, будь ласка, за хвилину.",
+  refused: "Стиліст не зміг відповісти на це. Спробуй переформулювати запит.",
+  empty_completion: "Стиліст не зміг сформувати відповідь. Спробуй запитати інакше.",
 };
 
 const WELCOME: Message = {
@@ -39,11 +58,29 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [streamingText, setStreamingText] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sampleRef = useRef<SampleFn | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const w = window as unknown as { claude?: { use: (name: string) => Promise<unknown> } };
+    if (w.claude) {
+      w.claude
+        .use("sample")
+        .then((fn) => {
+          if (!cancelled) sampleRef.current = (fn as SampleFn) ?? null;
+        })
+        .catch(() => {});
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, streamingText]);
 
   async function sendMessage(text: string) {
     const trimmed = text.trim();
@@ -54,7 +91,35 @@ export default function Chat() {
     setInput("");
     setError(null);
     setLoading(true);
+    setStreamingText(null);
 
+    // In-artifact path: ask Claude directly via the viewer's own sample
+    // capability, no backend needed.
+    if (sampleRef.current) {
+      try {
+        const turns = [
+          { role: "user" as const, content: STYLIST_SYSTEM_PROMPT },
+          ...nextMessages.slice(1).map((m) => ({ role: m.role, content: m.content })),
+        ];
+        const { text: reply } = await sampleRef.current(turns, {
+          cache: false,
+          onText: ({ text }) => setStreamingText(text),
+        });
+        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      } catch (e) {
+        const code = (e as { code?: string })?.code ?? "";
+        setError(
+          SAMPLE_ERROR_COPY[code] ??
+            "Стиліст зараз недоступний. Спробуй, будь ласка, ще раз за хвилину."
+        );
+      } finally {
+        setStreamingText(null);
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Deployed-site path: a real backend proxying to the Anthropic API.
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -67,9 +132,7 @@ export default function Chat() {
       const data = await res.json();
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply as string }]);
     } catch {
-      setError(
-        "Стиліст зараз недоступний. Спробуй, будь ласка, ще раз за хвилину."
-      );
+      setError("Стиліст зараз недоступний. Спробуй, будь ласка, ще раз за хвилину.");
     } finally {
       setLoading(false);
     }
@@ -113,7 +176,14 @@ export default function Chat() {
               </div>
             </div>
           ))}
-          {loading && (
+          {loading && streamingText && (
+            <div className="flex justify-start">
+              <div className="max-w-[80%] whitespace-pre-wrap rounded-2xl bg-[#f1ece2] px-4 py-3 text-sm leading-relaxed text-black">
+                {streamingText}
+              </div>
+            </div>
+          )}
+          {loading && !streamingText && (
             <div className="flex justify-start">
               <div className="flex items-center gap-1 rounded-2xl bg-[#f1ece2] px-4 py-3">
                 {[0, 1, 2].map((i) => (
