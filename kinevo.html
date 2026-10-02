@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KINEVO</title>
+<meta name="description" content="KINEVO — odzież i obuwie sportowe. Ruch bez granic. Odkryj kolekcję dla mężczyzn, kobiet i dzieci.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0a'/%3E%3Cpath d='M18 44 32 18l6 11-8 15z' fill='%23FF4D00'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KINEVO">
+<meta property="og:title" content="KINEVO — Ruch bez granic">
+<meta property="og:description" content="Odzież i obuwie sportowe dla tych, którzy się nie zatrzymują.">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SportingGoodsStore",
+  "name": "KINEVO",
+  "description": "Odzież i obuwie sportowe.",
+  "priceRange": "PLN",
+  "currenciesAccepted": "PLN"
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   KINEVO — tokens, reset, layout
+   ============================================================ */
+:root{
+  --bg:#ffffff;
+  --bg-elev:#f3f3f3;
+  --bg-elev-2:#e9e9e9;
+  --ink:#0a0a0a;
+  --ink-soft:rgba(10,10,10,.64);
+  --ink-faint:rgba(10,10,10,.42);
+  --line:rgba(10,10,10,.13);
+  --line-soft:rgba(10,10,10,.07);
+  --accent:#ff4d00;
+  --accent-ink:#ffffff;
+  --accent-soft:rgba(255,77,0,.12);
+  --ok:#1f8a4c;
+  --danger:#d1352b;
+  --radius-lg:22px;
+  --radius-md:14px;
+  --radius-sm:9px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --maxw:1360px;
+  --header-h:76px;
+  --font-display:'Archivo Black','Arial Black',Impact,sans-serif;
+  --font-body:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a0a0a;
+    --bg-elev:#161616;
+    --bg-elev-2:#1f1f1f;
+    --ink:#f5f5f5;
+    --ink-soft:rgba(245,245,245,.64);
+    --ink-faint:rgba(245,245,245,.42);
+    --line:rgba(245,245,245,.16);
+    --line-soft:rgba(245,245,245,.08);
+    --accent:#ff5c1a;
+    --accent-soft:rgba(255,92,26,.16);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a0a0a;
+  --bg-elev:#161616;
+  --bg-elev-2:#1f1f1f;
+  --ink:#f5f5f5;
+  --ink-soft:rgba(245,245,245,.64);
+  --ink-faint:rgba(245,245,245,.42);
+  --line:rgba(245,245,245,.16);
+  --line-soft:rgba(245,245,245,.08);
+  --accent:#ff5c1a;
+  --accent-soft:rgba(255,92,26,.16);
+}
+
+*{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-body); font-weight:400;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+  transition:background .3s var(--ease), color .3s var(--ease);
+}
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+}
+h1,h2,h3{ margin:0; font-family:var(--font-display); font-weight:400; letter-spacing:-.01em; text-transform:uppercase; }
+p{ margin:0; }
+a{ color:inherit; text-decoration:none; }
+button{ font-family:inherit; }
+ul{ margin:0; padding:0; list-style:none; }
+img,svg{ display:block; max-width:100%; }
+::selection{ background:var(--accent); color:var(--accent-ink); }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible{
+  outline:2px solid var(--accent); outline-offset:2px;
+}
+
+.wrap{ max-width:var(--maxw); margin:0 auto; padding-left:clamp(16px,4vw,48px); padding-right:clamp(16px,4vw,48px); }
+.skip-link{
+  position:fixed; top:-100px; left:12px; z-index:200; background:var(--accent); color:var(--accent-ink);
+  padding:12px 18px; border-radius:8px; font-size:14px; font-weight:700; transition:top .25s var(--ease);
+}
+.skip-link:focus{ top:12px; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+  font-weight:700; color:var(--ink-faint);
+}
+.eyebrow::before{ content:''; width:16px; height:2px; background:var(--accent); }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; height:50px; padding:0 28px;
+  border-radius:999px; border:1.5px solid var(--ink); font-size:13.5px; font-weight:700; letter-spacing:.04em;
+  text-transform:uppercase; cursor:pointer; white-space:nowrap; background:transparent; color:var(--ink);
+  transition:transform .3s var(--ease), background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+}
+.btn-primary{ background:var(--ink); color:var(--bg); }
+.btn-primary:hover{ transform:translateY(-2px); }
+.btn-ghost:hover{ background:var(--ink); color:var(--bg); }
+.btn-sm{ height:42px; padding:0 20px; font-size:12.5px; }
+.btn-block{ width:100%; }
+.btn[disabled]{ opacity:.4; cursor:not-allowed; pointer-events:none; }
+.btn-icon{
+  width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--ink);
+  display:inline-flex; align-items:center; justify-content:center; cursor:pointer; position:relative; flex-shrink:0;
+  transition:border-color .25s var(--ease), transform .25s var(--ease), background .25s var(--ease);
+}
+.btn-icon:hover{ border-color:var(--ink); transform:translateY(-1px); }
+.btn-icon svg{ width:19px; height:19px; }
+.badge-count{
+  position:absolute; top:-5px; right:-5px; min-width:18px; height:18px; padding:0 4px; border-radius:999px;
+  background:var(--accent); color:var(--accent-ink); font-size:10px; font-weight:800; display:flex; align-items:center;
+  justify-content:center; opacity:0; transform:scale(.6); transition:opacity .2s var(--ease), transform .2s var(--ease);
+}
+.badge-count.show{ opacity:1; transform:scale(1); }
+
+/* ---------- header ---------- */
+.site-header{
+  position:sticky; top:0; z-index:60; height:var(--header-h); display:flex; align-items:center;
+  background:rgba(255,255,255,.86); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft); transition:background .3s var(--ease), border-color .3s var(--ease);
+}
+:root[data-theme="dark"] .site-header{ background:rgba(10,10,10,.82); }
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .site-header{ background:rgba(10,10,10,.82); } }
+.header-row{ display:flex; align-items:center; gap:clamp(16px,3vw,36px); width:100%; }
+.logo{ font-family:var(--font-display); font-size:22px; letter-spacing:-.01em; flex-shrink:0; }
+.logo span{ color:var(--accent); }
+.main-nav{ display:flex; align-items:center; gap:clamp(14px,2vw,28px); flex-grow:1; }
+.main-nav a{
+  font-size:13.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-soft);
+  transition:color .2s var(--ease); white-space:nowrap;
+}
+.main-nav a:hover, .main-nav a.active{ color:var(--ink); }
+.header-actions{ display:flex; align-items:center; gap:8px; margin-left:auto; flex-shrink:0; }
+.nav-toggle{
+  display:none; width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:transparent;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px; cursor:pointer; flex-shrink:0;
+}
+.nav-toggle span{ width:18px; height:1.5px; background:var(--ink); transition:transform .3s var(--ease), opacity .3s var(--ease); }
+.nav-toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+
+.mobile-drawer{
+  position:fixed; inset:0 0 0 auto; width:min(340px,86vw); z-index:120; background:var(--bg);
+  transform:translateX(100%); transition:transform .4s var(--ease); display:flex; flex-direction:column;
+  padding:20px; border-left:1px solid var(--line);
+}
+.mobile-drawer.open{ transform:translateX(0); }
+.mobile-drawer-head{ display:flex; justify-content:space-between; align-items:center; }
+.mobile-drawer nav{ margin-top:28px; display:flex; flex-direction:column; }
+.mobile-drawer nav a{
+  padding:16px 2px; font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:.02em;
+  border-bottom:1px solid var(--line-soft); color:var(--ink);
+}
+.scrim{
+  position:fixed; inset:0; z-index:110; background:rgba(0,0,0,.5); opacity:0; pointer-events:none;
+  transition:opacity .35s var(--ease);
+}
+.scrim.show{ opacity:1; pointer-events:auto; }
+
+/* ---------- search overlay ---------- */
+.search-overlay{
+  position:fixed; inset:0; z-index:130; background:var(--bg); opacity:0; pointer-events:none;
+  transition:opacity .3s var(--ease); display:flex; flex-direction:column; padding:clamp(20px,5vw,60px);
+}
+.search-overlay.open{ opacity:1; pointer-events:auto; }
+.search-top{ display:flex; align-items:center; gap:16px; }
+.search-input-wrap{ flex-grow:1; position:relative; }
+.search-input{
+  width:100%; height:64px; border:none; border-bottom:2px solid var(--ink); background:transparent; color:var(--ink);
+  font-family:var(--font-display); font-size:clamp(22px,4vw,38px); text-transform:uppercase; padding:0 4px; outline:none;
+}
+.search-input::placeholder{ color:var(--ink-faint); }
+.search-suggestions{ margin-top:24px; display:flex; flex-direction:column; gap:2px; max-width:640px; }
+.search-suggestion{
+  display:flex; align-items:center; gap:16px; padding:12px 4px; border-radius:var(--radius-sm); cursor:pointer;
+  transition:background .2s var(--ease);
+}
+.search-suggestion:hover, .search-suggestion:focus-visible{ background:var(--bg-elev); }
+.search-suggestion .sg-thumb{ width:52px; height:52px; border-radius:8px; overflow:hidden; flex-shrink:0; }
+.search-suggestion .sg-name{ font-size:14.5px; font-weight:600; }
+.search-suggestion .sg-price{ font-size:13px; color:var(--ink-faint); margin-top:2px; }
+.search-empty{ margin-top:24px; color:var(--ink-faint); font-size:14px; }
+
+/* ---------- toasts ---------- */
+.toast-stack{ position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; pointer-events:none; width:min(360px,90vw); }
+.toast{
+  background:var(--ink); color:var(--bg); padding:14px 20px; border-radius:999px; font-size:13.5px; font-weight:600;
+  text-align:center; opacity:0; transform:translateY(10px); transition:opacity .3s var(--ease), transform .3s var(--ease);
+  box-shadow:0 20px 40px -20px rgba(0,0,0,.4);
+}
+.toast.show{ opacity:1; transform:translateY(0); }
+
+/* ---------- app / sections ---------- */
+#app{ min-height:60vh; }
+.section{ padding:clamp(56px,8vw,100px) clamp(16px,4vw,48px); max-width:var(--maxw); margin:0 auto; }
+.section-head{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:clamp(28px,4vw,44px); }
+.section h2{ font-size:clamp(26px,3.6vw,46px); letter-spacing:-.01em; }
+.section-lede{ margin-top:10px; font-size:15px; color:var(--ink-soft); max-width:52ch; line-height:1.6; text-transform:none; font-family:var(--font-body); }
+[data-reveal]{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+[data-reveal].in{ opacity:1; transform:translateY(0); }
+
+/* ---------- hero ---------- */
+.hero{ position:relative; height:min(92vh,880px); min-height:520px; display:flex; align-items:flex-end; overflow:hidden; }
+.hero-art{ position:absolute; inset:0; }
+.hero-art svg{ width:100%; height:100%; }
+.hero-scrim{ position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.08) 55%, rgba(0,0,0,.28) 100%); }
+.hero-content{ position:relative; z-index:1; padding:0 clamp(16px,4vw,48px) clamp(40px,6vw,72px); color:#fff; width:100%; max-width:var(--maxw); margin:0 auto; }
+.hero-content .eyebrow{ color:rgba(255,255,255,.78); }
+.hero-content .eyebrow::before{ background:var(--accent); }
+.hero h1{ font-size:clamp(44px,8vw,112px); line-height:.92; color:#fff; margin-top:14px; max-width:14ch; }
+.hero-sub{ margin-top:18px; font-size:clamp(15px,1.4vw,19px); color:rgba(255,255,255,.84); max-width:46ch; text-transform:none; font-family:var(--font-body); line-height:1.6; }
+.hero-actions{ margin-top:32px; display:flex; gap:14px; flex-wrap:wrap; }
+.hero .btn-primary{ background:#fff; color:#0a0a0b; border-color:#fff; }
+.hero .btn-ghost{ border-color:rgba(255,255,255,.6); color:#fff; }
+.hero .btn-ghost:hover{ background:#fff; color:#0a0a0b; }
+
+/* ---------- category tiles ---------- */
+.cat-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
+.cat-tile{
+  position:relative; aspect-ratio:3/4; border-radius:var(--radius-md); overflow:hidden; display:flex; align-items:flex-end;
+  padding:18px; color:#fff; cursor:pointer; transition:transform .35s var(--ease);
+}
+.cat-tile:hover{ transform:translateY(-4px); }
+.cat-tile svg{ position:absolute; inset:0; width:100%; height:100%; }
+.cat-tile span{ position:relative; z-index:1; font-family:var(--font-display); font-size:clamp(14px,1.6vw,18px); text-transform:uppercase; }
+
+/* ---------- horizontal rail ---------- */
+.rail-wrap{ position:relative; }
+.rail{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px 2px 14px; scrollbar-width:none; }
+.rail::-webkit-scrollbar{ display:none; }
+.rail .product-card{ flex:0 0 auto; width:clamp(200px,26vw,280px); scroll-snap-align:start; }
+.rail-arrows{ display:flex; gap:8px; }
+
+/* ---------- product card ---------- */
+.product-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(14px,2vw,24px); }
+.product-card{ display:flex; flex-direction:column; }
+.product-media{
+  position:relative; aspect-ratio:3/4; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-elev);
+  cursor:pointer;
+}
+.product-media .art-a, .product-media .art-b{ position:absolute; inset:0; display:block; transition:opacity .4s var(--ease); }
+.product-media .art-a svg, .product-media .art-b svg{ width:100%; height:100%; display:block; }
+.product-media .art-b{ opacity:0; }
+.product-card:hover .art-a{ opacity:0; }
+.product-card:hover .art-b{ opacity:1; }
+.media-link{ position:absolute; inset:0; z-index:1; }
+.product-badges{ position:absolute; top:10px; left:10px; z-index:2; display:flex; flex-direction:column; gap:6px; pointer-events:none; }
+.p-badge{
+  font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; border-radius:999px;
+  background:var(--accent); color:var(--accent-ink);
+}
+.p-badge.sale{ background:var(--ink); color:var(--bg); }
+.wish-btn{
+  position:absolute; top:10px; right:10px; z-index:2; width:38px; height:38px; border-radius:50%; border:none;
+  background:rgba(255,255,255,.9); color:#0a0a0a; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  transition:transform .25s var(--ease), background .25s var(--ease);
+}
+.wish-btn:hover{ transform:scale(1.08); }
+.wish-btn svg{ width:17px; height:17px; }
+.wish-btn.active svg{ fill:var(--accent); stroke:var(--accent); }
+.quick-add{
+  position:absolute; left:10px; right:10px; bottom:10px; z-index:2; height:42px; border-radius:999px; border:none;
+  background:var(--ink); color:var(--bg); font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  cursor:pointer; opacity:0; transform:translateY(8px); transition:opacity .25s var(--ease), transform .25s var(--ease);
+}
+.product-card:hover .quick-add{ opacity:1; transform:translateY(0); }
+.product-info{ margin-top:12px; }
+.product-name{ font-size:14px; font-weight:600; letter-spacing:-.005em; }
+.product-colors{ display:flex; gap:5px; margin-top:7px; }
+.color-dot{ width:13px; height:13px; border-radius:50%; border:1px solid var(--line); }
+.product-price-row{ margin-top:7px; display:flex; align-items:center; gap:8px; }
+.product-price{ font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums; }
+.product-price.old{ font-weight:500; color:var(--ink-faint); text-decoration:line-through; font-size:13px; }
+.product-price.sale{ color:var(--accent); }
+
+/* ---------- promo banner ---------- */
+.promo-banner{
+  border-radius:var(--radius-lg); background:var(--ink); color:var(--bg); padding:clamp(36px,6vw,64px);
+  display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:24px; overflow:hidden; position:relative;
+}
+.promo-banner::before{
+  content:''; position:absolute; right:-60px; top:50%; transform:translateY(-50%); width:300px; height:300px;
+  border-radius:50%; background:var(--accent); opacity:.18; filter:blur(10px);
+}
+.promo-banner h2{ color:var(--bg); position:relative; z-index:1; max-width:12ch; }
+.promo-banner p{ margin-top:10px; color:rgba(255,255,255,.7); font-size:14.5px; position:relative; z-index:1; }
+:root[data-theme="dark"] .promo-banner p, :root:not([data-theme="light"]) .promo-banner p{ color:rgba(10,10,10,.65); }
+.promo-banner .btn{ position:relative; z-index:1; }
+.promo-banner .btn-primary{ background:var(--bg); color:var(--ink); border-color:var(--bg); }
+
+/* ---------- newsletter ---------- */
+.newsletter{ text-align:center; }
+.newsletter h2{ max-width:18ch; margin:0 auto; }
+.newsletter-form{ margin:26px auto 0; display:flex; gap:10px; max-width:460px; flex-wrap:wrap; justify-content:center; }
+.newsletter-form input{
+  flex:1; min-width:200px; height:52px; border-radius:999px; border:1.5px solid var(--line); background:var(--bg-elev);
+  color:var(--ink); padding:0 22px; font-size:14px; outline:none; transition:border-color .25s var(--ease);
+}
+.newsletter-form input:focus-visible{ border-color:var(--ink); }
+.newsletter-note{ margin-top:14px; font-size:12.5px; color:var(--ink-faint); min-height:1.4em; }
+
+/* ---------- breadcrumb ---------- */
+.crumbs{ font-size:12.5px; color:var(--ink-faint); display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.crumbs a:hover{ color:var(--ink); }
+
+/* ---------- catalog ---------- */
+.catalog-head{ padding:clamp(28px,5vw,48px) clamp(16px,4vw,48px) 0; max-width:var(--maxw); margin:0 auto; }
+.catalog-head h1{ font-size:clamp(32px,5vw,58px); }
+.catalog-head .count{ margin-top:8px; font-size:13.5px; color:var(--ink-faint); text-transform:none; font-family:var(--font-body); }
+.catalog-body{ max-width:var(--maxw); margin:0 auto; padding:clamp(24px,4vw,40px) clamp(16px,4vw,48px) 80px; display:grid; grid-template-columns:240px 1fr; gap:clamp(24px,3vw,40px); align-items:flex-start; }
+.filters{ position:sticky; top:calc(var(--header-h) + 20px); display:flex; flex-direction:column; gap:26px; }
+.filter-group summary{ cursor:pointer; font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; padding:4px 0; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+.filter-group summary::-webkit-details-marker{ display:none; }
+.filter-group summary .chev{ width:12px; height:12px; transition:transform .25s var(--ease); }
+.filter-group[open] summary .chev{ transform:rotate(180deg); }
+.filter-opts{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+.filter-opt{ display:flex; align-items:center; gap:9px; font-size:13.5px; color:var(--ink-soft); cursor:pointer; }
+.filter-opt input{ accent-color:var(--ink); width:15px; height:15px; }
+.filter-opt:hover{ color:var(--ink); }
+.size-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+.size-chip{
+  height:36px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--ink); font-size:12.5px;
+  cursor:pointer; transition:border-color .2s var(--ease), background .2s var(--ease), color .2s var(--ease);
+}
+.size-chip:hover{ border-color:var(--ink); }
+.size-chip.active{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+.color-grid{ display:flex; flex-wrap:wrap; gap:8px; }
+.color-chip{ width:26px; height:26px; border-radius:50%; border:2px solid transparent; box-shadow:0 0 0 1px var(--line); cursor:pointer; }
+.color-chip.active{ border-color:var(--bg); box-shadow:0 0 0 2px var(--ink); }
+.clear-filters{ font-size:12.5px; text-decoration:underline; color:var(--ink-faint); align-self:flex-start; cursor:pointer; background:none; border:none; padding:0; }
+.catalog-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+.sort-select{
+  height:44px; border-radius:999px; border:1px solid var(--line); background:var(--bg); color:var(--ink); padding:0 36px 0 18px;
+  font-size:13px; font-weight:600; cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a0a0a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center; background-size:16px;
+}
+:root[data-theme="dark"] .sort-select, :root:not([data-theme="light"]) .sort-select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+.mobile-filter-btn{ display:none; }
+.empty-state{ padding:80px 20px; text-align:center; color:var(--ink-faint); font-size:15px; }
+
+/* ---------- product page ---------- */
+.product-page{ max-width:var(--maxw); margin:0 auto; padding:clamp(24px,4vw,40px) clamp(16px,4vw,48px) 90px; }
+.product-layout{ display:grid; grid-template-columns:1fr 440px; gap:clamp(28px,4vw,56px); align-items:flex-start; }
+.pg-gallery-main{ aspect-ratio:4/5; border-radius:var(--radius-lg); overflow:hidden; background:var(--bg-elev); cursor:zoom-in; position:relative; }
+.pg-gallery-main svg{ width:100%; height:100%; transition:transform .5s var(--ease); }
+.pg-gallery-main.zoomed svg{ transform:scale(1.6); }
+.pg-thumbs{ display:flex; gap:10px; margin-top:12px; }
+.pg-thumb{ width:76px; height:92px; border-radius:10px; overflow:hidden; border:2px solid transparent; cursor:pointer; background:var(--bg-elev); flex-shrink:0; }
+.pg-thumb.active{ border-color:var(--ink); }
+.pg-info{ position:sticky; top:calc(var(--header-h) + 20px); }
+.pg-info h1{ font-size:clamp(24px,2.6vw,32px); text-transform:none; letter-spacing:-.01em; }
+.pg-rating{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; color:var(--ink-soft); }
+.pg-rating .stars{ color:var(--accent); letter-spacing:1px; }
+.pg-price-row{ margin-top:16px; display:flex; align-items:center; gap:12px; }
+.pg-price{ font-size:26px; font-weight:800; font-variant-numeric:tabular-nums; }
+.pg-price.old{ font-size:17px; font-weight:500; color:var(--ink-faint); text-decoration:line-through; }
+.pg-section-label{ margin-top:26px; display:flex; justify-content:space-between; align-items:center; font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+.pg-size-link{ font-size:12px; text-decoration:underline; color:var(--ink-soft); cursor:pointer; background:none; border:none; font-weight:600; text-transform:none; letter-spacing:0; }
+.pg-colors{ display:flex; gap:10px; margin-top:12px; }
+.pg-color{ width:34px; height:34px; border-radius:50%; border:2px solid transparent; box-shadow:0 0 0 1px var(--line); cursor:pointer; }
+.pg-color.active{ border-color:var(--bg); box-shadow:0 0 0 2px var(--ink); }
+.pg-sizes{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
+.pg-actions{ margin-top:26px; display:flex; gap:10px; }
+.pg-actions .btn-primary{ flex-grow:1; }
+.pg-note{ margin-top:12px; font-size:12px; color:var(--danger); min-height:1.3em; }
+.pg-perks{ margin-top:26px; display:flex; flex-direction:column; gap:10px; }
+.pg-perk{ display:flex; gap:10px; align-items:center; font-size:13px; color:var(--ink-soft); }
+.pg-perk svg{ width:16px; height:16px; color:var(--accent); flex-shrink:0; }
+.pg-tabs{ margin-top:30px; border-top:1px solid var(--line); }
+.pg-tab{ border-bottom:1px solid var(--line); }
+.pg-tab summary{ padding:16px 2px; font-size:13.5px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; cursor:pointer; list-style:none; display:flex; justify-content:space-between; }
+.pg-tab summary::-webkit-details-marker{ display:none; }
+.pg-tab-body{ padding:0 2px 18px; font-size:13.5px; color:var(--ink-soft); line-height:1.6; }
+.reviews-list{ margin-top:18px; display:flex; flex-direction:column; gap:18px; }
+.review-item{ border-bottom:1px solid var(--line-soft); padding-bottom:16px; }
+.review-item .stars{ color:var(--accent); font-size:13px; letter-spacing:1px; }
+.review-item .r-name{ font-size:12.5px; color:var(--ink-faint); margin-top:6px; }
+.review-item p{ margin-top:8px; font-size:13.5px; line-height:1.6; }
+
+/* ---------- size chart modal ---------- */
+.modal-overlay{ position:fixed; inset:0; z-index:150; background:rgba(0,0,0,.55); opacity:0; pointer-events:none; transition:opacity .3s var(--ease); display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.open{ opacity:1; pointer-events:auto; }
+.modal{ background:var(--bg); border-radius:var(--radius-lg); max-width:520px; width:100%; max-height:84vh; overflow-y:auto; padding:30px; transform:scale(.94); transition:transform .3s var(--ease); }
+.modal-overlay.open .modal{ transform:scale(1); }
+.modal-head{ display:flex; justify-content:space-between; align-items:center; }
+.modal-head h3{ font-size:18px; text-transform:none; }
+.size-table{ width:100%; border-collapse:collapse; margin-top:18px; font-size:13px; }
+.size-table th, .size-table td{ padding:9px 8px; border-bottom:1px solid var(--line-soft); text-align:left; font-variant-numeric:tabular-nums; }
+.size-table th{ color:var(--ink-faint); font-weight:700; text-transform:uppercase; font-size:11px; letter-spacing:.04em; }
+
+/* ---------- cart drawer ---------- */
+.cart-overlay{ position:fixed; inset:0; z-index:140; background:rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:opacity .35s var(--ease); }
+.cart-overlay.open{ opacity:1; pointer-events:auto; }
+.cart-drawer{
+  position:fixed; top:0; right:0; bottom:0; z-index:141; width:min(420px,100%); background:var(--bg); border-left:1px solid var(--line);
+  display:flex; flex-direction:column; transform:translateX(100%); transition:transform .4s var(--ease); padding:22px clamp(18px,4vw,26px);
+}
+.cart-drawer.open{ transform:translateX(0); }
+.cart-head{ display:flex; justify-content:space-between; align-items:center; }
+.cart-head h3{ font-size:18px; text-transform:uppercase; }
+.cart-items{ margin-top:20px; display:flex; flex-direction:column; gap:18px; overflow-y:auto; flex-grow:1; }
+.cart-empty{ text-align:center; color:var(--ink-faint); font-size:14px; padding:40px 0; }
+.cart-line{ display:flex; gap:12px; }
+.cart-line .cl-thumb{ width:76px; height:92px; border-radius:10px; overflow:hidden; flex-shrink:0; background:var(--bg-elev); }
+.cl-info{ flex-grow:1; min-width:0; }
+.cl-name{ font-size:13.5px; font-weight:600; }
+.cl-meta{ font-size:12px; color:var(--ink-faint); margin-top:3px; }
+.cl-bottom{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+.cl-qty{ display:flex; align-items:center; gap:10px; }
+.cl-qty button{ width:24px; height:24px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--ink); cursor:pointer; font-size:14px; line-height:1; }
+.cl-qty span{ min-width:14px; text-align:center; font-size:13px; font-variant-numeric:tabular-nums; }
+.cl-remove{ font-size:12px; text-decoration:underline; color:var(--ink-faint); background:none; border:none; cursor:pointer; }
+.cl-price{ font-size:13.5px; font-weight:700; }
+.cart-foot{ border-top:1px solid var(--line); padding-top:18px; margin-top:12px; }
+.promo-row{ display:flex; gap:8px; margin-bottom:16px; }
+.promo-row input{ flex-grow:1; height:42px; border-radius:999px; border:1px solid var(--line); background:var(--bg-elev); color:var(--ink); padding:0 16px; font-size:13px; outline:none; }
+.promo-row input:focus-visible{ border-color:var(--ink); }
+.sum-row{ display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:8px; color:var(--ink-soft); }
+.sum-row.total{ font-size:16px; font-weight:800; color:var(--ink); margin-top:10px; }
+.promo-note{ font-size:12px; margin-top:8px; min-height:1.3em; }
+.promo-note.ok{ color:var(--ok); }
+.promo-note.err{ color:var(--danger); }
+
+/* ---------- favorites grid reuse product-grid ---------- */
+
+/* ---------- about / contact ---------- */
+.about-hero{ padding:clamp(60px,9vw,110px) clamp(16px,4vw,48px); max-width:900px; margin:0 auto; text-align:center; }
+.about-hero h1{ font-size:clamp(34px,5vw,64px); }
+.about-hero p{ margin-top:18px; font-size:15.5px; color:var(--ink-soft); text-transform:none; font-family:var(--font-body); line-height:1.7; }
+.values-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.value-card{ padding:28px 22px; border:1px solid var(--line); border-radius:var(--radius-md); }
+.value-card h3{ font-size:16px; text-transform:none; letter-spacing:0; }
+.value-card p{ margin-top:10px; font-size:13.5px; color:var(--ink-soft); line-height:1.55; text-transform:none; font-family:var(--font-body); }
+
+.contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,4vw,56px); }
+.contact-form{ display:flex; flex-direction:column; gap:14px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); }
+.field input, .field textarea, .field select{
+  height:50px; border-radius:var(--radius-sm); border:1px solid var(--line); background:var(--bg-elev); color:var(--ink);
+  padding:0 16px; font-size:14px; outline:none; font-family:inherit; transition:border-color .2s var(--ease);
+}
+.field textarea{ height:120px; padding:12px 16px; resize:vertical; }
+.field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible{ border-color:var(--ink); }
+.contact-info-list{ display:flex; flex-direction:column; gap:18px; }
+.contact-info-item h4{ font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-faint); font-weight:700; }
+.contact-info-item p{ margin-top:6px; font-size:15px; }
+
+/* ---------- checkout ---------- */
+.checkout-layout{ display:grid; grid-template-columns:1fr 400px; gap:clamp(28px,4vw,56px); align-items:flex-start; }
+.checkout-steps{ display:flex; gap:10px; margin-bottom:28px; }
+.checkout-step{ font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); display:flex; align-items:center; gap:8px; }
+.checkout-step.active{ color:var(--ink); }
+.checkout-step b{ width:22px; height:22px; border-radius:50%; background:var(--bg-elev); display:flex; align-items:center; justify-content:center; font-size:11px; }
+.checkout-step.active b{ background:var(--ink); color:var(--bg); }
+.pay-options{ display:flex; flex-direction:column; gap:10px; }
+.pay-opt{ display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px; cursor:pointer; transition:border-color .2s var(--ease); }
+.pay-opt:hover{ border-color:var(--ink-soft); }
+.pay-opt.active{ border-color:var(--ink); }
+.pay-opt input{ accent-color:var(--ink); width:16px; height:16px; }
+.pay-opt span{ font-size:14px; font-weight:600; }
+.summary-card{ border:1px solid var(--line); border-radius:var(--radius-lg); padding:22px; position:sticky; top:calc(var(--header-h) + 20px); }
+.order-confirm{ text-align:center; padding:60px 20px; }
+.order-confirm svg{ width:64px; height:64px; margin:0 auto; color:var(--ok); }
+.order-confirm h2{ margin-top:20px; }
+.order-confirm p{ margin-top:12px; color:var(--ink-soft); text-transform:none; font-family:var(--font-body); font-size:14.5px; }
+
+/* ---------- account ---------- */
+.account-layout{ display:grid; grid-template-columns:220px 1fr; gap:clamp(24px,3vw,40px); }
+.account-nav{ display:flex; flex-direction:column; gap:4px; }
+.account-nav button{ text-align:left; background:none; border:none; padding:12px 10px; border-radius:var(--radius-sm); font-size:13.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; }
+.account-nav button.active{ background:var(--bg-elev); color:var(--ink); }
+.order-row{ display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--line-soft); font-size:13.5px; gap:12px; flex-wrap:wrap; }
+.order-row .o-id{ font-weight:700; }
+.order-row .o-status{ font-size:11.5px; font-weight:700; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:var(--bg-elev); }
+
+/* ---------- footer ---------- */
+.site-footer{ border-top:1px solid var(--line-soft); margin-top:40px; }
+.foot-top{ max-width:var(--maxw); margin:0 auto; padding:clamp(48px,6vw,70px) clamp(16px,4vw,48px) clamp(32px,4vw,44px); display:grid; grid-template-columns:1.3fr repeat(3,1fr); gap:32px; }
+.foot-brand .logo{ display:block; }
+.foot-brand p{ margin-top:14px; font-size:13px; color:var(--ink-faint); max-width:32ch; line-height:1.6; text-transform:none; font-family:var(--font-body); }
+.foot-social{ display:flex; gap:10px; margin-top:18px; }
+.foot-col h4{ font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 14px; font-weight:800; }
+.foot-col a{ display:block; font-size:13.5px; color:var(--ink-soft); margin-bottom:11px; transition:color .2s var(--ease); }
+.foot-col a:hover{ color:var(--ink); }
+.foot-payments{ display:flex; gap:8px; margin-top:4px; flex-wrap:wrap; }
+.pay-icon{ height:26px; padding:0 10px; border:1px solid var(--line); border-radius:6px; display:flex; align-items:center; font-size:10.5px; font-weight:800; letter-spacing:.03em; color:var(--ink-faint); }
+.foot-bottom{ max-width:var(--maxw); margin:0 auto; padding:18px clamp(16px,4vw,48px) 30px; border-top:1px solid var(--line-soft); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-faint); }
+.foot-bottom a:hover{ color:var(--ink); }
+
+/* ---------- stats strip ---------- */
+.stats-strip{ display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); max-width:var(--maxw); margin:0 auto; }
+.stat-cell{ text-align:center; padding:clamp(28px,4vw,40px) 10px; border-left:1px solid var(--line-soft); }
+.stat-cell:first-child{ border-left:none; }
+.stat-cell b{ display:block; font-family:var(--font-display); font-size:clamp(22px,2.6vw,32px); }
+.stat-cell span{ display:block; margin-top:6px; font-size:11.5px; color:var(--ink-faint); letter-spacing:.03em; text-transform:uppercase; }
+
+/* ============================================================
+   responsive
+   ============================================================ */
+@media (max-width:1100px){
+  .product-grid{ grid-template-columns:repeat(3,1fr); }
+  .cat-grid{ grid-template-columns:repeat(3,1fr); }
+  .product-layout, .checkout-layout, .contact-grid{ grid-template-columns:1fr; }
+  .pg-info, .summary-card{ position:static; }
+}
+@media (max-width:980px){
+  .main-nav{ display:none; }
+  .nav-toggle{ display:flex; }
+  .catalog-body{ grid-template-columns:1fr; }
+  .filters{ display:none; }
+  .filters.mobile-open{
+    display:flex; position:fixed; inset:0; z-index:145; background:var(--bg); padding:24px; overflow-y:auto;
+    position:sticky; top:0;
+  }
+  .mobile-filter-btn{ display:inline-flex; }
+  .stats-strip{ grid-template-columns:repeat(2,1fr); }
+  .stat-cell:nth-child(3){ border-left:none; }
+}
+@media (max-width:720px){
+  .cat-grid{ grid-template-columns:repeat(2,1fr); }
+  .product-grid{ grid-template-columns:repeat(2,1fr); }
+  .foot-top{ grid-template-columns:1fr 1fr; }
+  .values-grid{ grid-template-columns:1fr; }
+  .account-layout{ grid-template-columns:1fr; }
+}
+@media (max-width:560px){
+  .cat-grid{ grid-template-columns:repeat(2,1fr); }
+  .hero h1{ font-size:clamp(36px,10vw,56px); }
+  .foot-top{ grid-template-columns:1fr; }
+  .pg-sizes{ grid-template-columns:repeat(3,1fr); }
+}
+@media (max-width:400px){
+  .logo{ font-size:18px; }
+  .header-row{ gap:10px; }
+  .header-actions{ gap:4px; }
+  .btn-icon, .nav-toggle{ width:38px; height:38px; }
+  .btn-icon svg{ width:17px; height:17px; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#app">Przejdź do treści</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="logo" href="#/" data-link><span>KI</span>NEVO</a>
+    <nav class="main-nav" id="mainNav" aria-label="Główna">
+      <a href="#/catalog?gender=meskie" data-link>Mężczyźni</a>
+      <a href="#/catalog?gender=damskie" data-link>Kobiety</a>
+      <a href="#/catalog?gender=dzieciece" data-link>Dzieci</a>
+      <a href="#/catalog?type=obuwie" data-link>Obuwie</a>
+      <a href="#/catalog?type=akcesoria" data-link>Akcesoria</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-icon" id="themeToggle" type="button" aria-label="Przełącz motyw">
+        <svg id="themeIconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+        <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="btn-icon" id="searchBtn" type="button" aria-label="Szukaj">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button class="btn-icon" id="favBtn" type="button" aria-label="Ulubione">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.5 5.6 4A5.8 5.8 0 0 1 12 7a5.8 5.8 0 0 1 6.4-3c3.6.5 5.2 4.2 3.6 7.7C19.5 16.4 12 21 12 21z"/></svg>
+        <span class="badge-count" id="favCount">0</span>
+      </button>
+      <button class="btn-icon" id="cartBtn" type="button" aria-label="Koszyk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.6 12.4a2 2 0 0 0 2 1.6h8a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+        <span class="badge-count" id="cartCount">0</span>
+      </button>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileDrawer" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="mobile-drawer" id="mobileDrawer" aria-label="Menu mobilne">
+  <div class="mobile-drawer-head">
+    <span class="logo"><span>KI</span>NEVO</span>
+    <button class="btn-icon" id="drawerClose" type="button" aria-label="Zamknij menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <nav>
+    <a href="#/catalog?gender=meskie" data-link>Mężczyźni</a>
+    <a href="#/catalog?gender=damskie" data-link>Kobiety</a>
+    <a href="#/catalog?gender=dzieciece" data-link>Dzieci</a>
+    <a href="#/catalog?type=obuwie" data-link>Obuwie</a>
+    <a href="#/catalog?type=akcesoria" data-link>Akcesoria</a>
+    <a href="#/about" data-link>O nas</a>
+    <a href="#/contact" data-link>Kontakt</a>
+  </nav>
+</aside>
+
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-top">
+    <div class="search-input-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="Szukaj produktów…" autocomplete="off">
+    </div>
+    <button class="btn-icon" id="searchClose" type="button" aria-label="Zamknij wyszukiwanie">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="search-suggestions" id="searchSuggestions"></div>
+</div>
+
+<main id="app"></main>
+
+<footer class="site-footer">
+  <div class="foot-top">
+    <div class="foot-brand">
+      <a class="logo" href="#/" data-link><span>KI</span>NEVO</a>
+      <p>Odzież i obuwie sportowe projektowane dla ruchu — treningu, miasta i wszystkiego pomiędzy.</p>
+      <div class="foot-social">
+        <a class="btn-icon" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a class="btn-icon" href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4v9.5a3.5 3.5 0 1 1-3-3.46"/><path d="M14 4c0 2.5 2 4.5 4.5 4.5"/></svg></a>
+        <a class="btn-icon" href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="4"/><path d="M11 10v4l3.5-2z" fill="currentColor" stroke="none"/></svg></a>
+      </div>
+    </div>
+    <div class="foot-col">
+      <h4>Sklep</h4>
+      <a href="#/catalog?gender=meskie" data-link>Mężczyźni</a>
+      <a href="#/catalog?gender=damskie" data-link>Kobiety</a>
+      <a href="#/catalog?gender=dzieciece" data-link>Dzieci</a>
+      <a href="#/catalog?type=obuwie" data-link>Obuwie</a>
+    </div>
+    <div class="foot-col">
+      <h4>Obsługa klienta</h4>
+      <a href="#/contact" data-link>Kontakt</a>
+      <a href="#" data-help="delivery">Dostawa i zwroty</a>
+      <a href="#" data-help="sizes">Tabela rozmiarów</a>
+      <a href="#" data-help="faq">FAQ</a>
+    </div>
+    <div class="foot-col">
+      <h4>Firma</h4>
+      <a href="#/about" data-link>O nas</a>
+      <a href="#" data-help="privacy">Polityka prywatności</a>
+      <a href="#" data-help="terms">Regulamin</a>
+      <div style="margin-top:16px;">
+        <h4>Płatności</h4>
+        <div class="foot-payments">
+          <span class="pay-icon">BLIK</span><span class="pay-icon">VISA</span><span class="pay-icon">PayPal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <p>&copy; 2026 KINEVO. Projekt koncepcyjny do celów demonstracyjnych.</p>
+    <p><a href="#" data-help="privacy">Prywatność</a> · <a href="#" data-help="terms">Regulamin</a></p>
+  </div>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer" role="dialog" aria-label="Koszyk" aria-hidden="true">
+  <div class="cart-head">
+    <h3>Koszyk</h3>
+    <button class="btn-icon" id="cartClose" type="button" aria-label="Zamknij koszyk">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot" id="cartFoot"></div>
+</aside>
+
+<div class="modal-overlay" id="sizeModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Tabela rozmiarów</h3>
+      <button class="btn-icon" id="sizeModalClose" type="button" aria-label="Zamknij">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="sizeModalBody"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="helpModalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="helpModalTitle">Informacje</h3>
+      <button class="btn-icon" id="helpModalClose" type="button" aria-label="Zamknij">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="helpModalBody" style="margin-top:16px; font-size:13.5px; line-height:1.7; color:var(--ink-soft);"></div>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script>
+(function(){
+  "use strict";
+  /* ============================================================
+     KINEVO — application state, data, rendering, routing
+     ============================================================ */
+
+  var qs = function(s, ctx){ return (ctx||document).querySelector(s); };
+  var qsa = function(s, ctx){ return [].slice.call((ctx||document).querySelectorAll(s)); };
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- persisted state ---------- */
+  var STORE_KEY = 'kinevo_state_v1';
+  function loadState(){
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return { cart: [], favorites: [], theme: null, promo: null, orders: [] };
+  }
+  function saveState(){
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  var state = loadState();
+  if (!state.cart) state.cart = [];
+  if (!state.favorites) state.favorites = [];
+  if (!state.orders) state.orders = [];
+
+  /* ---------- product catalog ---------- */
+  var ODZIEZ_SIZES = ['XS','S','M','L','XL','XXL'];
+  var BUTY_SIZES = ['38','39','40','41','42','43','44','45'];
+  var JEDEN = ['Uniwersalny'];
+
+  var C = {
+    black:{ n:'Czarny', h:'#111111' },
+    white:{ n:'Biały', h:'#f2f2f0' },
+    volt:{ n:'Volt', h:'#ff4d00' },
+    grey:{ n:'Szary', h:'#9a9a9a' },
+    navy:{ n:'Granatowy', h:'#1f2a44' },
+    red:{ n:'Czerwony', h:'#c8351f' },
+    green:{ n:'Zielony', h:'#2f6b4f' },
+    sand:{ n:'Piaskowy', h:'#cbb892' },
+    pink:{ n:'Róż', h:'#e3a6ad' }
+  };
+
+  function P(o){ return o; }
+  var PRODUCTS = [
+    P({ id:1, name:'Buty biegowe Kinevo Pulse', type:'obuwie', gender:'meskie', price:329, old:null, colors:[C.black,C.white,C.volt], sizes:BUTY_SIZES, silhouette:'shoe', palette:'p1', badge:'new', rating:4.6, reviews:128,
+      desc:'Lekkie buty biegowe z responsywną amortyzacją do codziennych treningów i długich dystansów.', comp:'Cholewka: 100% poliester z siatką oddychającą. Podeszwa: pianka EVA + guma.', care:'Czyścić wilgotną szmatką. Nie prać w pralce. Suszyć z dala od źródeł ciepła.' }),
+    P({ id:2, name:'Sneakersy Kinevo Street', type:'obuwie', gender:'unisex', price:279, old:349, colors:[C.white,C.black], sizes:BUTY_SIZES, silhouette:'shoe', palette:'p2', badge:'sale', rating:4.8, reviews:212,
+      desc:'Miejskie sneakersy łączące styl streetwear z komfortem na cały dzień.', comp:'Cholewka: skóra ekologiczna. Podeszwa: guma antypoślizgowa.', care:'Czyścić szczotką na sucho. Impregnować przed pierwszym użyciem.' }),
+    P({ id:3, name:'Buty treningowe Kinevo Flex', type:'obuwie', gender:'damskie', price:299, old:null, colors:[C.black,C.pink,C.white], sizes:BUTY_SIZES, silhouette:'shoe', palette:'p3', badge:null, rating:4.4, reviews:76,
+      desc:'Stabilne buty treningowe na siłownię i zajęcia grupowe, elastyczne w zgięciu stopy.', comp:'Cholewka: dzianina inżynierska. Podeszwa: TPU + guma.', care:'Prać ręcznie w zimnej wodzie. Suszyć w temperaturze pokojowej.' }),
+    P({ id:4, name:'Buty do koszykówki Kinevo Rise', type:'obuwie', gender:'meskie', price:449, old:null, colors:[C.black,C.red,C.navy], sizes:BUTY_SIZES, silhouette:'shoe', palette:'p4', badge:'bestseller', rating:4.7, reviews:164,
+      desc:'Wysokie buty do koszykówki z dodatkową stabilizacją kostki i amortyzacją przy lądowaniu.', comp:'Cholewka: syntetyk + siatka. Podeszwa: pianka kompresyjna.', care:'Czyścić wilgotną szmatką po każdym treningu.' }),
+    P({ id:5, name:'Sneakersy Kinevo Low', type:'obuwie', gender:'damskie', price:259, old:null, colors:[C.white,C.sand,C.black], sizes:BUTY_SIZES, silhouette:'shoe', palette:'p5', badge:null, rating:4.5, reviews:98,
+      desc:'Niskie sneakersy o minimalistycznym kroju, uniwersalne do większości stylizacji.', comp:'Cholewka: skóra ekologiczna. Podeszwa: guma.', care:'Czyścić szczotką na sucho.' }),
+    P({ id:6, name:'Buty trailowe Kinevo Trail', type:'obuwie', gender:'meskie', price:389, old:null, colors:[C.green,C.black,C.grey], sizes:BUTY_SIZES, silhouette:'shoe', palette:'p6', badge:'new', rating:4.6, reviews:54,
+      desc:'Buty trailowe z agresywnym bieżnikiem i membraną chroniącą przed wilgocią.', comp:'Cholewka: ripstop + membrana wodoodporna. Podeszwa: guma Vibram-style.', care:'Czyścić po każdym wyjściu na szlak. Impregnować co 3 miesiące.' }),
+
+    P({ id:7, name:'Bluza Kinevo Core Hoodie', type:'odziez', gender:'meskie', price:249, old:null, colors:[C.black,C.grey,C.navy], sizes:ODZIEZ_SIZES, silhouette:'hoodie', palette:'p7', badge:'bestseller', rating:4.8, reviews:301,
+      desc:'Ciężka bluza z kapturem o prostym kroju, nasz najczęściej wybierany model.', comp:'80% bawełna, 20% poliester, 320 g/m².', care:'Prać w 30°C. Nie wybielać. Prasować w niskiej temperaturze.' }),
+    P({ id:8, name:'T-shirt Kinevo Dry Tee', type:'odziez', gender:'meskie', price:99, old:null, colors:[C.black,C.white,C.volt], sizes:ODZIEZ_SIZES, silhouette:'tshirt', palette:'p8', badge:null, rating:4.5, reviews:189,
+      desc:'Treningowy t-shirt z technologią odprowadzania wilgoci, lekki i przewiewny.', comp:'100% poliester z technologią Dry-Flow.', care:'Prać w 30°C z podobnymi kolorami. Nie prasować nadruku.' }),
+    P({ id:9, name:'Spodenki Kinevo Sprint', type:'odziez', gender:'meskie', price:119, old:149, colors:[C.black,C.navy], sizes:ODZIEZ_SIZES, silhouette:'shorts', palette:'p9', badge:'sale', rating:4.3, reviews:67,
+      desc:'Lekkie spodenki biegowe z wewnętrzną podszewką i kieszonką na kluczyki.', comp:'100% poliester.', care:'Prać w 30°C. Suszyć na sznurku.' }),
+    P({ id:10, name:'Kurtka Kinevo Wind Shell', type:'odziez', gender:'meskie', price:379, old:null, colors:[C.black,C.navy,C.volt], sizes:ODZIEZ_SIZES, silhouette:'jacket', palette:'p10', badge:'new', rating:4.7, reviews:42,
+      desc:'Wiatroszczelna kurtka treningowa, pakowana do małej kieszeni.', comp:'100% nylon z powłoką DWR.', care:'Prać w 30°C w worku do prania. Nie używać zmiękczacza.' }),
+    P({ id:11, name:'Legginsy Kinevo Compression', type:'odziez', gender:'meskie', price:159, old:null, colors:[C.black,C.grey], sizes:ODZIEZ_SIZES, silhouette:'leggings', palette:'p11', badge:null, rating:4.4, reviews:58,
+      desc:'Legginsy kompresyjne wspierające mięśnie podczas intensywnego treningu.', comp:'78% poliester, 22% elastan.', care:'Prać w 30°C. Nie suszyć w suszarce.' }),
+
+    P({ id:12, name:'Top Kinevo Flow', type:'odziez', gender:'damskie', price:109, old:null, colors:[C.black,C.pink,C.white], sizes:ODZIEZ_SIZES, silhouette:'tshirt', palette:'p12', badge:null, rating:4.6, reviews:143,
+      desc:'Dopasowany top treningowy z wbudowaną wyściółką, idealny na jogę i siłownię.', comp:'88% poliamid, 12% elastan.', care:'Prać ręcznie lub w 30°C w worku do prania.' }),
+    P({ id:13, name:'Legginsy Kinevo Sculpt', type:'odziez', gender:'damskie', price:189, old:229, colors:[C.black,C.navy,C.sand], sizes:ODZIEZ_SIZES, silhouette:'leggings', palette:'p13', badge:'sale', rating:4.9, reviews:412,
+      desc:'Legginsy modelujące sylwetkę z wysokim stanem, nasz bestseller damski.', comp:'75% poliamid, 25% elastan.', care:'Prać w 30°C. Nie prasować.' }),
+    P({ id:14, name:'Bluza Kinevo Soft Hoodie', type:'odziez', gender:'damskie', price:229, old:null, colors:[C.white,C.pink,C.grey], sizes:ODZIEZ_SIZES, silhouette:'hoodie', palette:'p14', badge:'bestseller', rating:4.7, reviews:256,
+      desc:'Miękka bluza z kapturem o luźnym kroju oversize.', comp:'70% bawełna, 30% poliester.', care:'Prać w 30°C. Prasować na lewej stronie.' }),
+    P({ id:15, name:'Spodnie Kinevo Jogger', type:'odziez', gender:'damskie', price:169, old:null, colors:[C.black,C.sand], sizes:ODZIEZ_SIZES, silhouette:'shorts', palette:'p15', badge:null, rating:4.5, reviews:88,
+      desc:'Spodnie jogger ze ściągaczami, idealne na trening i co dzień.', comp:'95% bawełna, 5% elastan.', care:'Prać w 30°C.' }),
+    P({ id:16, name:'Kurtka Kinevo Rain Shell', type:'odziez', gender:'damskie', price:349, old:null, colors:[C.navy,C.black,C.pink], sizes:ODZIEZ_SIZES, silhouette:'jacket', palette:'p16', badge:'new', rating:4.6, reviews:37,
+      desc:'Przeciwdeszczowa kurtka z regulowanym kapturem, w pełni wodoodporna.', comp:'100% poliester z laminatem wodoodpornym 10 000 mm.', care:'Prać w 30°C. Odnawiać impregnację co sezon.' }),
+
+    P({ id:17, name:'T-shirt Kinevo Kids Tee', type:'odziez', gender:'dzieciece', price:69, old:null, colors:[C.volt,C.white,C.navy], sizes:['104','110','116','122','128','134'], silhouette:'tshirt', palette:'p17', badge:null, rating:4.7, reviews:64,
+      desc:'Lekki t-shirt dziecięcy odporny na częste pranie i zabawę.', comp:'100% bawełna organiczna.', care:'Prać w 40°C. Można suszyć w suszarce.' }),
+    P({ id:18, name:'Bluza Kinevo Kids Hoodie', type:'odziez', gender:'dzieciece', price:129, old:null, colors:[C.black,C.volt], sizes:['104','110','116','122','128','134'], silhouette:'hoodie', palette:'p18', badge:'new', rating:4.8, reviews:51,
+      desc:'Ciepła bluza z kapturem dla małych sportowców.', comp:'80% bawełna, 20% poliester.', care:'Prać w 40°C.' }),
+    P({ id:19, name:'Buty Kinevo Kids Runner', type:'obuwie', gender:'dzieciece', price:179, old:null, colors:[C.white,C.volt,C.navy], sizes:['28','29','30','31','32','33','34'], silhouette:'shoe', palette:'p19', badge:'bestseller', rating:4.6, reviews:92,
+      desc:'Buty dziecięce z zapięciem na rzep, lekkie i łatwe do założenia.', comp:'Cholewka: siatka oddychająca. Podeszwa: guma.', care:'Czyścić wilgotną szmatką.' }),
+    P({ id:20, name:'Spodenki Kinevo Kids Shorts', type:'odziez', gender:'dzieciece', price:59, old:79, colors:[C.navy,C.volt], sizes:['104','110','116','122','128','134'], silhouette:'shorts', palette:'p20', badge:'sale', rating:4.5, reviews:33,
+      desc:'Spodenki sportowe dla dzieci z elastycznym pasem.', comp:'100% poliester.', care:'Prać w 40°C.' }),
+
+    P({ id:21, name:'Czapka Kinevo Cap', type:'akcesoria', gender:'unisex', price:89, old:null, colors:[C.black,C.white,C.volt], sizes:JEDEN, silhouette:'cap', palette:'p21', badge:null, rating:4.6, reviews:77,
+      desc:'Klasyczna czapka z daszkiem z haftowanym logo i regulacją obwodu.', comp:'100% bawełna.', care:'Czyścić ręcznie, nie prać w pralce.' }),
+    P({ id:22, name:'Plecak Kinevo Pack', type:'akcesoria', gender:'unisex', price:199, old:null, colors:[C.black,C.grey], sizes:JEDEN, silhouette:'bag', palette:'p22', badge:'new', rating:4.7, reviews:48,
+      desc:'Pojemny plecak sportowy z kieszenią na laptopa i butelkę na wodę.', comp:'100% poliester 600D, wodoodporny spód.', care:'Czyścić wilgotną szmatką.' }),
+    P({ id:23, name:'Skarpety Kinevo Grip (2 pary)', type:'akcesoria', gender:'unisex', price:49, old:null, colors:[C.black,C.white], sizes:['36-39','40-43','44-46'], silhouette:'socks', palette:'p23', badge:null, rating:4.4, reviews:112,
+      desc:'Skarpety treningowe z antypoślizgową strefą pod stopą.', comp:'75% bawełna, 20% poliamid, 5% elastan.', care:'Prać w 40°C.' }),
+    P({ id:24, name:'Bidon Kinevo Bottle 750ml', type:'akcesoria', gender:'unisex', price:59, old:null, colors:[C.black,C.volt,C.white], sizes:JEDEN, silhouette:'bottle', palette:'p24', badge:'bestseller', rating:4.8, reviews:201,
+      desc:'Lekki bidon sportowy bez BPA z ergonomicznym piciem jednym ruchem.', comp:'Tritan bez BPA.', care:'Myć ręcznie lub w zmywarce (górny kosz).' })
+  ];
+
+  function productById(id){
+    id = parseInt(id, 10);
+    for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i].id === id) return PRODUCTS[i];
+    return null;
+  }
+
+  /* ============================================================
+     Product art — no photo pipeline is available in this build
+     environment, so every tile is a lit, two-tone illustration
+     generated from the product's own palette. Hover swaps from a
+     neutral tone (art-a) to a tint of the product's first color
+     swatch (art-b), standing in for a second angle / colorway.
+     ============================================================ */
+  var TONES = ['#e7e3da','#15151a','#1d2636','#2c3a30','#ded5c6','#eee8df','#161616','#232733','#e3dfd6','#1a2230'];
+
+  function hexToRgb(hex){
+    hex = hex.replace('#','');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    return [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
+  }
+  function rgbToHex(rgb){
+    return '#' + rgb.map(function(v){ return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0'); }).join('');
+  }
+  function mix(hexA, hexB, t){
+    var a = hexToRgb(hexA), b = hexToRgb(hexB);
+    return rgbToHex([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]);
+  }
+  function relLum(hex){
+    var rgb = hexToRgb(hex).map(function(v){
+      v = v/255; return v <= .03928 ? v/12.92 : Math.pow((v+.055)/1.055, 2.4);
+    });
+    return .2126*rgb[0] + .7152*rgb[1] + .0722*rgb[2];
+  }
+  function inkFor(bgHex){ return relLum(bgHex) > .42 ? '#111111' : '#f5f5f5'; }
+
+  function toneFor(id){ return TONES[(id - 1) % TONES.length]; }
+  function colorwayTone(hex){
+    var lum = relLum(hex);
+    return lum > .6 ? mix(hex, '#000000', .18) : mix(hex, '#ffffff', .62);
+  }
+
+  function silhouettePath(kind){
+    switch (kind){
+      case 'shoe': return (
+        '<path d="M10 62c0-7 5-10 13-13l27-10c6-2 10-6 13-11l6-9c3 5 2 11-2 16l-4 5 20 2c7 1 11 5 11 11v9c0 5-4 9-9 9H19c-5 0-9-4-9-9z"/>' +
+        '<path d="M34 39l6 9M46 35l5 9M58 30l4 9"/>'
+      );
+      case 'tshirt': return (
+        '<path d="M34 16 20 24v14l8-3v39h40V35l8 3V24L62 16l-6 5a10 10 0 0 1-12 0z"/>'
+      );
+      case 'hoodie': return (
+        '<path d="M34 20 20 27v14l8-3v36h40V38l8 3V27L62 20l-5 4c2 4 1 9-5 9s-7-5-5-9z"/>' +
+        '<path d="M34 20c-3 8-3 16 6 19M62 20c3 8 3 16-6 19"/>' +
+        '<path d="M44 58h12M50 52v12" opacity=".6"/>'
+      );
+      case 'shorts': return (
+        '<path d="M22 20h36l3 24-2 20h-9l-3-26-3 26h-9l-3-20z"/>' +
+        '<path d="M22 20h36" stroke-width="3"/>'
+      );
+      case 'leggings': return (
+        '<path d="M28 16h24l2 20-3 32h-8l-3-34-3 34h-8l-3-32z"/>' +
+        '<path d="M28 16h24" stroke-width="3"/>'
+      );
+      case 'jacket': return (
+        '<path d="M34 16 20 24v14l8-3v39h40V35l8 3V24L62 16l-6 6a9 9 0 0 1-12 0z"/>' +
+        '<path d="M50 24v52" stroke-dasharray="3 3"/>'
+      );
+      case 'cap': return (
+        '<path d="M18 52a32 32 0 0 1 64 0z"/>' +
+        '<path d="M18 52c-10 1-16 4-16 7s18 4 18-1"/>' +
+        '<path d="M50 20v10" opacity=".5"/>'
+      );
+      case 'bag': return (
+        '<rect x="18" y="30" width="44" height="46" rx="8"/>' +
+        '<path d="M28 30v-6a12 12 0 0 1 24 0v6"/>' +
+        '<rect x="26" y="44" width="28" height="14" rx="4" opacity=".5"/>'
+      );
+      case 'socks': return (
+        '<path d="M38 12h18v30l16 20a8 8 0 0 1-5 14H44a10 10 0 0 1-10-10V12z"/>' +
+        '<path d="M38 30h18" opacity=".6"/>'
+      );
+      case 'bottle': return (
+        '<path d="M42 10h16v8l5 8v46a6 6 0 0 1-6 6H43a6 6 0 0 1-6-6V26l5-8z"/>' +
+        '<rect x="40" y="6" width="20" height="6" rx="2"/>' +
+        '<path d="M37 40h26" opacity=".5"/>'
+      );
+      default: return '<circle cx="50" cy="50" r="28"/>';
+    }
+  }
+
+  function uidFor(p, ctx){ return 'kv-' + p.id + '-' + ctx; }
+
+  function artSvg(opts){
+    var scale = opts.scale || 1;
+    var fillAttr, defs = '';
+    if (opts.gradient){
+      var vg = 'vg-' + opts.uid;
+      defs = '<defs><radialGradient id="' + vg + '" cx="50%" cy="38%" r="75%">' +
+        '<stop offset="0%" stop-color="' + mix(opts.bg, opts.ink, .06) + '"/><stop offset="100%" stop-color="' + opts.bg + '"/>' +
+      '</radialGradient></defs>';
+      fillAttr = 'url(#' + vg + ')';
+    } else {
+      fillAttr = opts.bg;
+    }
+    return (
+      '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' +
+        defs +
+        '<rect width="100" height="100" fill="' + fillAttr + '"/>' +
+        '<g fill="none" stroke="' + opts.ink + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity=".92" transform="translate(50 50) scale(' + scale + ') translate(-50 -50)">' +
+          silhouettePath(opts.kind) +
+        '</g>' +
+      '</svg>'
+    );
+  }
+
+  function productArt(p, ctx, variant){
+    variant = variant || 'a';
+    var bg = variant === 'a' ? toneFor(p.id) : colorwayTone(p.colors[0].h);
+    var ink = inkFor(bg);
+    return artSvg({ bg:bg, ink:ink, kind:p.silhouette, gradient:true, uid:uidFor(p, ctx) + '-' + variant });
+  }
+
+  function productTileHtml(p, ctx){
+    return (
+      '<span class="art-a">' + productArt(p, ctx, 'a') + '</span>' +
+      '<span class="art-b">' + productArt(p, ctx, 'b') + '</span>'
+    );
+  }
+
+  function catTileArt(bg, kind, uid){
+    var ink = inkFor(bg);
+    return artSvg({ bg:bg, ink:ink, kind:kind, scale:1.7, gradient:true, uid:uid });
+  }
+
+  /* ============================================================
+     helpers: price, stars, badge labels
+     ============================================================ */
+  function fmtPrice(v){ return v.toFixed(2).replace(/\.00$/, '') + ' zł'; }
+  function badgeLabel(b){ return { new:'Nowość', sale:'Promocja', bestseller:'Bestseller' }[b] || ''; }
+  function starsHtml(rating){
+    var full = Math.round(rating);
+    var s = '';
+    for (var i = 1; i <= 5; i++) s += i <= full ? '★' : '☆';
+    return s;
+  }
+
+  /* ============================================================
+     toasts
+     ============================================================ */
+  function showToast(msg){
+    var stack = qs('#toastStack');
+    var el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    stack.appendChild(el);
+    requestAnimationFrame(function(){ el.classList.add('show'); });
+    window.setTimeout(function(){
+      el.classList.remove('show');
+      window.setTimeout(function(){ el.remove(); }, 350);
+    }, 2200);
+  }
+
+  /* ============================================================
+     cart + favorites
+     ============================================================ */
+  function renderBadges(){
+    var cartTotal = state.cart.reduce(function(s,l){ return s + l.qty; }, 0);
+    var cartCountEl = qs('#cartCount');
+    cartCountEl.textContent = cartTotal;
+    cartCountEl.classList.toggle('show', cartTotal > 0);
+    var favCountEl = qs('#favCount');
+    favCountEl.textContent = state.favorites.length;
+    favCountEl.classList.toggle('show', state.favorites.length > 0);
+  }
+
+  function addToCart(id, color, size, qty){
+    qty = qty || 1;
+    var line = null;
+    for (var i = 0; i < state.cart.length; i++){
+      if (state.cart[i].id === id && state.cart[i].color === color && state.cart[i].size === size){ line = state.cart[i]; break; }
+    }
+    if (line) line.qty += qty; else state.cart.push({ id:id, color:color, size:size, qty:qty });
+    saveState();
+    renderBadges();
+    renderCartDrawer();
+  }
+  function removeCartLine(index){
+    state.cart.splice(index, 1);
+    saveState();
+    renderBadges();
+    renderCartDrawer();
+    refreshCartPageIfActive();
+  }
+  function changeCartQty(index, delta){
+    if (!state.cart[index]) return;
+    state.cart[index].qty += delta;
+    if (state.cart[index].qty <= 0) state.cart.splice(index, 1);
+    saveState();
+    renderBadges();
+    renderCartDrawer();
+    refreshCartPageIfActive();
+  }
+  function cartSubtotal(){
+    return state.cart.reduce(function(sum, l){
+      var p = productById(l.id);
+      return sum + (p ? p.price * l.qty : 0);
+    }, 0);
+  }
+  function appliedPromoDiscount(subtotal){
+    if (state.promo === 'KINEVO10') return subtotal * 0.10;
+    return 0;
+  }
+
+  function toggleFavorite(id){
+    var idx = state.favorites.indexOf(id);
+    var nowActive = idx === -1;
+    if (nowActive) state.favorites.push(id); else state.favorites.splice(idx, 1);
+    saveState();
+    renderBadges();
+    qsa('[data-wish="' + id + '"]').forEach(function(btn){
+      btn.classList.toggle('active', nowActive);
+      btn.setAttribute('aria-pressed', nowActive ? 'true' : 'false');
+    });
+    if (currentRoute.name === 'favorites'){
+      qs('#app').innerHTML = renderFavorites();
+      wireFavorites();
+      initReveal();
+    }
+  }
+
+  function refreshCartPageIfActive(){
+    if (currentRoute.name === 'cart'){
+      qs('#app').innerHTML = renderCartPage();
+      wireCartPage();
+      initReveal();
+    }
+  }
+
+  /* ============================================================
+     product card (grid / rail)
+     ============================================================ */
+  function productCardHtml(p){
+    var isFav = state.favorites.indexOf(p.id) !== -1;
+    var priceHtml = p.old
+      ? '<span class="product-price old">' + fmtPrice(p.old) + '</span><span class="product-price sale">' + fmtPrice(p.price) + '</span>'
+      : '<span class="product-price">' + fmtPrice(p.price) + '</span>';
+    var badgeHtml = p.badge ? '<span class="p-badge' + (p.badge === 'sale' ? ' sale' : '') + '">' + badgeLabel(p.badge) + '</span>' : '';
+    var colorsHtml = p.colors.map(function(c){ return '<span class="color-dot" style="background:' + c.h + ';" title="' + c.n + '"></span>'; }).join('');
+    return (
+      '<article class="product-card" data-id="' + p.id + '">' +
+        '<div class="product-media">' +
+          '<div class="product-badges">' + badgeHtml + '</div>' +
+          '<button type="button" class="wish-btn' + (isFav ? ' active' : '') + '" data-wish="' + p.id + '" aria-label="Dodaj do ulubionych" aria-pressed="' + isFav + '">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.5 5.6 4A5.8 5.8 0 0 1 12 7a5.8 5.8 0 0 1 6.4-3c3.6.5 5.2 4.2 3.6 7.7C19.5 16.4 12 21 12 21z"/></svg>' +
+          '</button>' +
+          '<a class="media-link" href="#/product/' + p.id + '" data-link aria-label="' + p.name + '"></a>' +
+          productTileHtml(p, 'grid' + p.id) +
+          '<button type="button" class="quick-add" data-quickadd="' + p.id + '">Dodaj do koszyka</button>' +
+        '</div>' +
+        '<div class="product-info">' +
+          '<a class="product-name" href="#/product/' + p.id + '" data-link>' + p.name + '</a>' +
+          '<div class="product-colors">' + colorsHtml + '</div>' +
+          '<div class="product-price-row">' + priceHtml + '</div>' +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  /* ============================================================
+     HOME
+     ============================================================ */
+  function renderHome(){
+    var newArrivals = PRODUCTS.filter(function(p){ return p.badge === 'new'; });
+    var bestsellers = PRODUCTS.filter(function(p){ return p.badge === 'bestseller'; });
+
+    var catDefs = [
+      { label:'Mężczyźni', href:'#/catalog?gender=meskie', kind:'tshirt', bg:'#1c2230' },
+      { label:'Kobiety', href:'#/catalog?gender=damskie', kind:'leggings', bg:'#e7dfd4' },
+      { label:'Dzieci', href:'#/catalog?gender=dzieciece', kind:'hoodie', bg:'#2c3a30' },
+      { label:'Obuwie', href:'#/catalog?type=obuwie', kind:'shoe', bg:'#111113' },
+      { label:'Akcesoria', href:'#/catalog?type=akcesoria', kind:'bag', bg:'#ded6c9' }
+    ];
+    var catHtml = catDefs.map(function(c, i){
+      return (
+        '<a class="cat-tile" href="' + c.href + '" data-link style="background:' + c.bg + ';">' +
+          catTileArt(c.bg, c.kind, 'cat' + i) +
+          '<span>' + c.label + '</span>' +
+        '</a>'
+      );
+    }).join('');
+
+    return (
+      '<section class="hero">' +
+        '<div class="hero-art">' + catTileArt('#141414', 'shoe', 'heroart') + '</div>' +
+        '<div class="hero-scrim"></div>' +
+        '<div class="hero-content">' +
+          '<p class="eyebrow">Nowa kolekcja SS26</p>' +
+          '<h1>Ruch bez granic.</h1>' +
+          '<p class="hero-sub">Odzież i obuwie zaprojektowane do treningu, miasta i wszystkiego pomiędzy — technologia, która nadąża za Tobą.</p>' +
+          '<div class="hero-actions">' +
+            '<a class="btn btn-primary" href="#/catalog" data-link>Kupuj teraz</a>' +
+            '<a class="btn btn-ghost" href="#/catalog?gender=meskie" data-link>Mężczyźni</a>' +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="section" data-reveal>' +
+        '<div class="section-head"><div><p class="eyebrow">Kategorie</p><h2>Znajdź swój trening.</h2></div></div>' +
+        '<div class="cat-grid">' + catHtml + '</div>' +
+      '</section>' +
+
+      '<section class="section" data-reveal>' +
+        '<div class="section-head">' +
+          '<div><p class="eyebrow">Świeże dostawy</p><h2>Nowości.</h2></div>' +
+          '<div class="rail-arrows">' +
+            '<button class="btn-icon" id="railPrev" type="button" aria-label="Przewiń w lewo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg></button>' +
+            '<button class="btn-icon" id="railNext" type="button" aria-label="Przewiń w prawo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="rail-wrap"><div class="rail" id="homeRail">' + newArrivals.map(productCardHtml).join('') + '</div></div>' +
+      '</section>' +
+
+      '<section class="section" data-reveal>' +
+        '<div class="section-head"><div><p class="eyebrow">Wybór klientów</p><h2>Bestsellery.</h2></div></div>' +
+        '<div class="product-grid">' + bestsellers.map(productCardHtml).join('') + '</div>' +
+      '</section>' +
+
+      '<section class="section" data-reveal>' +
+        '<div class="promo-banner">' +
+          '<div><h2>-10% na start</h2><p>Użyj kodu <strong>KINEVO10</strong> przy kasie i odbierz rabat na całe zamówienie.</p></div>' +
+          '<a class="btn btn-primary" href="#/catalog" data-link>Zobacz ofertę</a>' +
+        '</div>' +
+      '</section>' +
+
+      '<section class="stats-strip" data-reveal>' +
+        '<div class="stat-cell"><b>180+</b><span>Krajów dostawy</span></div>' +
+        '<div class="stat-cell"><b>50k+</b><span>Zadowolonych klientów</span></div>' +
+        '<div class="stat-cell"><b>4.7★</b><span>Średnia ocena</span></div>' +
+        '<div class="stat-cell"><b>24/7</b><span>Obsługa klienta</span></div>' +
+      '</section>' +
+
+      '<section class="section newsletter" data-reveal>' +
+        '<p class="eyebrow" style="justify-content:center;">Bądź na bieżąco</p>' +
+        '<h2>Zapisz się i odbierz -10% na pierwsze zamówienie.</h2>' +
+        '<form class="newsletter-form" id="newsletterForm" novalidate>' +
+          '<input type="email" placeholder="Twój adres e-mail" required id="newsletterEmail" autocomplete="email">' +
+          '<button class="btn btn-primary" type="submit">Zapisz się</button>' +
+        '</form>' +
+        '<p class="newsletter-note" id="newsletterNote"></p>' +
+      '</section>'
+    );
+  }
+
+  function wireHome(){
+    var rail = qs('#homeRail');
+    if (rail){
+      var prevBtn = qs('#railPrev'), nextBtn = qs('#railNext');
+      var amount = function(){ var it = qs('.product-card', rail); return it ? it.getBoundingClientRect().width + 16 : 260; };
+      if (prevBtn) prevBtn.addEventListener('click', function(){ rail.scrollBy({ left:-amount(), behavior: prefersReducedMotion ? 'auto' : 'smooth' }); });
+      if (nextBtn) nextBtn.addEventListener('click', function(){ rail.scrollBy({ left:amount(), behavior: prefersReducedMotion ? 'auto' : 'smooth' }); });
+    }
+    var nlForm = qs('#newsletterForm');
+    if (nlForm){
+      nlForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        var email = qs('#newsletterEmail').value.trim();
+        var note = qs('#newsletterNote');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+          note.textContent = 'Podaj poprawny adres e-mail.';
+          note.style.color = 'var(--danger)';
+          return;
+        }
+        note.textContent = 'Dziękujemy! Kod rabatowy wysłaliśmy na Twój e-mail.';
+        note.style.color = 'var(--ok)';
+        nlForm.reset();
+      });
+    }
+    wireProductCards();
+  }
+
+  function wireProductCards(container){
+    qsa('[data-wish]', container).forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        toggleFavorite(parseInt(btn.dataset.wish, 10));
+      });
+    });
+    qsa('[data-quickadd]', container).forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        var p = productById(btn.dataset.quickadd);
+        if (!p) return;
+        addToCart(p.id, p.colors[0].n, p.sizes[0], 1);
+        showToast('Dodano do koszyka: ' + p.name);
+      });
+    });
+  }
+
+  /* ============================================================
+     CATALOG
+     ============================================================ */
+  var catalogState = { gender:[], type:[], color:[], sizes:[], maxPrice:500, sort:'relevance', query:'' };
+  var ALL_COLORS = ['black','white','volt','grey','navy','red','green','sand','pink'].map(function(k){ return C[k]; });
+  var ALL_SIZES = (function(){
+    var seen = {}, out = [];
+    PRODUCTS.forEach(function(p){ p.sizes.forEach(function(s){ if (!seen[s]){ seen[s] = true; out.push(s); } }); });
+    return out;
+  })();
+
+  function parseCatalogQuery(q){
+    q = q || {};
+    catalogState = {
+      gender: q.gender ? q.gender.split(',') : [],
+      type: q.type ? q.type.split(',') : [],
+      color: q.color ? decodeURIComponent(q.color).split(',') : [],
+      sizes: q.size ? decodeURIComponent(q.size).split(',') : [],
+      maxPrice: q.maxPrice ? parseInt(q.maxPrice, 10) : 500,
+      sort: q.sort || 'relevance',
+      query: q.q ? decodeURIComponent(q.q) : ''
+    };
+  }
+
+  function filteredProducts(){
+    return PRODUCTS.filter(function(p){
+      if (catalogState.gender.length && p.gender !== 'unisex' && catalogState.gender.indexOf(p.gender) === -1) return false;
+      if (catalogState.type.length && catalogState.type.indexOf(p.type) === -1) return false;
+      if (catalogState.color.length && !p.colors.some(function(c){ return catalogState.color.indexOf(c.n) !== -1; })) return false;
+      if (catalogState.sizes.length && !p.sizes.some(function(s){ return catalogState.sizes.indexOf(s) !== -1; })) return false;
+      if (p.price > catalogState.maxPrice) return false;
+      if (catalogState.query && p.name.toLowerCase().indexOf(catalogState.query.toLowerCase()) === -1) return false;
+      return true;
+    }).sort(function(a, b){
+      switch (catalogState.sort){
+        case 'price-asc': return a.price - b.price;
+        case 'price-desc': return b.price - a.price;
+        case 'new': return (b.badge === 'new' ? 1 : 0) - (a.badge === 'new' ? 1 : 0);
+        case 'popular': return b.reviews - a.reviews;
+        default: return 0;
+      }
+    });
+  }
+
+  function catalogTitle(){
+    if (catalogState.query) return 'Wyniki dla „' + catalogState.query + '”';
+    if (catalogState.gender.length === 1 && !catalogState.type.length){
+      return { meskie:'Dla mężczyzn', damskie:'Dla kobiet', dzieciece:'Dla dzieci' }[catalogState.gender[0]] || 'Katalog';
+    }
+    if (catalogState.type.length === 1 && !catalogState.gender.length){
+      return { obuwie:'Obuwie', odziez:'Odzież', akcesoria:'Akcesoria' }[catalogState.type[0]] || 'Katalog';
+    }
+    return 'Wszystkie produkty';
+  }
+
+  function checkGroupHtml(name, opts, selected){
+    return opts.map(function(o){
+      return '<label class="filter-opt"><input type="checkbox" data-filter="' + name + '" value="' + o[0] + '"' + (selected.indexOf(o[0]) !== -1 ? ' checked' : '') + '> ' + o[1] + '</label>';
+    }).join('');
+  }
+  function chevSvg(){ return '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>'; }
+
+  function filterSidebarHtml(){
+    var genderOpts = [['meskie','Mężczyźni'],['damskie','Kobiety'],['dzieciece','Dzieci']];
+    var typeOpts = [['odziez','Odzież'],['obuwie','Obuwie'],['akcesoria','Akcesoria']];
+    return (
+      '<button type="button" class="clear-filters" id="clearFilters">Wyczyść filtry</button>' +
+      '<details class="filter-group" open><summary>Płeć' + chevSvg() + '</summary><div class="filter-opts">' + checkGroupHtml('gender', genderOpts, catalogState.gender) + '</div></details>' +
+      '<details class="filter-group" open><summary>Kategoria' + chevSvg() + '</summary><div class="filter-opts">' + checkGroupHtml('type', typeOpts, catalogState.type) + '</div></details>' +
+      '<details class="filter-group" open><summary>Rozmiar' + chevSvg() + '</summary><div class="size-grid">' +
+        ALL_SIZES.map(function(s){ return '<button type="button" class="size-chip' + (catalogState.sizes.indexOf(s) !== -1 ? ' active' : '') + '" data-size-filter="' + s + '">' + s + '</button>'; }).join('') +
+      '</div></details>' +
+      '<details class="filter-group" open><summary>Kolor' + chevSvg() + '</summary><div class="color-grid">' +
+        ALL_COLORS.map(function(c){ return '<button type="button" class="color-chip' + (catalogState.color.indexOf(c.n) !== -1 ? ' active' : '') + '" style="background:' + c.h + ';" data-color-filter="' + c.n + '" title="' + c.n + '" aria-label="' + c.n + '"></button>'; }).join('') +
+      '</div></details>' +
+      '<details class="filter-group" open><summary>Cena' + chevSvg() + '</summary><div class="filter-opts">' +
+        '<input type="range" id="priceRange" min="0" max="500" step="10" value="' + catalogState.maxPrice + '" style="width:100%; accent-color:var(--ink);">' +
+        '<div style="display:flex; justify-content:space-between; font-size:12px; color:var(--ink-faint);"><span>0 zł</span><span id="priceRangeLabel">' + catalogState.maxPrice + ' zł</span></div>' +
+      '</div></details>'
+    );
+  }
+
+  function gridHtml(list){
+    if (!list.length) return '<div class="empty-state">Brak produktów spełniających wybrane kryteria.</div>';
+    return list.map(productCardHtml).join('');
+  }
+
+  function renderCatalog(query){
+    parseCatalogQuery(query);
+    var list = filteredProducts();
+    return (
+      '<div class="catalog-head">' +
+        '<div class="crumbs"><a href="#/" data-link>Strona główna</a> / <span>' + catalogTitle() + '</span></div>' +
+        '<h1>' + catalogTitle() + '</h1>' +
+      '</div>' +
+      '<div class="catalog-body">' +
+        '<aside class="filters" id="filtersPanel">' + filterSidebarHtml() + '</aside>' +
+        '<div>' +
+          '<div class="catalog-toolbar">' +
+            '<button class="btn btn-sm mobile-filter-btn" id="mobileFilterBtn" type="button">Filtry</button>' +
+            '<span class="count" id="resultCount">' + list.length + ' produktów</span>' +
+            '<select class="sort-select" id="sortSelect" aria-label="Sortuj">' +
+              '<option value="relevance"' + (catalogState.sort === 'relevance' ? ' selected' : '') + '>Polecane</option>' +
+              '<option value="new"' + (catalogState.sort === 'new' ? ' selected' : '') + '>Najnowsze</option>' +
+              '<option value="price-asc"' + (catalogState.sort === 'price-asc' ? ' selected' : '') + '>Cena rosnąco</option>' +
+              '<option value="price-desc"' + (catalogState.sort === 'price-desc' ? ' selected' : '') + '>Cena malejąco</option>' +
+              '<option value="popular"' + (catalogState.sort === 'popular' ? ' selected' : '') + '>Popularne</option>' +
+            '</select>' +
+          '</div>' +
+          '<div class="product-grid" id="catalogGrid">' + gridHtml(list) + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function serializeCatalogState(){
+    var parts = [];
+    if (catalogState.gender.length) parts.push('gender=' + catalogState.gender.join(','));
+    if (catalogState.type.length) parts.push('type=' + catalogState.type.join(','));
+    if (catalogState.color.length) parts.push('color=' + encodeURIComponent(catalogState.color.join(',')));
+    if (catalogState.sizes.length) parts.push('size=' + encodeURIComponent(catalogState.sizes.join(',')));
+    if (catalogState.maxPrice < 500) parts.push('maxPrice=' + catalogState.maxPrice);
+    if (catalogState.sort !== 'relevance') parts.push('sort=' + catalogState.sort);
+    if (catalogState.query) parts.push('q=' + encodeURIComponent(catalogState.query));
+    return '#/catalog' + (parts.length ? '?' + parts.join('&') : '');
+  }
+
+  function applyCatalogChange(){
+    history.replaceState(null, '', serializeCatalogState());
+    var list = filteredProducts();
+    qs('#resultCount').textContent = list.length + ' produktów';
+    qs('#catalogGrid').innerHTML = gridHtml(list);
+    wireProductCards(qs('#catalogGrid'));
+  }
+
+  function wireCatalog(){
+    qsa('[data-filter]').forEach(function(input){
+      input.addEventListener('change', function(){
+        var arr = catalogState[input.dataset.filter];
+        var idx = arr.indexOf(input.value);
+        if (input.checked && idx === -1) arr.push(input.value);
+        if (!input.checked && idx !== -1) arr.splice(idx, 1);
+        applyCatalogChange();
+      });
+    });
+    qsa('[data-size-filter]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var idx = catalogState.sizes.indexOf(btn.dataset.sizeFilter);
+        if (idx === -1) catalogState.sizes.push(btn.dataset.sizeFilter); else catalogState.sizes.splice(idx, 1);
+        btn.classList.toggle('active');
+        applyCatalogChange();
+      });
+    });
+    qsa('[data-color-filter]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var idx = catalogState.color.indexOf(btn.dataset.colorFilter);
+        if (idx === -1) catalogState.color.push(btn.dataset.colorFilter); else catalogState.color.splice(idx, 1);
+        btn.classList.toggle('active');
+        applyCatalogChange();
+      });
+    });
+    var priceRange = qs('#priceRange');
+    if (priceRange) priceRange.addEventListener('input', function(){
+      catalogState.maxPrice = parseInt(priceRange.value, 10);
+      qs('#priceRangeLabel').textContent = catalogState.maxPrice + ' zł';
+      applyCatalogChange();
+    });
+    var sortSelect = qs('#sortSelect');
+    if (sortSelect) sortSelect.addEventListener('change', function(){
+      catalogState.sort = sortSelect.value;
+      applyCatalogChange();
+    });
+    var clearBtn = qs('#clearFilters');
+    if (clearBtn) clearBtn.addEventListener('click', function(){
+      history.replaceState(null, '', '#/catalog');
+      qs('#app').innerHTML = renderCatalog({});
+      wireCatalog();
+    });
+    var mobileFilterBtn = qs('#mobileFilterBtn');
+    if (mobileFilterBtn) mobileFilterBtn.addEventListener('click', function(){
+      qs('#filtersPanel').classList.toggle('mobile-open');
+    });
+    wireProductCards(qs('#catalogGrid'));
+  }
+
+  /* ============================================================
+     PRODUCT PAGE
+     ============================================================ */
+  function typeLabel(t){ return { obuwie:'Obuwie', odziez:'Odzież', akcesoria:'Akcesoria' }[t] || 'Katalog'; }
+
+  function productGalleryArt(p, colorHex, idx){
+    var bg = colorwayTone(colorHex);
+    var ink = inkFor(bg);
+    return artSvg({ bg:bg, ink:ink, kind:p.silhouette, gradient:true, uid:uidFor(p, 'pg' + idx), scale:1.3 });
+  }
+
+  var REVIEW_NAMES = ['Anna K.','Michał W.','Kasia P.','Tomek N.','Ola S.','Piotr Z.','Magda R.','Kuba L.','Ewa D.','Marek B.'];
+  var REVIEW_COMMENTS = [
+    'Świetna jakość wykonania, czuć że to produkt premium.',
+    'Rozmiar zgodny z tabelą, dotarło szybko.',
+    'Noszę codziennie do treningu, bardzo wygodne.',
+    'Materiał przyjemny, kolor jak na zdjęciach.',
+    'Jeden z lepszych zakupów sportowych w tym roku.',
+    'Pasuje idealnie, polecam osobom aktywnym.',
+    'Solidne wykonanie, bez zarzutu po kilku praniach.',
+    'Świetnie trzyma formę przy intensywnym treningu.'
+  ];
+  function reviewsFor(p){
+    var ratings = [Math.min(5, Math.round(p.rating)), 5, Math.max(3, Math.round(p.rating) - 1)];
+    var out = [];
+    for (var i = 0; i < 3; i++){
+      var seed = p.id * 7 + i * 13;
+      out.push({
+        name: REVIEW_NAMES[seed % REVIEW_NAMES.length],
+        comment: REVIEW_COMMENTS[(seed + i * 3) % REVIEW_COMMENTS.length],
+        rating: ratings[i]
+      });
+    }
+    return out;
+  }
+  function reviewItemHtml(r){
+    return '<div class="review-item"><span class="stars">' + starsHtml(r.rating) + '</span><p>„' + r.comment + '”</p><div class="r-name">' + r.name + '</div></div>';
+  }
+
+  function sizeChartHtml(p){
+    if (p.type === 'obuwie'){
+      var rows = p.sizes.map(function(s){
+        var cm = (parseInt(s, 10) * 0.65 + 1).toFixed(1);
+        return '<tr><td>' + s + '</td><td>' + cm + ' cm</td></tr>';
+      }).join('');
+      return (
+        '<table class="size-table"><thead><tr><th>Rozmiar EU</th><th>Długość wkładki</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<p style="margin-top:14px; font-size:12.5px; color:var(--ink-faint);">Masz szerszą stopę? Rozważ model o pół rozmiaru większy.</p>'
+      );
+    }
+    if (p.sizes.length === 1){
+      return '<p style="font-size:13.5px; color:var(--ink-soft);">Produkt dostępny w rozmiarze uniwersalnym, dopasowanym do większości odbiorców.</p>';
+    }
+    if (p.type === 'akcesoria'){
+      var rows2 = p.sizes.map(function(s){ return '<tr><td>' + s + '</td><td>Odpowiednik rozmiaru buta</td></tr>'; }).join('');
+      return '<table class="size-table"><thead><tr><th>Rozmiar</th><th>Opis</th></tr></thead><tbody>' + rows2 + '</tbody></table>';
+    }
+    if (p.gender === 'dzieciece'){
+      var ageMap = { '104':'3-4', '110':'4-5', '116':'5-6', '122':'6-7', '128':'7-8', '134':'8-9' };
+      var rows3 = p.sizes.map(function(s){ return '<tr><td>' + s + ' cm</td><td>' + (ageMap[s] || '-') + ' lat</td></tr>'; }).join('');
+      return '<table class="size-table"><thead><tr><th>Wzrost dziecka</th><th>Wiek</th></tr></thead><tbody>' + rows3 + '</tbody></table>';
+    }
+    var chart = { XS:['82-85','62-65'], S:['86-89','66-69'], M:['90-94','70-74'], L:['95-100','75-80'], XL:['101-106','81-86'], XXL:['107-113','87-93'] };
+    var rows4 = p.sizes.map(function(s){
+      var c = chart[s] || ['-','-'];
+      return '<tr><td>' + s + '</td><td>' + c[0] + ' cm</td><td>' + c[1] + ' cm</td></tr>';
+    }).join('');
+    return '<table class="size-table"><thead><tr><th>Rozmiar</th><th>Obwód klatki</th><th>Obwód pasa</th></tr></thead><tbody>' + rows4 + '</tbody></table>';
+  }
+  function openSizeModal(p){
+    qs('#sizeModalBody').innerHTML = sizeChartHtml(p);
+    qs('#sizeModalOverlay').classList.add('open');
+  }
+  function closeSizeModal(){ qs('#sizeModalOverlay').classList.remove('open'); }
+
+  function renderProduct(idParam){
+    var p = productById(idParam);
+    if (!p){
+      return '<div class="product-page"><div class="empty-state">Produkt nie został znaleziony. <a href="#/catalog" data-link>Wróć do katalogu</a>.</div></div>';
+    }
+    var isFav = state.favorites.indexOf(p.id) !== -1;
+    var mainArt = productGalleryArt(p, p.colors[0].h, 0);
+    var thumbsHtml = p.colors.map(function(c, i){
+      return '<button type="button" class="pg-thumb' + (i === 0 ? ' active' : '') + '" data-thumb="' + i + '" aria-label="Pokaż kolor ' + c.n + '">' + productGalleryArt(p, c.h, i) + '</button>';
+    }).join('');
+    var colorsHtml = p.colors.map(function(c, i){
+      return '<button type="button" class="pg-color' + (i === 0 ? ' active' : '') + '" data-color="' + i + '" style="background:' + c.h + ';" aria-label="' + c.n + '" title="' + c.n + '"></button>';
+    }).join('');
+    var sizesHtml = p.sizes.map(function(s){
+      return '<button type="button" class="size-chip' + (p.sizes.length === 1 ? ' active' : '') + '" data-pgsize="' + s + '">' + s + '</button>';
+    }).join('');
+    var priceHtml = p.old
+      ? '<span class="pg-price old">' + fmtPrice(p.old) + '</span><span class="pg-price">' + fmtPrice(p.price) + '</span>'
+      : '<span class="pg-price">' + fmtPrice(p.price) + '</span>';
+    var related = PRODUCTS.filter(function(x){ return x.id !== p.id && x.type === p.type; });
+    PRODUCTS.forEach(function(x){
+      if (related.length >= 4) return;
+      if (x.id !== p.id && x.gender === p.gender && related.indexOf(x) === -1) related.push(x);
+    });
+    related = related.slice(0, 4);
+    var reviews = reviewsFor(p);
+    return (
+      '<div class="product-page">' +
+        '<nav class="crumbs"><a href="#/" data-link>Strona główna</a><span>/</span><a href="#/catalog?type=' + p.type + '" data-link>' + typeLabel(p.type) + '</a><span>/</span><span>' + p.name + '</span></nav>' +
+        '<div class="product-layout">' +
+          '<div class="pg-gallery">' +
+            '<div class="pg-gallery-main" id="pgGalleryMain">' + mainArt + '</div>' +
+            '<div class="pg-thumbs" id="pgThumbs">' + thumbsHtml + '</div>' +
+          '</div>' +
+          '<div class="pg-info">' +
+            '<h1>' + p.name + '</h1>' +
+            '<div class="pg-rating"><span class="stars">' + starsHtml(p.rating) + '</span><span>' + p.rating.toFixed(1) + ' · ' + p.reviews + ' opinii</span></div>' +
+            '<div class="pg-price-row">' + priceHtml + '</div>' +
+            '<div class="pg-section-label"><span>Kolor: <span id="pgColorName">' + p.colors[0].n + '</span></span></div>' +
+            '<div class="pg-colors" id="pgColors">' + colorsHtml + '</div>' +
+            '<div class="pg-section-label"><span>Rozmiar</span><button type="button" class="pg-size-link" id="pgSizeChartBtn">Tabela rozmiarów</button></div>' +
+            '<div class="pg-sizes" id="pgSizes">' + sizesHtml + '</div>' +
+            '<p class="pg-note" id="pgNote"></p>' +
+            '<div class="pg-actions">' +
+              '<button type="button" class="btn btn-primary" id="pgAddToCart">Dodaj do koszyka</button>' +
+              '<button type="button" class="btn-icon wish-btn' + (isFav ? ' active' : '') + '" id="pgWishBtn" data-wish="' + p.id + '" aria-label="Dodaj do ulubionych" aria-pressed="' + isFav + '">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.2 2 4.5 5.6 4A5.8 5.8 0 0 1 12 7a5.8 5.8 0 0 1 6.4-3c3.6.5 5.2 4.2 3.6 7.7C19.5 16.4 12 21 12 21z"/></svg>' +
+              '</button>' +
+            '</div>' +
+            '<div class="pg-perks">' +
+              '<div class="pg-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="15" height="12" rx="2"/><path d="M17 11h3l2 3v5h-5"/><circle cx="7.5" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/></svg><span>Darmowa dostawa od 200 zł</span></div>' +
+              '<div class="pg-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg><span>Bezpłatny zwrot w ciągu 30 dni</span></div>' +
+              '<div class="pg-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><span>Płatność BLIK, kartą lub PayPal</span></div>' +
+            '</div>' +
+            '<div class="pg-tabs">' +
+              '<details class="pg-tab" open><summary>Opis' + chevSvg() + '</summary><div class="pg-tab-body">' + p.desc + '</div></details>' +
+              '<details class="pg-tab"><summary>Skład' + chevSvg() + '</summary><div class="pg-tab-body">' + p.comp + '</div></details>' +
+              '<details class="pg-tab"><summary>Pranie i pielęgnacja' + chevSvg() + '</summary><div class="pg-tab-body">' + p.care + '</div></details>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<section class="section" data-reveal>' +
+          '<div class="section-head"><div><p class="eyebrow">Opinie</p><h2>Co mówią klienci.</h2></div></div>' +
+          '<div class="reviews-list">' + reviews.map(reviewItemHtml).join('') + '</div>' +
+        '</section>' +
+        (related.length ? (
+          '<section class="section" data-reveal>' +
+            '<div class="section-head"><div><p class="eyebrow">Polecane</p><h2>Może Ci się spodobać.</h2></div></div>' +
+            '<div class="product-grid" id="relatedGrid">' + related.map(productCardHtml).join('') + '</div>' +
+          '</section>'
+        ) : '') +
+      '</div>'
+    );
+  }
+
+  function wireProduct(idParam){
+    var p = productById(idParam);
+    if (!p) return;
+    var selectedColorIdx = 0;
+    var selectedSize = p.sizes.length === 1 ? p.sizes[0] : null;
+    var mainEl = qs('#pgGalleryMain');
+
+    if (mainEl) mainEl.addEventListener('click', function(){
+      mainEl.classList.toggle('zoomed');
+    });
+
+    function selectColor(idx){
+      selectedColorIdx = idx;
+      qsa('.pg-color').forEach(function(btn, i){ btn.classList.toggle('active', i === idx); });
+      qsa('.pg-thumb').forEach(function(btn, i){ btn.classList.toggle('active', i === idx); });
+      qs('#pgColorName').textContent = p.colors[idx].n;
+      mainEl.classList.remove('zoomed');
+      mainEl.innerHTML = productGalleryArt(p, p.colors[idx].h, idx);
+    }
+    qsa('.pg-color').forEach(function(btn, i){ btn.addEventListener('click', function(){ selectColor(i); }); });
+    qsa('.pg-thumb').forEach(function(btn, i){ btn.addEventListener('click', function(){ selectColor(i); }); });
+
+    qsa('[data-pgsize]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var wasActive = btn.classList.contains('active');
+        qsa('[data-pgsize]').forEach(function(b){ b.classList.remove('active'); });
+        if (!wasActive){ btn.classList.add('active'); selectedSize = btn.dataset.pgsize; }
+        else selectedSize = null;
+        qs('#pgNote').textContent = '';
+      });
+    });
+
+    var addBtn = qs('#pgAddToCart');
+    if (addBtn) addBtn.addEventListener('click', function(){
+      if (!selectedSize){
+        qs('#pgNote').textContent = 'Wybierz rozmiar przed dodaniem do koszyka.';
+        return;
+      }
+      addToCart(p.id, p.colors[selectedColorIdx].n, selectedSize, 1);
+      showToast('Dodano do koszyka: ' + p.name);
+    });
+
+    var wishBtn = qs('#pgWishBtn');
+    if (wishBtn) wishBtn.addEventListener('click', function(){ toggleFavorite(p.id); });
+
+    var sizeChartBtn = qs('#pgSizeChartBtn');
+    if (sizeChartBtn) sizeChartBtn.addEventListener('click', function(){ openSizeModal(p); });
+
+    var relatedGrid = qs('#relatedGrid');
+    if (relatedGrid) wireProductCards(relatedGrid);
+  }
+
+  /* ============================================================
+     CART DRAWER / CART PAGE
+     ============================================================ */
+  function cartLineHtml(line, i, thumbSize){
+    var p = productById(line.id);
+    if (!p) return '';
+    var colorObj = p.colors.filter(function(c){ return c.n === line.color; })[0] || p.colors[0];
+    var thumbStyle = thumbSize ? ' style="width:' + thumbSize[0] + 'px;height:' + thumbSize[1] + 'px;"' : '';
+    return (
+      '<div class="cart-line">' +
+        '<div class="cl-thumb"' + thumbStyle + '>' + productGalleryArt(p, colorObj.h, 'cl' + i) + '</div>' +
+        '<div class="cl-info">' +
+          '<a class="cl-name" href="#/product/' + p.id + '" data-link>' + p.name + '</a>' +
+          '<div class="cl-meta">' + line.color + ' · ' + line.size + '</div>' +
+          '<div class="cl-bottom">' +
+            '<div class="cl-qty"><button type="button" data-qty="-1" data-idx="' + i + '" aria-label="Zmniejsz liczbę">−</button><span>' + line.qty + '</span><button type="button" data-qty="1" data-idx="' + i + '" aria-label="Zwiększ liczbę">+</button></div>' +
+            '<div class="cl-price">' + fmtPrice(p.price * line.qty) + '</div>' +
+          '</div>' +
+          '<button type="button" class="cl-remove" data-remove="' + i + '">Usuń</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  function wireCartLines(container){
+    if (!container) return;
+    qsa('[data-qty]', container).forEach(function(btn){
+      btn.addEventListener('click', function(){ changeCartQty(parseInt(btn.dataset.idx, 10), parseInt(btn.dataset.qty, 10)); });
+    });
+    qsa('[data-remove]', container).forEach(function(btn){
+      btn.addEventListener('click', function(){ removeCartLine(parseInt(btn.dataset.remove, 10)); });
+    });
+  }
+
+  function renderCartDrawer(){
+    var itemsEl = qs('#cartItems');
+    var footEl = qs('#cartFoot');
+    if (!itemsEl || !footEl) return;
+    if (!state.cart.length){
+      itemsEl.innerHTML = '<div class="cart-empty">Twój koszyk jest pusty.</div>';
+      footEl.innerHTML = '';
+      return;
+    }
+    itemsEl.innerHTML = state.cart.map(function(line, i){ return cartLineHtml(line, i); }).join('');
+    var subtotal = cartSubtotal();
+    var discount = appliedPromoDiscount(subtotal);
+    footEl.innerHTML = (
+      '<div class="sum-row"><span>Suma częściowa</span><span>' + fmtPrice(subtotal) + '</span></div>' +
+      (discount ? '<div class="sum-row"><span>Rabat (' + state.promo + ')</span><span>-' + fmtPrice(discount) + '</span></div>' : '') +
+      '<div class="sum-row total"><span>Razem</span><span>' + fmtPrice(subtotal - discount) + '</span></div>' +
+      '<a class="btn btn-primary" href="#/checkout" data-link id="cartCheckoutLink" style="width:100%; justify-content:center; margin-top:14px;">Przejdź do kasy</a>'
+    );
+    wireCartLines(itemsEl);
+    var checkoutLink = qs('#cartCheckoutLink');
+    if (checkoutLink) checkoutLink.addEventListener('click', closeCartDrawer);
+  }
+
+  function renderCartPage(){
+    if (!state.cart.length){
+      return (
+        '<div class="product-page">' +
+          '<h1 style="margin-bottom:10px;">Koszyk</h1>' +
+          '<div class="empty-state">Twój koszyk jest pusty. <a href="#/catalog" data-link>Przejdź do katalogu</a>.</div>' +
+        '</div>'
+      );
+    }
+    var subtotal = cartSubtotal();
+    var discount = appliedPromoDiscount(subtotal);
+    var linesHtml = state.cart.map(function(line, i){ return cartLineHtml(line, i, [100,120]); }).join('');
+    return (
+      '<div class="product-page">' +
+        '<h1 style="margin-bottom:24px;">Koszyk</h1>' +
+        '<div class="checkout-layout">' +
+          '<div id="cartPageLines" style="display:flex; flex-direction:column; gap:20px;">' + linesHtml + '</div>' +
+          '<div class="summary-card">' +
+            '<div class="promo-row"><input type="text" id="promoInput" placeholder="Kod rabatowy" value="' + (state.promo || '') + '"><button type="button" class="btn btn-ghost btn-sm" id="promoApply">Zastosuj</button></div>' +
+            '<p class="promo-note" id="promoNote"></p>' +
+            '<div class="sum-row"><span>Suma częściowa</span><span>' + fmtPrice(subtotal) + '</span></div>' +
+            (discount ? '<div class="sum-row"><span>Rabat</span><span>-' + fmtPrice(discount) + '</span></div>' : '') +
+            '<div class="sum-row total"><span>Razem</span><span>' + fmtPrice(subtotal - discount) + '</span></div>' +
+            '<a class="btn btn-primary" href="#/checkout" data-link style="width:100%; justify-content:center; margin-top:16px;">Przejdź do kasy</a>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  function wireCartPage(){
+    wireCartLines(qs('#cartPageLines'));
+    var promoInput = qs('#promoInput');
+    var promoBtn = qs('#promoApply');
+    if (promoBtn) promoBtn.addEventListener('click', function(){
+      var code = (promoInput.value || '').trim().toUpperCase();
+      var note = qs('#promoNote');
+      if (code === 'KINEVO10'){
+        state.promo = code;
+        saveState();
+        note.textContent = 'Kod rabatowy zastosowany: -10%.';
+        note.className = 'promo-note';
+        refreshCartPageIfActive();
+      } else {
+        note.textContent = 'Nieprawidłowy kod rabatowy.';
+        note.className = 'promo-note err';
+      }
+    });
+  }
+
+  /* ============================================================
+     CHECKOUT
+     ============================================================ */
+  function renderCheckout(){
+    if (!state.cart.length){
+      return (
+        '<div class="product-page">' +
+          '<h1 style="margin-bottom:10px;">Kasa</h1>' +
+          '<div class="empty-state">Twój koszyk jest pusty. <a href="#/catalog" data-link>Przejdź do katalogu</a>.</div>' +
+        '</div>'
+      );
+    }
+    var subtotal = cartSubtotal();
+    var discount = appliedPromoDiscount(subtotal);
+    return (
+      '<div class="product-page">' +
+        '<div class="checkout-steps">' +
+          '<div class="checkout-step active"><b>1</b><span>Dostawa</span></div>' +
+          '<div class="checkout-step active"><b>2</b><span>Płatność</span></div>' +
+          '<div class="checkout-step"><b>3</b><span>Potwierdzenie</span></div>' +
+        '</div>' +
+        '<div class="checkout-layout">' +
+          '<form id="checkoutForm" novalidate>' +
+            '<div class="pg-section-label" style="margin-top:0;"><span>Dane do dostawy</span></div>' +
+            '<div class="field" style="margin-top:14px;"><label for="coName">Imię i nazwisko</label><input type="text" id="coName" required autocomplete="name"></div>' +
+            '<div class="field" style="margin-top:14px;"><label for="coEmail">E-mail</label><input type="email" id="coEmail" required autocomplete="email"></div>' +
+            '<div class="field" style="margin-top:14px;"><label for="coAddress">Adres</label><input type="text" id="coAddress" required autocomplete="street-address"></div>' +
+            '<div style="display:flex; gap:14px; margin-top:14px;">' +
+              '<div class="field" style="flex:2;"><label for="coCity">Miasto</label><input type="text" id="coCity" required autocomplete="address-level2"></div>' +
+              '<div class="field" style="flex:1;"><label for="coZip">Kod pocztowy</label><input type="text" id="coZip" required autocomplete="postal-code"></div>' +
+            '</div>' +
+            '<div class="pg-section-label" style="margin-top:28px;"><span>Metoda płatności</span></div>' +
+            '<div class="pay-options" style="margin-top:14px;">' +
+              '<label class="pay-opt active"><input type="radio" name="payMethod" value="blik" checked><span>BLIK</span></label>' +
+              '<label class="pay-opt"><input type="radio" name="payMethod" value="card"><span>Karta płatnicza</span></label>' +
+              '<label class="pay-opt"><input type="radio" name="payMethod" value="paypal"><span>PayPal</span></label>' +
+            '</div>' +
+            '<button type="submit" class="btn btn-primary" style="margin-top:28px; width:100%; justify-content:center;">Zamów i zapłać</button>' +
+          '</form>' +
+          '<div class="summary-card">' +
+            '<div class="sum-row"><span>Suma częściowa</span><span>' + fmtPrice(subtotal) + '</span></div>' +
+            (discount ? '<div class="sum-row"><span>Rabat</span><span>-' + fmtPrice(discount) + '</span></div>' : '') +
+            '<div class="sum-row total"><span>Razem</span><span>' + fmtPrice(subtotal - discount) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  function wireCheckout(){
+    qsa('.pay-opt').forEach(function(label){
+      label.addEventListener('click', function(){
+        qsa('.pay-opt').forEach(function(l){ l.classList.remove('active'); });
+        label.classList.add('active');
+      });
+    });
+    var form = qs('#checkoutForm');
+    if (form) form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var orderId = 'KV-' + Math.floor(100000 + Math.random() * 900000);
+      var total = cartSubtotal() - appliedPromoDiscount(cartSubtotal());
+      state.orders.unshift({ id: orderId, date: new Date().toISOString().slice(0, 10), total: total, status: 'W realizacji' });
+      state.cart = [];
+      state.promo = null;
+      saveState();
+      renderBadges();
+      renderCartDrawer();
+      qs('#app').innerHTML = (
+        '<div class="product-page">' +
+          '<div class="order-confirm">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>' +
+            '<h2>Zamówienie przyjęte</h2>' +
+            '<p>Numer zamówienia: <strong>' + orderId + '</strong>. Potwierdzenie wysłaliśmy na podany adres e-mail.</p>' +
+            '<a class="btn btn-primary" href="#/" data-link style="margin-top:24px; display:inline-flex;">Wróć do strony głównej</a>' +
+          '</div>' +
+        '</div>'
+      );
+    });
+  }
+
+  /* ============================================================
+     FAVORITES / ACCOUNT / ABOUT / CONTACT
+     ============================================================ */
+  function renderFavorites(){
+    var list = state.favorites.map(productById).filter(Boolean);
+    return (
+      '<div class="product-page">' +
+        '<h1 style="margin-bottom:24px;">Ulubione</h1>' +
+        (list.length
+          ? '<div class="product-grid">' + list.map(productCardHtml).join('') + '</div>'
+          : '<div class="empty-state">Nie masz jeszcze ulubionych produktów. <a href="#/catalog" data-link>Przeglądaj katalog</a>.</div>'
+        ) +
+      '</div>'
+    );
+  }
+  function wireFavorites(){ wireProductCards(qs('.product-page')); }
+
+  function renderAccount(){
+    var orders = state.orders || [];
+    return (
+      '<div class="product-page">' +
+        '<h1 style="margin-bottom:24px;">Moje konto</h1>' +
+        '<div class="account-layout">' +
+          '<nav class="account-nav">' +
+            '<button type="button" class="active">Historia zamówień</button>' +
+            '<button type="button" id="accLogoutBtn">Wyloguj</button>' +
+          '</nav>' +
+          '<div>' +
+            (orders.length
+              ? orders.map(function(o){
+                  return '<div class="order-row"><span class="o-id">' + o.id + '</span><span>' + o.date + '</span><span>' + fmtPrice(o.total) + '</span><span class="o-status">' + o.status + '</span></div>';
+                }).join('')
+              : '<div class="empty-state">Nie masz jeszcze żadnych zamówień.</div>'
+            ) +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  function wireAccount(){
+    var logoutBtn = qs('#accLogoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', function(){ showToast('To demo koncepcyjne — logowanie nie jest wymagane.'); });
+  }
+
+  function renderAbout(){
+    return (
+      '<div>' +
+        '<section class="about-hero" data-reveal>' +
+          '<p class="eyebrow" style="justify-content:center;">O KINEVO</p>' +
+          '<h1>Projektujemy sprzęt, który nie stoi w miejscu.</h1>' +
+          '<p>KINEVO powstało z przekonania, że sportowa odzież i obuwie powinny wspierać ruch, nie go ograniczać. Projektujemy produkty testowane przez biegaczy, trenerów i miejskich entuzjastów aktywności — z naciskiem na materiały, które naprawdę wytrzymują intensywny tryb życia.</p>' +
+        '</section>' +
+        '<section class="section" data-reveal>' +
+          '<div class="values-grid">' +
+            '<div class="value-card"><h3>Materiały</h3><p>Wybieramy tkaniny techniczne odporne na zużycie, przebadane pod kątem oddychalności i elastyczności.</p></div>' +
+            '<div class="value-card"><h3>Projekt</h3><p>Minimalistyczna forma, maksimum funkcji — każdy detal ma swój powód.</p></div>' +
+            '<div class="value-card"><h3>Odpowiedzialność</h3><p>Ograniczamy odpady produkcyjne i stawiamy na kolekcje sezonowe zamiast masowej produkcji.</p></div>' +
+          '</div>' +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  function renderContact(){
+    return (
+      '<div class="product-page">' +
+        '<h1 style="margin-bottom:28px;">Kontakt</h1>' +
+        '<div class="contact-grid">' +
+          '<form class="contact-form" id="contactForm" novalidate>' +
+            '<div class="field"><label for="ctName">Imię i nazwisko</label><input type="text" id="ctName" required></div>' +
+            '<div class="field"><label for="ctEmail">E-mail</label><input type="email" id="ctEmail" required></div>' +
+            '<div class="field"><label for="ctMessage">Wiadomość</label><textarea id="ctMessage" required></textarea></div>' +
+            '<button type="submit" class="btn btn-primary">Wyślij wiadomość</button>' +
+            '<p class="promo-note" id="contactNote"></p>' +
+          '</form>' +
+          '<div class="contact-info-list">' +
+            '<div class="contact-info-item"><h4>E-mail</h4><p>kontakt@kinevo.pl</p></div>' +
+            '<div class="contact-info-item"><h4>Telefon</h4><p>+48 22 123 45 67</p></div>' +
+            '<div class="contact-info-item"><h4>Siedziba</h4><p>ul. Sportowa 12, 00-001 Warszawa</p></div>' +
+            '<div class="contact-info-item"><h4>Godziny obsługi</h4><p>Pon–Pt, 9:00–17:00</p></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+  function wireContact(){
+    var form = qs('#contactForm');
+    if (form) form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var note = qs('#contactNote');
+      note.textContent = 'Dziękujemy! Odpowiemy w ciągu 24 godzin.';
+      note.className = 'promo-note';
+      form.reset();
+    });
+  }
+
+  /* ============================================================
+     HELP MODAL CONTENT
+     ============================================================ */
+  var HELP_CONTENT = {
+    delivery: { title:'Dostawa i zwroty', body:'<p>Standardowa dostawa: 1–3 dni robocze, od 14,99 zł, darmowa od 200 zł.</p><p>Zwroty przyjmujemy w ciągu 30 dni od otrzymania zamówienia — produkt musi być nieużywany, w oryginalnym opakowaniu.</p>' },
+    sizes: { title:'Tabela rozmiarów', body:'<p>Dokładne wymiary znajdziesz na każdej stronie produktu, po kliknięciu przycisku „Tabela rozmiarów” przy wyborze rozmiaru.</p>' },
+    faq: { title:'Najczęściej zadawane pytania', body:'<p><strong>Jak śledzić zamówienie?</strong> Status znajdziesz w zakładce „Moje konto”.</p><p><strong>Czy mogę zmienić rozmiar po zamówieniu?</strong> Skontaktuj się z nami w ciągu 24h od zakupu.</p><p><strong>Jakie są metody płatności?</strong> BLIK, karta płatnicza i PayPal.</p>' },
+    privacy: { title:'Polityka prywatności', body:'<p>To projekt koncepcyjny — nie zbieramy ani nie przechowujemy żadnych danych osobowych na serwerach. Dane koszyka i ulubionych zapisywane są wyłącznie lokalnie, w Twojej przeglądarce.</p>' },
+    terms: { title:'Regulamin', body:'<p>Niniejsza witryna jest demonstracją projektową marki KINEVO i nie stanowi rzeczywistego sklepu internetowego. Wszystkie transakcje są symulowane.</p>' }
+  };
+  function openHelpModal(key){
+    var c = HELP_CONTENT[key];
+    if (!c) return;
+    qs('#helpModalTitle').textContent = c.title;
+    qs('#helpModalBody').innerHTML = c.body;
+    qs('#helpModalOverlay').classList.add('open');
+  }
+  function closeHelpModal(){ qs('#helpModalOverlay').classList.remove('open'); }
+
+  /* ============================================================
+     scroll reveal
+     ============================================================ */
+  function initReveal(){
+    var items = qsa('[data-reveal]');
+    if (!items.length) return;
+    if (!('IntersectionObserver' in window) || prefersReducedMotion){
+      items.forEach(function(el){ el.classList.add('in'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold:0.12 });
+    items.forEach(function(el){ obs.observe(el); });
+  }
+
+  /* ============================================================
+     global chrome: drawers, overlays, theme, search
+     ============================================================ */
+  function openMobileDrawer(){
+    qs('#mobileDrawer').classList.add('open');
+    qs('#scrim').classList.add('show');
+    qs('#navToggle').setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileDrawer(){
+    qs('#mobileDrawer').classList.remove('open');
+    qs('#scrim').classList.remove('show');
+    qs('#navToggle').setAttribute('aria-expanded', 'false');
+    if (!qs('#searchOverlay').classList.contains('open') && !qs('#cartDrawer').classList.contains('open')) document.body.style.overflow = '';
+  }
+
+  function updateSearchSuggestions(query){
+    var box = qs('#searchSuggestions');
+    query = (query || '').trim().toLowerCase();
+    if (!query){ box.innerHTML = ''; return; }
+    var matches = PRODUCTS.filter(function(p){ return p.name.toLowerCase().indexOf(query) !== -1; }).slice(0, 6);
+    if (!matches.length){
+      box.innerHTML = '<p class="search-empty">Brak wyników dla „' + query + '”.</p>';
+      return;
+    }
+    box.innerHTML = matches.map(function(p){
+      return (
+        '<a class="search-suggestion" href="#/product/' + p.id + '" data-link>' +
+          '<span class="sg-thumb">' + productGalleryArt(p, p.colors[0].h, 'sg' + p.id) + '</span>' +
+          '<span><span class="sg-name">' + p.name + '</span><span class="sg-price">' + fmtPrice(p.price) + '</span></span>' +
+        '</a>'
+      );
+    }).join('');
+    qsa('.search-suggestion', box).forEach(function(a){ a.addEventListener('click', closeSearchOverlay); });
+  }
+  function openSearchOverlay(){
+    qs('#searchOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(function(){ qs('#searchInput').focus(); }, 50);
+  }
+  function closeSearchOverlay(){
+    qs('#searchOverlay').classList.remove('open');
+    if (!qs('#mobileDrawer').classList.contains('open') && !qs('#cartDrawer').classList.contains('open')) document.body.style.overflow = '';
+    qs('#searchInput').value = '';
+    qs('#searchSuggestions').innerHTML = '';
+  }
+
+  function openCartDrawer(){
+    renderCartDrawer();
+    qs('#cartDrawer').classList.add('open');
+    qs('#cartOverlay').classList.add('open');
+    qs('#cartDrawer').setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCartDrawer(){
+    qs('#cartDrawer').classList.remove('open');
+    qs('#cartOverlay').classList.remove('open');
+    qs('#cartDrawer').setAttribute('aria-hidden', 'true');
+    if (!qs('#mobileDrawer').classList.contains('open') && !qs('#searchOverlay').classList.contains('open')) document.body.style.overflow = '';
+  }
+
+  function applyTheme(theme){
+    if (theme === 'dark'){
+      document.documentElement.setAttribute('data-theme', 'dark');
+      qs('#themeIconSun').style.display = 'none';
+      qs('#themeIconMoon').style.display = '';
+    } else if (theme === 'light'){
+      document.documentElement.setAttribute('data-theme', 'light');
+      qs('#themeIconSun').style.display = '';
+      qs('#themeIconMoon').style.display = 'none';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      qs('#themeIconSun').style.display = prefersDark ? 'none' : '';
+      qs('#themeIconMoon').style.display = prefersDark ? '' : 'none';
+    }
+  }
+
+  function initChrome(){
+    var themeToggle = qs('#themeToggle');
+    if (themeToggle) themeToggle.addEventListener('click', function(){
+      var current = document.documentElement.getAttribute('data-theme');
+      var isDark = current === 'dark' || (!current && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var next = isDark ? 'light' : 'dark';
+      state.theme = next;
+      saveState();
+      applyTheme(next);
+    });
+
+    var navToggle = qs('#navToggle');
+    if (navToggle) navToggle.addEventListener('click', function(){
+      if (qs('#mobileDrawer').classList.contains('open')) closeMobileDrawer(); else openMobileDrawer();
+    });
+    var drawerClose = qs('#drawerClose');
+    if (drawerClose) drawerClose.addEventListener('click', closeMobileDrawer);
+    var scrim = qs('#scrim');
+    if (scrim) scrim.addEventListener('click', closeMobileDrawer);
+    qsa('#mobileDrawer a[data-link]').forEach(function(a){ a.addEventListener('click', closeMobileDrawer); });
+
+    var searchBtn = qs('#searchBtn');
+    if (searchBtn) searchBtn.addEventListener('click', openSearchOverlay);
+    var searchClose = qs('#searchClose');
+    if (searchClose) searchClose.addEventListener('click', closeSearchOverlay);
+    var searchInput = qs('#searchInput');
+    if (searchInput){
+      searchInput.addEventListener('input', function(){ updateSearchSuggestions(searchInput.value); });
+      searchInput.addEventListener('keydown', function(e){
+        if (e.key === 'Enter'){
+          e.preventDefault();
+          var q = searchInput.value.trim();
+          if (q){
+            closeSearchOverlay();
+            location.hash = '#/catalog?q=' + encodeURIComponent(q);
+          }
+        } else if (e.key === 'Escape'){
+          closeSearchOverlay();
+        }
+      });
+    }
+
+    var favBtn = qs('#favBtn');
+    if (favBtn) favBtn.addEventListener('click', function(){ location.hash = '#/favorites'; });
+
+    var cartBtn = qs('#cartBtn');
+    if (cartBtn) cartBtn.addEventListener('click', function(){
+      if (qs('#cartDrawer').classList.contains('open')) closeCartDrawer(); else openCartDrawer();
+    });
+    var cartClose = qs('#cartClose');
+    if (cartClose) cartClose.addEventListener('click', closeCartDrawer);
+    var cartOverlay = qs('#cartOverlay');
+    if (cartOverlay) cartOverlay.addEventListener('click', closeCartDrawer);
+
+    var sizeModalClose = qs('#sizeModalClose');
+    if (sizeModalClose) sizeModalClose.addEventListener('click', closeSizeModal);
+    var sizeModalOverlay = qs('#sizeModalOverlay');
+    if (sizeModalOverlay) sizeModalOverlay.addEventListener('click', function(e){ if (e.target === sizeModalOverlay) closeSizeModal(); });
+
+    var helpModalClose = qs('#helpModalClose');
+    if (helpModalClose) helpModalClose.addEventListener('click', closeHelpModal);
+    var helpModalOverlay = qs('#helpModalOverlay');
+    if (helpModalOverlay) helpModalOverlay.addEventListener('click', function(e){ if (e.target === helpModalOverlay) closeHelpModal(); });
+    qsa('[data-help]').forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        openHelpModal(a.dataset.help);
+      });
+    });
+
+    document.addEventListener('keydown', function(e){
+      if (e.key !== 'Escape') return;
+      closeMobileDrawer();
+      closeSearchOverlay();
+      closeCartDrawer();
+      closeSizeModal();
+      closeHelpModal();
+    });
+  }
+
+  /* ============================================================
+     ROUTER
+     ============================================================ */
+  var currentRoute = { name:'home', segs:[], query:{} };
+
+  function parseHash(){
+    var hash = location.hash.slice(1) || '/';
+    var qIndex = hash.indexOf('?');
+    var path = qIndex === -1 ? hash : hash.slice(0, qIndex);
+    var queryStr = qIndex === -1 ? '' : hash.slice(qIndex + 1);
+    var query = {};
+    queryStr.split('&').forEach(function(pair){
+      if (!pair) return;
+      var kv = pair.split('=');
+      query[kv[0]] = kv[1] || '';
+    });
+    return { segs: path.split('/').filter(Boolean), query: query };
+  }
+
+  function routeTitle(name){
+    var titles = {
+      home:'KINEVO — Ruch bez granic',
+      catalog:'Katalog — KINEVO',
+      product:'Produkt — KINEVO',
+      cart:'Koszyk — KINEVO',
+      checkout:'Kasa — KINEVO',
+      favorites:'Ulubione — KINEVO',
+      account:'Moje konto — KINEVO',
+      about:'O nas — KINEVO',
+      contact:'Kontakt — KINEVO'
+    };
+    return titles[name] || 'KINEVO';
+  }
+
+  function renderRoute(){
+    var parsed = parseHash();
+    var segs = parsed.segs;
+    var app = qs('#app');
+    closeMobileDrawer();
+    closeSearchOverlay();
+    closeCartDrawer();
+
+    if (segs[0] === 'catalog'){
+      currentRoute = { name:'catalog', segs:segs, query:parsed.query };
+      app.innerHTML = renderCatalog(parsed.query);
+      wireCatalog();
+    } else if (segs[0] === 'product' && segs[1]){
+      currentRoute = { name:'product', segs:segs, query:parsed.query };
+      app.innerHTML = renderProduct(segs[1]);
+      wireProduct(segs[1]);
+    } else if (segs[0] === 'cart'){
+      currentRoute = { name:'cart', segs:segs, query:parsed.query };
+      app.innerHTML = renderCartPage();
+      wireCartPage();
+    } else if (segs[0] === 'checkout'){
+      currentRoute = { name:'checkout', segs:segs, query:parsed.query };
+      app.innerHTML = renderCheckout();
+      wireCheckout();
+    } else if (segs[0] === 'favorites'){
+      currentRoute = { name:'favorites', segs:segs, query:parsed.query };
+      app.innerHTML = renderFavorites();
+      wireFavorites();
+    } else if (segs[0] === 'account'){
+      currentRoute = { name:'account', segs:segs, query:parsed.query };
+      app.innerHTML = renderAccount();
+      wireAccount();
+    } else if (segs[0] === 'about'){
+      currentRoute = { name:'about', segs:segs, query:parsed.query };
+      app.innerHTML = renderAbout();
+    } else if (segs[0] === 'contact'){
+      currentRoute = { name:'contact', segs:segs, query:parsed.query };
+      app.innerHTML = renderContact();
+      wireContact();
+    } else {
+      currentRoute = { name:'home', segs:segs, query:parsed.query };
+      app.innerHTML = renderHome();
+      wireHome();
+    }
+
+    document.title = routeTitle(currentRoute.name);
+    window.scrollTo(0, 0);
+    renderBadges();
+    initReveal();
+  }
+
+  window.addEventListener('hashchange', renderRoute);
+
+  /* ============================================================
+     boot
+     ============================================================ */
+  applyTheme(state.theme);
+  initChrome();
+  renderRoute();
+
+})();
+</script>
+</body>
+</html>
