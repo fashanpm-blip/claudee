@@ -1,0 +1,17 @@
+# systemd-юнит: скопируйте в /etc/systemd/system/expense-bot.service
+[Unit]
+Description=Telegram expense & habits bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=bot
+WorkingDirectory=/opt/expense_bot
+ExecStart=/opt/expense_bot/.venv/bin/python main.py
+Restart=always
+RestartSec=5
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
