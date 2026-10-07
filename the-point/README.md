@@ -13,6 +13,32 @@ npm run build      # готовый сайт попадает в папку dist
 npm run preview    # посмотреть собранную версию
 ```
 
+## Готовая папка сайта: `site/` (чистые HTML + CSS)
+
+В корне репозитория лежит папка **`site/`**. Это готовый сайт без Node.js и Astro: только HTML-страницы, один `css/style.css`, шрифты и фото. Все ссылки в нём относительные, поэтому:
+- сайт открывается **двойным кликом** по `site/index.html` прямо с компьютера;
+- папку можно загрузить на **любой хостинг** как есть: Netlify, Cloudflare Pages, GitHub Pages или обычный FTP.
+
+```
+site/
+├── index.html            ← главная (DE)
+├── en/index.html         ← главная (EN)
+├── impressum/  datenschutz/  en/imprint/  en/privacy/
+├── css/style.css         ← все стили
+├── fonts/                ← шрифты (без Google Fonts)
+├── images/               ← фото (WebP + оригиналы)
+├── robots.txt  sitemap.xml  favicon.svg
+```
+
+**Важно:** `site/` создаётся автоматически. Правки делаются в `the-point/` (данные, тексты, стили), а потом папка пересобирается:
+
+```bash
+cd the-point
+npm run export     # собирает сайт и заново создаёт ../site/
+```
+
+Если отредактировать `site/` вручную, при следующем `npm run export` правки пропадут.
+
 ## Где что лежит
 
 | Что менять | Файл |
@@ -104,16 +130,26 @@ npm run preview    # посмотреть собранную версию
 
 ---
 
+## Публикация на Cloudflare Pages (через GitHub)
+
+1. Зайдите на https://dash.cloudflare.com → **Workers & Pages → Create → Pages → Connect to Git** и выберите репозиторий.
+2. Настройки:
+   - **Framework preset:** None
+   - **Build command:** оставить пустым
+   - **Build output directory:** `site`
+3. **Save and Deploy**. Сайт появится по адресу `имя.pages.dev`, и каждый push будет обновлять его автоматически (после `npm run export` и коммита папки `site/`).
+4. Свой домен: **Custom domains → Set up a custom domain**. Если домен уже в Cloudflare, DNS настроится сам.
+
 ## Публикация на Netlify
 
 1. Зарегистрируйтесь на https://app.netlify.com через GitHub.
 2. Нажмите **Add new site → Import an existing project → GitHub** и выберите репозиторий.
-3. Настройки сборки:
+3. Настройки сборки (они уже записаны в `the-point/netlify.toml`):
    - **Base directory:** `the-point`
    - **Build command:** `npm run build`
    - **Publish directory:** `the-point/dist`
 
-   (Они уже записаны в `the-point/netlify.toml`, Netlify подхватит их сам.)
+   Самый быстрый вариант без настроек: перетащите папку `site/` на https://app.netlify.com/drop.
 4. Нажмите **Deploy**. Через минуту сайт будет доступен по адресу вида `имя.netlify.app`.
 
 Дальше каждый `git push` в выбранную ветку автоматически обновляет сайт.
@@ -148,6 +184,6 @@ npm run preview    # посмотреть собранную версию
 
 ## Проверено
 
-- Lighthouse (production-сборка): mobile — Performance 97, Accessibility 100, Best Practices 100, SEO 100; desktop — 100/100/100/100.
+- Lighthouse (production-сборка): mobile — Performance 95–97, Accessibility 100, Best Practices 100, SEO 100; desktop — 100/100/100/100.
 - Ширина 390 px и 1440 px: без горизонтальной прокрутки, кнопки ≥ 44 px.
 - Шрифты Bricolage Grotesque и Source Sans 3 хранятся на самом сайте (`@fontsource`), без запросов к Google Fonts.

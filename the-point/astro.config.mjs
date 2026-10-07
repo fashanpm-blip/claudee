@@ -4,5 +4,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://thepoint-uerdingen.de',
   trailingSlash: 'ignore',
-  build: { inlineStylesheets: 'always', format: 'directory' },
+  build: { inlineStylesheets: 'never', format: 'directory' },
 });

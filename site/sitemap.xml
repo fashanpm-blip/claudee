@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://thepoint-uerdingen.de/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://thepoint-uerdingen.de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thepoint-uerdingen.de/en/"/>
+  </url>
+  <url>
+    <loc>https://thepoint-uerdingen.de/en/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://thepoint-uerdingen.de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thepoint-uerdingen.de/en/"/>
+  </url>
+  <url>
+    <loc>https://thepoint-uerdingen.de/impressum/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://thepoint-uerdingen.de/impressum/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thepoint-uerdingen.de/en/imprint/"/>
+  </url>
+  <url>
+    <loc>https://thepoint-uerdingen.de/en/imprint/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://thepoint-uerdingen.de/impressum/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thepoint-uerdingen.de/en/imprint/"/>
+  </url>
+  <url>
+    <loc>https://thepoint-uerdingen.de/datenschutz/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://thepoint-uerdingen.de/datenschutz/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thepoint-uerdingen.de/en/privacy/"/>
+  </url>
+  <url>
+    <loc>https://thepoint-uerdingen.de/en/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="de" href="https://thepoint-uerdingen.de/datenschutz/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://thepoint-uerdingen.de/en/privacy/"/>
+  </url>
+</urlset>
