@@ -1,0 +1,210 @@
+{
+  "_hinweis": "Struktur: Kategorie → Gericht → Beschreibung → Preis (Zahl in Euro, z. B. 13.9). Platzhalter-Einträge löschen, sobald die echten Gerichte aus Hauptkarte.pdf / Speisekarte.pdf eingetragen sind. Die PDFs waren beim Erstellen nicht abrufbar – nichts wurde erfunden.",
+  "pdfs": [
+    {
+      "label": {
+        "de": "Hauptkarte (PDF)",
+        "en": "Main menu (PDF, German)"
+      },
+      "url": "https://cdn.website.dish.co/media/0f/25/9851797/Hauptkarte.pdf"
+    },
+    {
+      "label": {
+        "de": "Speisekarte (PDF)",
+        "en": "Food menu (PDF, German)"
+      },
+      "url": "https://cdn.website.dish.co/media/2b/cb/10213139/Speisekarte.pdf"
+    }
+  ],
+  "categories": [
+    {
+      "id": "woche",
+      "name": {
+        "de": "Wochenangebote",
+        "en": "Weekly specials"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "Schnitzelbuffet",
+            "en": "Schnitzel buffet"
+          },
+          "description": {
+            "de": "Jeden Donnerstag",
+            "en": "Every Thursday"
+          },
+          "price": 13.9
+        },
+        {
+          "name": {
+            "de": "Burgerkarte",
+            "en": "Burger menu"
+          },
+          "description": {
+            "de": "Jeden Freitag",
+            "en": "Every Friday"
+          },
+          "price": null
+        },
+        {
+          "name": {
+            "de": "Steaks & Klassiker",
+            "en": "Steaks & classics"
+          },
+          "description": {
+            "de": "Jeden Samstag",
+            "en": "Every Saturday"
+          },
+          "price": null
+        }
+      ]
+    },
+    {
+      "id": "fruehstueck",
+      "name": {
+        "de": "Frühstück",
+        "en": "Breakfast"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    },
+    {
+      "id": "mittagessen",
+      "name": {
+        "de": "Mittagessen",
+        "en": "Lunch"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    },
+    {
+      "id": "kaffee-kuchen",
+      "name": {
+        "de": "Kaffee & Kuchen",
+        "en": "Coffee & cake"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    },
+    {
+      "id": "abendessen",
+      "name": {
+        "de": "Abendessen",
+        "en": "Dinner"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    },
+    {
+      "id": "flammkuchen",
+      "name": {
+        "de": "Flammkuchen",
+        "en": "Tarte flambée"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    },
+    {
+      "id": "hot-dogs",
+      "name": {
+        "de": "Hot Dogs",
+        "en": "Hot dogs"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    },
+    {
+      "id": "eis",
+      "name": {
+        "de": "Eis",
+        "en": "Ice cream"
+      },
+      "items": [
+        {
+          "name": {
+            "de": "[PLATZHALTER: Gerichte aus der Karte]",
+            "en": "[PLACEHOLDER: dishes from the menu]"
+          },
+          "description": {
+            "de": "[PLATZHALTER: Beschreibung]",
+            "en": "[PLACEHOLDER: description]"
+          },
+          "price": null,
+          "placeholder": true
+        }
+      ]
+    }
+  ]
+}

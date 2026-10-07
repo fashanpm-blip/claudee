@@ -1,0 +1,12 @@
+{
+  "_hinweis": "Zeiten im Format HH:MM. closed: true = Ruhetag. close: null = Schließzeit unbekannt (wird als [PLATZHALTER] angezeigt).",
+  "days": [
+    { "day": "mo", "closed": true },
+    { "day": "tu", "open": "10:00", "close": "22:00" },
+    { "day": "we", "open": "10:00", "close": "22:00" },
+    { "day": "th", "open": "10:00", "close": "22:00" },
+    { "day": "fr", "open": "10:00", "close": "22:00" },
+    { "day": "sa", "open": "13:00", "close": "22:00", "_pruefen": "Alte Website: 13:00–22:00, Angabe vom Kunden: ab 11:00 – bitte beim Inhaber bestätigen." },
+    { "day": "su", "open": "10:00", "close": null }
+  ]
+}

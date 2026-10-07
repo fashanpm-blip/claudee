@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Home from '../components/Home.astro';
+import { t } from '../i18n';
+import { restaurantJsonLd } from '../lib/jsonld';
+const s = t.de;
+---
+<Layout lang="de" title={s.title} description={s.description} altPath="/en/" jsonLd={restaurantJsonLd('de', Astro.site!)}>
+  <Home lang="de" />
+</Layout>

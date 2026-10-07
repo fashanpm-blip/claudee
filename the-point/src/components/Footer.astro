@@ -1,0 +1,46 @@
+---
+import { t, type Lang } from '../i18n';
+import { site } from '../site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t[lang];
+const year = new Date().getFullYear();
+const socials = [
+  ['Instagram', site.instagram],
+  ['Facebook', site.facebook],
+] as const;
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <p class="footer-name">{site.name}</p>
+      <address>
+        {site.street}<br />{site.zip} {site.city}<br />
+        <a href={site.phoneHref}>{site.phone}</a><br />
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+      </address>
+    </div>
+    <div>
+      <p class="footer-head">{s.footer.social}</p>
+      <ul class="footer-list">
+        {socials.map(([name, url]) => (
+          <li>
+            {url
+              ? <a href={url} rel="noopener" target="_blank">{name}</a>
+              : <span>{name}: <span class="placeholder">{s.footer.socialPlaceholder}</span></span>}
+          </li>
+        ))}
+        <li><a href={site.cateringUrl} rel="noopener" target="_blank">{s.footer.catering}</a></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="footer-list">
+        <li><a href={s.legal.imprintPath}>{s.footer.imprint}</a></li>
+        <li><a href={s.legal.privacyPath}>{s.footer.privacy}</a></li>
+      </ul>
+      <p class="footer-copy">© {year} {site.name}. {s.footer.rights}</p>
+    </div>
+  </div>
+</footer>

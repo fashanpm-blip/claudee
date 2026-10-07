@@ -1,0 +1,352 @@
+---
+import { t, type Lang } from '../i18n';
+import { site } from '../site';
+import hours from '../data/hours.json';
+import menu from '../data/menu.json';
+import eventsData from '../data/events.json';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t[lang];
+
+const fmtPrice = (p: number) =>
+  new Intl.NumberFormat(lang === 'de' ? 'de-DE' : 'en-GB', { style: 'currency', currency: 'EUR' }).format(p);
+
+const fmtDate = (iso: string) =>
+  new Intl.DateTimeFormat(lang === 'de' ? 'de-DE' : 'en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Berlin',
+  }).format(new Date(iso + 'T12:00:00'));
+
+// Events: Datum ist Pflicht, vergangene werden schon beim Build entfernt (und zusätzlich im Browser ausgeblendet).
+const todayIso = new Date().toISOString().slice(0, 10);
+for (const e of eventsData.events) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(e.date ?? '')) throw new Error(`events.json: Event "${e.id}" braucht ein Datum im Format YYYY-MM-DD`);
+}
+const events = eventsData.events
+  .filter((e) => ((e as any).endDate ?? e.date) >= todayIso)
+  .sort((a, b) => a.date.localeCompare(b.date));
+
+const img = (name: string) => ({
+  src: `/images/${name}-800.webp`,
+  srcset: `/images/${name}-400.webp 400w, /images/${name}-800.webp 800w`,
+});
+
+const statusText = JSON.stringify(s.status);
+const dayNames = JSON.stringify(s.days);
+---
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <img class="hero-img" {...img('innenraum-tische')} sizes="100vw" alt={s.hero.imgAlt} width="800" height="600" fetchpriority="high" decoding="async" />
+  <div class="hero-shade" aria-hidden="true"></div>
+  <div class="wrap hero-content">
+    <p class="kicker">{s.hero.kicker}</p>
+    <h1 id="hero-title">{s.hero.title}</h1>
+    <p class="hero-lead">{s.hero.lead}</p>
+    <p class="status-badge" data-status hidden></p>
+    <div class="hero-ctas">
+      <a class="btn btn-gold" href={site.phoneHref}>{s.reserve}</a>
+      <a class="btn btn-ghost" href="#speisekarte">{s.hero.menuCta}</a>
+    </div>
+  </div>
+</section>
+
+<!-- ÖFFNUNGSZEITEN / ADRESSE / TELEFON -->
+<section id="zeiten" class="section info" aria-labelledby="info-title">
+  <div class="wrap">
+    <div class="info-intro">
+      <h2 id="info-title">{s.info.title}</h2>
+      <p>{s.info.intro}</p>
+      <ul class="chips" aria-label={s.info.offerTitle}>
+        {s.info.offers.map((o) => <li>{o}</li>)}
+      </ul>
+    </div>
+    <div class="info-grid">
+      <div class="card hours-card">
+        <div class="card-head">
+          <h3>{s.info.hoursTitle}</h3>
+          <p class="status-badge small" data-status hidden></p>
+        </div>
+        <table class="hours">
+          <caption class="sr-only">{s.info.hoursTitle}</caption>
+          <tbody>
+            {hours.days.map((d) => (
+              <tr data-day={d.day}>
+                <th scope="row">{s.days[d.day as keyof typeof s.days]}</th>
+                <td>
+                  {d.closed
+                    ? s.info.closedDay
+                    : d.close
+                      ? `${d.open} – ${d.close}`
+                      : <>{s.info.from} {d.open} – <span class="placeholder">{s.info.closeUnknown}</span></>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h3>{s.info.addressTitle}</h3>
+        <address class="big">{site.street}<br />{site.zip} {site.city}-{site.district}</address>
+        <a class="btn btn-outline" href={site.mapsUrl} rel="noopener" target="_blank">{s.info.route}</a>
+      </div>
+      <div class="card">
+        <h3>{s.info.phoneTitle}</h3>
+        <p class="big"><a href={site.phoneHref}>{site.phone}</a></p>
+        <a class="btn btn-green" href={site.phoneHref}>{s.info.call}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JEDE WOCHE BEI UNS -->
+<section id="jede-woche" class="section dark weekly" aria-labelledby="weekly-title">
+  <div class="wrap">
+    <h2 id="weekly-title">{s.weekly.title}</h2>
+    <p class="section-lead">{s.weekly.lead}</p>
+    <ol class="weekly-grid">
+      {s.weekly.cards.map((c) => (
+        <li class="weekly-card">
+          <span class="weekly-icon" aria-hidden="true">
+            {c.icon === 'schnitzel' && <svg viewBox="0 0 48 48"><ellipse cx="24" cy="26" rx="18" ry="11" fill="#E9B45A"/><path d="M12 24c4-3 8 2 12-1s8 2 12-1" stroke="#1B2A22" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="36" cy="14" r="5" fill="#F4F5F0"/><path d="M33 14h6" stroke="#2F5D45" stroke-width="2"/></svg>}
+            {c.icon === 'burger' && <svg viewBox="0 0 48 48"><path d="M8 22a16 12 0 0 1 32 0Z" fill="#E9B45A"/><rect x="7" y="25" width="34" height="5" rx="2.5" fill="#6FA37F"/><rect x="8" y="31" width="32" height="5" rx="2.5" fill="#8A4B2A"/><path d="M9 38h30a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4Z" fill="#E9B45A"/></svg>}
+            {c.icon === 'steak' && <svg viewBox="0 0 48 48"><path d="M10 26c0-9 9-15 19-13s12 9 9 15-11 9-19 8-9-4-9-10Z" fill="#B85C38"/><path d="M15 25c1-5 6-8 12-7" stroke="#F4F5F0" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="28" cy="27" r="3" fill="#F4F5F0"/></svg>}
+          </span>
+          <p class="weekly-day">{c.day}</p>
+          <h3>{c.title}</h3>
+          <p>{c.text}</p>
+          {c.price && <p class="weekly-price">{c.price}</p>}
+        </li>
+      ))}
+    </ol>
+    <p class="weekly-park">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2 5 12h4l-3 5h5v5h2v-5h5l-3-5h4L12 2Z"/></svg>
+      {s.weekly.park}
+    </p>
+  </div>
+</section>
+
+<!-- SPEISEKARTE -->
+<section id="speisekarte" class="section menu" aria-labelledby="menu-title">
+  <div class="wrap">
+    <h2 id="menu-title">{s.menu.title}</h2>
+    <p class="section-lead">{s.menu.lead}</p>
+    <div class="tabs" role="tablist" aria-label={s.menu.tabsLabel}>
+      {menu.categories.map((c, i) => (
+        <button class="tab" role="tab" type="button" id={`tab-${c.id}`} aria-controls={`panel-${c.id}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>
+          {c.name[lang]}
+        </button>
+      ))}
+    </div>
+    {menu.categories.map((c, i) => (
+      <div class="panel" role="tabpanel" id={`panel-${c.id}`} aria-labelledby={`tab-${c.id}`} data-first={i === 0 ? '' : undefined} tabindex="0">
+        <h3 class="panel-title">{c.name[lang]}</h3>
+        <ul class="dishes">
+          {c.items.map((d: any) => (
+            <li class:list={['dish', { 'is-placeholder': d.placeholder }]}>
+              <div>
+                <p class="dish-name">{d.name[lang]}</p>
+                {d.description && <p class="dish-desc">{d.description[lang]}</p>}
+              </div>
+              <p class="dish-price">{d.price != null ? fmtPrice(d.price) : ''}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+    <p class="menu-note">{s.menu.note}</p>
+    <div class="menu-downloads">
+      <span>{s.menu.download}:</span>
+      {menu.pdfs.map((p) => (
+        <a href={p.url} rel="noopener" target="_blank">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 16 7 11l1.4-1.4 2.6 2.6V4h2v8.2l2.6-2.6L17 11l-5 5Zm-7 4v-2h14v2H5Z"/></svg>
+          {p.label[lang]}
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section id="galerie" class="section gallery" aria-labelledby="gallery-title">
+  <div class="wrap">
+    <h2 id="gallery-title">{s.gallery.title}</h2>
+    <p class="section-lead">{s.gallery.lead}</p>
+    <ul class="gallery-grid">
+      {s.gallery.items.map((g) => (
+        <li>
+          <figure>
+            <img {...img(g.img)} sizes="(min-width: 960px) 25vw, 50vw" alt={g.alt} width="800" height="600" loading="lazy" decoding="async" />
+            <figcaption>{g.caption}</figcaption>
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events" class="section events" aria-labelledby="events-title">
+  <div class="wrap">
+    <h2 id="events-title">{s.events.title}</h2>
+    <p class="section-lead">{s.events.lead}</p>
+    <ul class="events-list">
+      {events.map((e: any) => (
+        <li class="event" data-end={e.endDate ?? e.date}>
+          <img {...img(e.image)} sizes="(min-width: 760px) 320px, 100vw" alt={s.gallery.items.find((g) => g.img === e.image)?.alt ?? ''} width="800" height="600" loading="lazy" decoding="async" />
+          <div class="event-body">
+            <p class="event-date">
+              {e.dateIsPlaceholder
+                ? <span class="placeholder">{s.events.datePlaceholder}</span>
+                : <time datetime={e.date}>{fmtDate(e.date)}{e.time ? `, ${e.time}` : ''}</time>}
+            </p>
+            <h3>{e.title[lang]}</h3>
+            {e.subtitle && <p class="event-sub">{e.subtitle[lang]}</p>}
+            <p>{e.text[lang]}</p>
+            <a class="btn btn-green" href={site.phoneHref}>{s.events.reserve}</a>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="events-none" data-events-none hidden={events.length > 0}>{s.events.none}</p>
+  </div>
+</section>
+
+<!-- CATERING & FEIERN -->
+<section id="catering" class="section dark catering" aria-labelledby="catering-title">
+  <div class="wrap catering-grid">
+    <img {...img('festtafel')} sizes="(min-width: 960px) 40vw, 100vw" alt={s.catering.imgAlt} width="800" height="1067" loading="lazy" decoding="async" />
+    <div>
+      <h2 id="catering-title">{s.catering.title}</h2>
+      <p>{s.catering.lead}</p>
+      <h3>{s.catering.servicesTitle}</h3>
+      <ul class="chips chips-dark">
+        {s.catering.services.map((x) => <li>{x}</li>)}
+      </ul>
+      <div class="btn-row">
+        <a class="btn btn-gold" href={site.cateringUrl} rel="noopener" target="_blank">{s.catering.cta}</a>
+        <a class="btn btn-ghost" href={`mailto:${site.email}?subject=${encodeURIComponent(s.catering.mailSubject)}`}>{s.catering.ask}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEWERTUNGEN -->
+<section id="bewertungen" class="section reviews" aria-labelledby="reviews-title">
+  <div class="wrap">
+    <h2 id="reviews-title">{s.reviews.title}</h2>
+    <ul class="reviews-grid">
+      {[1, 2, 3].map(() => (
+        <li class="review">
+          <p class="stars" role="img" aria-label={s.reviews.stars}>★★★★★</p>
+          <blockquote><p class="placeholder">{s.reviews.placeholder}</p></blockquote>
+          <p class="review-author">— <span class="placeholder">{s.reviews.author}</span></p>
+        </li>
+      ))}
+    </ul>
+    <a class="btn btn-outline" href={site.googleReviews || site.mapsUrl} rel="noopener" target="_blank">{s.reviews.all}</a>
+  </div>
+</section>
+
+<!-- KONTAKT + KARTE -->
+<section id="kontakt" class="section contact" aria-labelledby="contact-title">
+  <div class="wrap contact-grid">
+    <div>
+      <h2 id="contact-title">{s.contact.title}</h2>
+      <p>{s.contact.lead}</p>
+      <dl class="contact-list">
+        <dt>{s.info.phoneTitle}</dt><dd><a href={site.phoneHref}>{site.phone}</a></dd>
+        <dt>{s.contact.email}</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd>
+        <dt>{s.info.addressTitle}</dt><dd>{site.street}, {site.zip} {site.city}</dd>
+      </dl>
+      <h3>{s.contact.paymentTitle}</h3>
+      <ul class="chips">
+        {s.contact.payments.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+    <a class="map-card" href={site.mapsUrl} rel="noopener" target="_blank">
+      <svg class="map-art" viewBox="0 0 400 260" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+        <rect width="400" height="260" fill="#2F5D45"/>
+        <path d="M0 200 C80 170 140 230 220 190 S340 140 400 160 V260 H0Z" fill="#244a37"/>
+        <g fill="#3d7558"><circle cx="60" cy="70" r="26"/><circle cx="95" cy="50" r="20"/><circle cx="330" cy="60" r="28"/><circle cx="300" cy="90" r="18"/><circle cx="80" cy="190" r="22"/><circle cx="350" cy="210" r="24"/></g>
+        <rect x="150" y="70" width="110" height="70" rx="4" fill="#B8603E" stroke="#F4F5F0" stroke-width="3"/>
+        <path d="M205 70v70M150 105h110" stroke="#F4F5F0" stroke-width="2"/>
+        <path d="M0 240 C120 220 260 250 400 225" stroke="#E9B45A" stroke-width="6" fill="none" stroke-dasharray="2 0"/>
+        <g transform="translate(205 160)"><path d="M0 -38c-12 0-20 9-20 20 0 15 20 34 20 34s20-19 20-34c0-11-8-20-20-20Z" fill="#E9B45A"/><circle cy="-18" r="7" fill="#1B2A22"/></g>
+      </svg>
+      <span class="map-text">
+        <strong>{s.contact.mapTitle}</strong>
+        <span>{s.contact.mapText}</span>
+        <span class="map-cta">{s.contact.mapCta} →</span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<script is:inline define:vars={{ hours: hours.days, st: statusText, dn: dayNames, lang }}>
+  // Öffnungsstatus live berechnen (Zeitzone Europe/Berlin), heutigen Tag markieren, abgelaufene Events ausblenden.
+  (function () {
+    var S = JSON.parse(st), D = JSON.parse(dn);
+    var keys = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'];
+    var parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+    var p = {}; parts.forEach(function (x) { p[x.type] = x.value; });
+    var wd = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[p.weekday];
+    var now = +p.hour * 60 + +p.minute;
+    var iso = p.year + '-' + p.month + '-' + p.day;
+    var byDay = {}; hours.forEach(function (h) { byDay[h.day] = h; });
+    var min = function (s) { var a = s.split(':'); return +a[0] * 60 + +a[1]; };
+    var today = byDay[keys[wd]];
+    var row = document.querySelector('tr[data-day="' + keys[wd] + '"]');
+    if (row) row.classList.add('is-today');
+
+    function next() {
+      for (var i = 1; i <= 7; i++) {
+        var h = byDay[keys[(wd + i) % 7]];
+        if (h && !h.closed) return S.opensOn + ' ' + D[h.day] + ' ' + S.at + ' ' + h.open;
+      }
+      return '';
+    }
+    var text, state;
+    if (!today || today.closed) { state = 'closed'; text = S.closed + ' · ' + next(); }
+    else if (now < min(today.open)) { state = 'closed'; text = S.closed + ' · ' + S.opensToday + ' ' + today.open; }
+    else if (!today.close) { state = 'neutral'; text = S.openFrom + ' ' + today.open; }
+    else if (now < min(today.close)) { state = 'open'; text = S.open + ' · ' + S.until + ' ' + today.close; }
+    else { state = 'closed'; text = S.closed + ' · ' + next(); }
+    document.querySelectorAll('[data-status]').forEach(function (el) {
+      el.textContent = text; el.dataset.state = state; el.hidden = false;
+    });
+
+    var visible = 0;
+    document.querySelectorAll('.event[data-end]').forEach(function (el) {
+      if (el.dataset.end < iso) el.remove(); else visible++;
+    });
+    var none = document.querySelector('[data-events-none]');
+    if (none && visible === 0) none.hidden = false;
+  })();
+</script>
+
+<script>
+  // Tabs der Speisekarte (barrierefrei: Pfeiltasten, Home/End)
+  const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('.tab'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('.panel'));
+  function select(i: number, focus = false) {
+    tabs.forEach((t, j) => {
+      const on = i === j;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      panels[j].hidden = !on;
+    });
+    if (focus) tabs[i].focus();
+  }
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('click', () => select(i));
+    tab.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if (k === 'ArrowRight' || k === 'ArrowDown') { e.preventDefault(); select((i + 1) % tabs.length, true); }
+      if (k === 'ArrowLeft' || k === 'ArrowUp') { e.preventDefault(); select((i - 1 + tabs.length) % tabs.length, true); }
+      if (k === 'Home') { e.preventDefault(); select(0, true); }
+      if (k === 'End') { e.preventDefault(); select(tabs.length - 1, true); }
+    });
+  });
+  if (tabs.length) select(0);
+</script>

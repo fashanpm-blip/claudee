@@ -1,0 +1,18 @@
+{
+  "_hinweis": "date ist Pflicht (YYYY-MM-DD). Nach dem Datum (bzw. endDate) wird das Event automatisch ausgeblendet. dateIsPlaceholder: true zeigt [PLATZHALTER: Datum] statt des Datums an – nach dem Eintragen des echten Datums entfernen.",
+  "events": [
+    {
+      "id": "spare-ribs-buffet",
+      "date": "2026-12-31",
+      "dateIsPlaceholder": true,
+      "time": null,
+      "image": "spanferkel-grill",
+      "title": { "de": "Spare Ribs Buffet", "en": "Spare Ribs Buffet" },
+      "subtitle": { "de": "Wir gehen in die zweite Runde!", "en": "We're going for round two!" },
+      "text": {
+        "de": "Schnell noch einen Platz ergattern!",
+        "en": "Grab your seat while you still can!"
+      }
+    }
+  ]
+}

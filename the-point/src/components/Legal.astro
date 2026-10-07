@@ -1,0 +1,80 @@
+---
+import { t, homePath, type Lang } from '../i18n';
+import { site } from '../site';
+
+interface Props { lang: Lang; kind: 'imprint' | 'privacy' }
+const { lang, kind } = Astro.props;
+const s = t[lang];
+const de = lang === 'de';
+---
+
+<article class="section legal">
+  <div class="wrap narrow">
+    {kind === 'imprint' ? (
+      de ? (
+        <>
+          <h1>Impressum</h1>
+          <h2>Angaben gemäß § 5 DDG</h2>
+          <p>{site.name}<br />Inhaber: {site.owner}<br />{site.street}<br />{site.zip} {site.city}</p>
+          <h2>Kontakt</h2>
+          <p>Telefon: <a href={site.phoneHref}>{site.phone}</a><br />E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+          <h2>Umsatzsteuer-ID</h2>
+          <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz: {site.vatId}</p>
+          <h2>Verantwortlich für den Inhalt</h2>
+          <p>{site.owner}, Anschrift wie oben.</p>
+          <h2>Verbraucherstreitbeilegung</h2>
+          <p>Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+          <p class="placeholder">[PLATZHALTER: Impressum vor Veröffentlichung rechtlich prüfen lassen]</p>
+        </>
+      ) : (
+        <>
+          <h1>Legal notice</h1>
+          <p class="muted">This is a translation for information purposes. The German version (Impressum) is legally binding.</p>
+          <h2>Information pursuant to § 5 DDG (German Digital Services Act)</h2>
+          <p>{site.name}<br />Owner: {site.owner}<br />{site.street}<br />{site.zip} {site.city}, Germany</p>
+          <h2>Contact</h2>
+          <p>Phone: <a href={site.phoneHref}>{site.phone}</a><br />Email: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+          <h2>VAT ID</h2>
+          <p>VAT identification number pursuant to § 27a German VAT Act: {site.vatId}</p>
+          <h2>Responsible for content</h2>
+          <p>{site.owner}, address as above.</p>
+          <h2>Consumer dispute resolution</h2>
+          <p>We are neither willing nor obliged to take part in dispute resolution proceedings before a consumer arbitration board.</p>
+          <p class="placeholder">[PLACEHOLDER: have the legal notice reviewed before publishing]</p>
+        </>
+      )
+    ) : de ? (
+      <>
+        <h1>Datenschutzerklärung</h1>
+        <p class="placeholder">[PLATZHALTER: Datenschutzerklärung vor Veröffentlichung rechtlich prüfen lassen]</p>
+        <h2>1. Verantwortlicher</h2>
+        <p>{site.owner}, {site.name}, {site.street}, {site.zip} {site.city}<br />Telefon: {site.phone} · E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+        <h2>2. Keine Cookies, kein Tracking</h2>
+        <p>Diese Website setzt keine Cookies und verwendet keine Analyse- oder Werbedienste. Schriftarten werden von unserem eigenen Server geladen, es werden keine Daten an Google Fonts übertragen. Eine Karte von Google Maps wird nicht eingebettet; erst wenn Sie den Link „In Google Maps öffnen“ anklicken, verlassen Sie unsere Website.</p>
+        <h2>3. Hosting und Server-Logfiles</h2>
+        <p>Die Website wird bei <span class="placeholder">[PLATZHALTER: Hosting-Anbieter, z. B. Netlify, Inc.]</span> gehostet. Beim Aufruf werden technisch notwendige Daten (IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Browsertyp) kurzzeitig in Server-Logfiles verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (sicherer und stabiler Betrieb der Website).</p>
+        <h2>4. Kontakt per Telefon oder E-Mail</h2>
+        <p>Wenn Sie uns anrufen oder eine E-Mail schreiben, verarbeiten wir Ihre Angaben ausschließlich zur Bearbeitung Ihrer Anfrage bzw. Reservierung (Art. 6 Abs. 1 lit. b DSGVO) und löschen sie, sobald sie nicht mehr erforderlich sind.</p>
+        <h2>5. Ihre Rechte</h2>
+        <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO) sowie das Recht auf Beschwerde bei einer Datenschutz-Aufsichtsbehörde, z. B. der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.</p>
+      </>
+    ) : (
+      <>
+        <h1>Privacy policy</h1>
+        <p class="muted">This is a translation for information purposes. The German version (Datenschutzerklärung) is legally binding.</p>
+        <p class="placeholder">[PLACEHOLDER: have the privacy policy reviewed before publishing]</p>
+        <h2>1. Controller</h2>
+        <p>{site.owner}, {site.name}, {site.street}, {site.zip} {site.city}, Germany<br />Phone: {site.phone} · Email: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+        <h2>2. No cookies, no tracking</h2>
+        <p>This website does not set any cookies and does not use analytics or advertising services. Fonts are served from our own server; no data is sent to Google Fonts. No Google Maps map is embedded; you only leave our website when you click the “Open in Google Maps” link.</p>
+        <h2>3. Hosting and server log files</h2>
+        <p>The website is hosted by <span class="placeholder">[PLACEHOLDER: hosting provider, e.g. Netlify, Inc.]</span>. When you visit, technically necessary data (IP address, date and time, page requested, browser type) is briefly processed in server log files. The legal basis is Art. 6(1)(f) GDPR (secure and stable operation of the website).</p>
+        <h2>4. Contact by phone or email</h2>
+        <p>If you call or email us, we process your details solely to handle your enquiry or reservation (Art. 6(1)(b) GDPR) and delete them once they are no longer needed.</p>
+        <h2>5. Your rights</h2>
+        <p>You have the right to access, rectification, erasure, restriction of processing, data portability and objection (Art. 15–21 GDPR), and the right to lodge a complaint with a data protection supervisory authority, e.g. the State Commissioner for Data Protection and Freedom of Information of North Rhine-Westphalia.</p>
+      </>
+    )}
+    <p><a class="btn btn-outline" href={homePath(lang)}>{s.legal.back}</a></p>
+  </div>
+</article>
