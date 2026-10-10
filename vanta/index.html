@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VANTA — ігрові мишки для перемог</title>
+<meta name="description" content="VANTA — ультралегкі ігрові мишки: 49 г, сенсор 26 000 DPI, опитування 8000 Гц. Обери свою модель, перевір реакцію в тренажері прицілювання та замовляй з безкоштовною доставкою.">
+<meta name="theme-color" content="#0f0f23">
+<meta property="og:title" content="VANTA — ігрові мишки для перемог">
+<meta property="og:description" content="Ультралегкі ігрові мишки: 49 г, 26 000 DPI, 8000 Гц.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M4 5h7l5 13 5-13h7L19 28h-6z' fill='%23f43f5e'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&family=Russo+One&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js');setTimeout(function(){if(!window.__vantaReady)document.documentElement.classList.remove('js')},2500);</script>
+</head>
+<body>
+
+<!-- Reusable SVG: mouse illustration + icons -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-shade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".28"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".45"/>
+    </linearGradient>
+    <radialGradient id="g-gloss" cx=".35" cy=".2" r=".6">
+      <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <symbol id="mouse" viewBox="0 0 200 320">
+    <path style="fill:var(--m-body,#18162c)" d="M100 8C152 8 180 50 183 112c3 60 1 118-12 156-12 30-38 46-71 46s-59-16-71-46C16 230 14 172 17 112 20 50 48 8 100 8Z"/>
+    <path d="M100 8C152 8 180 50 183 112c3 60 1 118-12 156-12 30-38 46-71 46s-59-16-71-46C16 230 14 172 17 112 20 50 48 8 100 8Z" fill="url(#g-shade)"/>
+    <ellipse cx="72" cy="70" rx="44" ry="56" fill="url(#g-gloss)"/>
+    <!-- button split -->
+    <path d="M100 10v118" stroke="#000" stroke-opacity=".55" stroke-width="2.5"/>
+    <path d="M22 122c26 14 52 20 78 20s52-6 78-20" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="2.5"/>
+    <!-- scroll wheel -->
+    <rect x="90" y="40" width="20" height="50" rx="10" fill="#0a0a16"/>
+    <clipPath id="wheel-clip"><rect x="92" y="42" width="16" height="46" rx="8"/></clipPath>
+    <g clip-path="url(#wheel-clip)">
+      <g fill="#3b3b55">
+        <rect x="92" y="34" width="16" height="3"/><rect x="92" y="42" width="16" height="3"/><rect x="92" y="50" width="16" height="3"/>
+        <rect x="92" y="58" width="16" height="3"/><rect x="92" y="66" width="16" height="3"/><rect x="92" y="74" width="16" height="3"/>
+        <rect x="92" y="82" width="16" height="3"/><rect x="92" y="90" width="16" height="3"/>
+      </g>
+    </g>
+    <rect x="94" y="100" width="12" height="14" rx="3" fill="#0a0a16"/>
+    <rect x="97" y="104" width="6" height="6" rx="1.5" style="fill:var(--m-accent,#f43f5e)"/>
+    <!-- side buttons -->
+    <rect x="12" y="140" width="9" height="30" rx="4" fill="#0a0a16"/>
+    <rect x="12" y="176" width="9" height="30" rx="4" fill="#0a0a16"/>
+    <!-- honeycomb vents -->
+    <g fill="#000" fill-opacity=".35">
+      <circle cx="80" cy="180" r="5"/><circle cx="100" cy="180" r="5"/><circle cx="120" cy="180" r="5"/>
+      <circle cx="90" cy="196" r="5"/><circle cx="110" cy="196" r="5"/>
+      <circle cx="80" cy="212" r="5"/><circle cx="100" cy="212" r="5"/><circle cx="120" cy="212" r="5"/>
+    </g>
+    <!-- logo -->
+    <path style="fill:var(--m-accent,#f43f5e)" d="M86 240h8l6 14 6-14h8l-11 24h-6z"/>
+    <!-- RGB strip -->
+    <path style="stroke:var(--m-accent,#f43f5e);filter:drop-shadow(0 0 5px var(--m-accent,#f43f5e))" d="M34 262c14 30 38 42 66 42s52-12 66-42" fill="none" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="i-cart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2M10 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m-6 6 6-6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="i-feather" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20.2 12.2a6 6 0 0 0-8.5-8.5L5 10.5V19h8.5zM16 8 2 22M17.5 15H9"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></g></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-battery" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2M6 10v4M10 10v4M14 10v4"/></g></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M2 8.8a15 15 0 0 1 20 0M5 12.6a10 10 0 0 1 14 0M8.5 16.3a5 5 0 0 1 7 0M12 20h.01"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M6 7h12l1 14H5zM9 7a3 3 0 0 1 6 0"/></symbol>
+</svg>
+
+<a class="skip-link" href="#main">Перейти до змісту</a>
+<div class="progress" aria-hidden="true"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--a" aria-hidden="true"></div>
+<div class="bg-glow bg-glow--b" aria-hidden="true"></div>
+
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a class="logo" href="#top" aria-label="VANTA — на початок сторінки">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5h7l5 13 5-13h7L19 28h-6z" fill="#f43f5e"/></svg>
+      VANTA
+    </a>
+    <nav class="nav" aria-label="Основна навігація">
+      <ul>
+        <li><a href="#features">Технології</a></li>
+        <li><a href="#shop">Моделі</a></li>
+        <li><a href="#trainer">Тренажер</a></li>
+        <li><a href="#compare">Порівняння</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="header__actions">
+      <button class="icon-btn" id="cart-open" type="button" aria-label="Відкрити кошик" aria-controls="cart" aria-expanded="false">
+        <svg aria-hidden="true"><use href="#i-cart"/></svg>
+        <span class="cart-count" id="cart-count" hidden>0</span>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Відкрити меню" aria-controls="mobile-menu" aria-expanded="false">
+        <svg aria-hidden="true"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="mobile-menu" id="mobile-menu" aria-label="Мобільна навігація">
+  <a href="#features">Технології</a>
+  <a href="#shop">Моделі</a>
+  <a href="#trainer">Тренажер</a>
+  <a href="#compare">Порівняння</a>
+  <a href="#faq">FAQ</a>
+</nav>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="container hero__grid">
+      <div>
+        <span class="eyebrow"><span class="dot" aria-hidden="true"></span>Нова серія X1 · вже в наявності</span>
+        <h1 id="hero-title">
+          <span class="line"><span style="--delay:100ms">Цілься.</span></span>
+          <span class="line"><span style="--delay:220ms" class="grad-text">Клікай.</span></span>
+          <span class="line"><span style="--delay:340ms">Перемагай.</span></span>
+        </h1>
+        <p class="hero__lead" data-reveal style="--delay:450ms">Ультралегкі ігрові мишки, створені разом із кіберспортсменами. Нуль затримки, ідеальний сенсор і форма, яка зникає в руці.</p>
+        <div class="hero__cta" data-reveal style="--delay:550ms">
+          <a class="btn" href="#shop">Обрати мишку <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn--ghost" href="#trainer">Перевірити реакцію</a>
+        </div>
+        <div class="hero__stats" data-reveal style="--delay:650ms">
+          <div class="stat"><div class="stat__num"><span data-count="49">49</span><small>&nbsp;г</small></div><div class="stat__label">вага X1 Pro</div></div>
+          <div class="stat"><div class="stat__num"><span data-count="26000" data-format="thousands">26 000</span></div><div class="stat__label">DPI сенсора</div></div>
+          <div class="stat"><div class="stat__num"><span data-count="8000" data-format="thousands">8 000</span><small>&nbsp;Гц</small></div><div class="stat__label">частота опитування</div></div>
+        </div>
+      </div>
+
+      <div class="hero__visual" data-reveal="scale" style="--delay:250ms">
+        <div class="hero__ring" aria-hidden="true"></div>
+        <div class="hero__ring hero__ring--2" aria-hidden="true"></div>
+        <svg class="mouse-svg hero__mouse" viewBox="0 0 200 320" id="hero-mouse" role="img" aria-label="Ігрова мишка VANTA X1 Pro, вигляд зверху" style="--m-body:#18162c;--m-accent:#f43f5e">
+          <use href="#mouse"/>
+        </svg>
+        <div class="hero__tag hero__tag--1"><b>0.2 мс</b> затримка кліку</div>
+        <div class="hero__tag hero__tag--2"><b>120 год</b> без зарядки</div>
+        <div class="hero__tag hero__tag--3"><b>PTFE</b> ніжки 100%</div>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true"></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <div class="marquee__group">
+        <span class="marquee__item">Оптичні перемикачі</span><span class="marquee__item">26K DPI</span>
+        <span class="marquee__item">Бездротовий 8K</span><span class="marquee__item">49 грамів</span>
+        <span class="marquee__item">RGB підсвітка</span><span class="marquee__item">2 роки гарантії</span>
+      </div>
+      <div class="marquee__group">
+        <span class="marquee__item">Оптичні перемикачі</span><span class="marquee__item">26K DPI</span>
+        <span class="marquee__item">Бездротовий 8K</span><span class="marquee__item">49 грамів</span>
+        <span class="marquee__item">RGB підсвітка</span><span class="marquee__item">2 роки гарантії</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features" aria-labelledby="features-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="section__kicker" data-reveal>Технології</span>
+          <h2 class="section__title" id="features-title" data-reveal style="--delay:80ms">Кожен грам має значення</h2>
+        </div>
+        <p class="section__sub" data-reveal style="--delay:160ms">Ми прибрали все зайве та залишили тільки те, що допомагає тобі виграти раунд.</p>
+      </div>
+
+      <div class="features">
+        <article class="feature feature--wide feature--tall" data-reveal>
+          <div class="feature__icon"><svg aria-hidden="true"><use href="#i-target"/></svg></div>
+          <h3>Сенсор Focus 26K</h3>
+          <p>Відстежує рух з точністю 99,8% навіть на швидкості 650 IPS. Ніякого «тремтіння» прицілу, навіть на скляному килимку.</p>
+          <div class="feature__big"><span data-count="26000" data-format="thousands">26 000</span></div>
+          <div class="feature__bars" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </article>
+        <article class="feature feature--wide" data-reveal style="--delay:80ms">
+          <div class="feature__icon"><svg aria-hidden="true"><use href="#i-feather"/></svg></div>
+          <h3>Корпус 49 г без дірок</h3>
+          <p>Цільний магнієвий каркас: легкий, як перо, і без отворів, у які забивається пил.</p>
+        </article>
+        <article class="feature" data-reveal style="--delay:160ms">
+          <div class="feature__icon"><svg aria-hidden="true"><use href="#i-bolt"/></svg></div>
+          <h3>Оптичні кліки</h3>
+          <p>0,2 мс на спрацювання і 100 млн натискань ресурсу.</p>
+        </article>
+        <article class="feature" data-reveal style="--delay:240ms">
+          <div class="feature__icon"><svg aria-hidden="true"><use href="#i-wifi"/></svg></div>
+          <h3>HyperLink 8K</h3>
+          <p>Бездротовий зв'язок, швидший за дріт.</p>
+        </article>
+        <article class="feature feature--full" data-reveal style="--delay:120ms">
+          <div class="feature__icon"><svg aria-hidden="true"><use href="#i-battery"/></svg></div>
+          <h3>120 годин роботи</h3>
+          <p>Тиждень турнірів на одному заряді. 15 хвилин через USB-C дають ще 20 годин гри.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOP -->
+  <section class="section" id="shop" aria-labelledby="shop-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="section__kicker" data-reveal>Моделі</span>
+          <h2 class="section__title" id="shop-title" data-reveal style="--delay:80ms">Обери свою зброю</h2>
+        </div>
+        <p class="section__sub" data-reveal style="--delay:160ms">Обери колір: мишка на картці зміниться. Доставка безкоштовна від 3 000 грн.</p>
+      </div>
+      <div class="products" id="products"><!-- rendered by app.js --></div>
+    </div>
+  </section>
+
+  <!-- AIM TRAINER -->
+  <section class="section" id="trainer" aria-labelledby="trainer-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="section__kicker" data-reveal>Тренажер</span>
+          <h2 class="section__title" id="trainer-title" data-reveal style="--delay:80ms">Перевір свою реакцію</h2>
+        </div>
+        <p class="section__sub" data-reveal style="--delay:160ms">У тебе 20 секунд. Влучай у мішені якомога швидше: з часом вони стають меншими.</p>
+      </div>
+
+      <div class="trainer" data-reveal>
+        <div class="arena" id="arena">
+          <div class="arena__overlay" id="arena-overlay">
+            <div>
+              <h3 id="arena-title">Готовий?</h3>
+              <p id="arena-text">Натисни «Старт» і влуч у якомога більше мішеней.</p>
+              <button class="btn" id="arena-start" type="button">Старт</button>
+            </div>
+          </div>
+        </div>
+        <div class="hud" aria-live="polite">
+          <div class="hud__item hud__item--wide">
+            <div class="hud__label">Час</div>
+            <div class="hud__value"><span id="hud-time">20.0</span> с</div>
+            <div class="timebar" aria-hidden="true"><span id="hud-bar"></span></div>
+          </div>
+          <div class="hud__item"><div class="hud__label">Влучання</div><div class="hud__value" id="hud-hits">0</div></div>
+          <div class="hud__item"><div class="hud__label">Точність</div><div class="hud__value"><span id="hud-acc">0</span>%</div></div>
+          <div class="hud__item"><div class="hud__label">Реакція</div><div class="hud__value"><span id="hud-rt">—</span></div></div>
+          <div class="hud__item"><div class="hud__label">Рекорд</div><div class="hud__value" id="hud-best">0</div></div>
+          <div class="hud__item hud__item--wide"><div class="hud__label">Твій ранг</div><div class="hud__value rank" id="hud-rank">—</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARE -->
+  <section class="section" id="compare" aria-labelledby="compare-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="section__kicker" data-reveal>Порівняння</span>
+          <h2 class="section__title" id="compare-title" data-reveal style="--delay:80ms">Яка модель для тебе?</h2>
+        </div>
+      </div>
+      <div class="table-wrap" data-reveal>
+        <table class="compare">
+          <caption class="sr-only">Порівняння характеристик мишок VANTA</caption>
+          <thead>
+            <tr><th scope="col">Характеристика</th><th scope="col" class="is-hl">X1 Pro</th><th scope="col">Air</th><th scope="col">Titan</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Вага</th><td class="is-hl">49 г</td><td>39 г</td><td>89 г</td></tr>
+            <tr><th scope="row">Сенсор (DPI)</th><td class="is-hl">26 000</td><td>16 000</td><td>26 000</td></tr>
+            <tr><th scope="row">Опитування</th><td class="is-hl">8000 Гц</td><td>1000 Гц</td><td>4000 Гц</td></tr>
+            <tr><th scope="row">Бездротова</th><td class="is-hl"><span class="yes">Так</span></td><td><span class="no">Ні, дріт</span></td><td><span class="yes">Так</span></td></tr>
+            <tr><th scope="row">Кнопок</th><td class="is-hl">5</td><td>5</td><td>14</td></tr>
+            <tr><th scope="row">Автономність</th><td class="is-hl">120 год</td><td>—</td><td>90 год</td></tr>
+            <tr><th scope="row">Найкраще для</th><td class="is-hl">FPS, кіберспорт</td><td>Бюджет, FPS</td><td>MMO, MOBA</td></tr>
+            <tr><th scope="row">Ціна</th><td class="is-hl">4 999 грн</td><td>2 499 грн</td><td>3 799 грн</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-hint">← Гортай таблицю вбік →</p>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section" id="reviews" aria-labelledby="reviews-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="section__kicker" data-reveal>Відгуки</span>
+          <h2 class="section__title" id="reviews-title" data-reveal style="--delay:80ms">Гравці кажуть</h2>
+        </div>
+        <p class="section__sub" data-reveal style="--delay:160ms">Середня оцінка 4,9 з 5 на основі 2 300+ відгуків.</p>
+      </div>
+      <div class="reviews">
+        <figure class="review" data-reveal>
+          <div class="stars" aria-label="Оцінка 5 з 5"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></div>
+          <blockquote>«Після переходу на X1 Pro мій хедшот-рейт у CS2 виріс помітно. Мишку просто не відчуваєш у руці».</blockquote>
+          <figcaption class="review__who"><span class="avatar" aria-hidden="true">О</span><span><b>Олег К.</b><small>FPS-гравець, Київ</small></span></figcaption>
+        </figure>
+        <figure class="review" data-reveal style="--delay:100ms">
+          <div class="stars" aria-label="Оцінка 5 з 5"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></div>
+          <blockquote>«Titan — ідеальна для WoW. 14 кнопок під великий палець, і всі на своїх місцях. Батарея тримає майже тиждень».</blockquote>
+          <figcaption class="review__who"><span class="avatar" aria-hidden="true">М</span><span><b>Марта Л.</b><small>MMO-гравчиня, Варшава</small></span></figcaption>
+        </figure>
+        <figure class="review" data-reveal style="--delay:200ms">
+          <div class="stars" aria-label="Оцінка 5 з 5"><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg><svg aria-hidden="true"><use href="#i-star"/></svg></div>
+          <blockquote>«Взяв Air як першу ігрову мишку. За такі гроші — найкраще, що я тримав. Кабель м'який, як шнурок».</blockquote>
+          <figcaption class="review__who"><span class="avatar" aria-hidden="true">Д</span><span><b>Денис П.</b><small>Студент, Львів</small></span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="section__kicker" data-reveal>FAQ</span>
+          <h2 class="section__title" id="faq-title" data-reveal style="--delay:80ms">Часті питання</h2>
+        </div>
+      </div>
+      <div class="faq">
+        <details data-reveal>
+          <summary>Скільки триває доставка?</summary>
+          <div class="faq__body">По Україні: 1–3 дні через Нову пошту. У Польщу та ЄС: 3–7 днів. Від 3 000 грн доставка безкоштовна.</div>
+        </details>
+        <details data-reveal style="--delay:60ms">
+          <summary>Яка гарантія?</summary>
+          <div class="faq__body">2 роки на всі моделі. Якщо щось зламалося не з твоєї вини, ми замінимо мишку на нову.</div>
+        </details>
+        <details data-reveal style="--delay:120ms">
+          <summary>Чи можна повернути мишку?</summary>
+          <div class="faq__body">Так, протягом 30 днів без пояснення причин, навіть якщо ти вже нею грав.</div>
+        </details>
+        <details data-reveal style="--delay:180ms">
+          <summary>Що таке DPI і скільки мені потрібно?</summary>
+          <div class="faq__body">DPI показує, наскільки далеко рухається курсор, коли ти рухаєш мишку на 1 дюйм. Більшість професійних гравців у шутерах грають на 400–1600 DPI. Великий запас сенсора (26 000) потрібен для точності, а не для того, щоб ставити максимум.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / NEWSLETTER -->
+  <section class="section" aria-labelledby="cta-title">
+    <div class="container">
+      <div class="cta" data-reveal="scale">
+        <div class="cta__inner">
+          <div>
+            <h2 id="cta-title">−10% на перше замовлення</h2>
+            <p>Підпишись на розсилку: промокод прийде на пошту одразу. Без спаму, тільки новинки та знижки.</p>
+          </div>
+          <form class="form" id="newsletter" novalidate>
+            <label for="email">Твій email</label>
+            <div class="form__row">
+              <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@gmail.com" aria-describedby="email-help" required>
+              <button class="btn" type="submit">Отримати код</button>
+            </div>
+            <p class="form__help" id="email-help" aria-live="polite">Ми ніколи не передаємо твій email третім особам.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="logo" href="#top" aria-label="VANTA — на початок сторінки">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5h7l5 13 5-13h7L19 28h-6z" fill="#f43f5e"/></svg>
+          VANTA
+        </a>
+        <p>Ігрові мишки, створені для тих, хто грає, щоб вигравати.</p>
+      </div>
+      <div>
+        <h3>Магазин</h3>
+        <ul><li><a href="#shop">X1 Pro</a></li><li><a href="#shop">Air</a></li><li><a href="#shop">Titan</a></li></ul>
+      </div>
+      <div>
+        <h3>Допомога</h3>
+        <ul><li><a href="#faq">Доставка</a></li><li><a href="#faq">Гарантія</a></li><li><a href="#faq">Повернення</a></li></ul>
+      </div>
+      <div>
+        <h3>Розділи</h3>
+        <ul><li><a href="#features">Технології</a></li><li><a href="#trainer">Тренажер</a></li><li><a href="#compare">Порівняння</a></li></ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© <span id="year">2026</span> VANTA. Демонстраційний сайт.</span>
+      <span>Зроблено для геймерів</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CART -->
+<div class="scrim" id="scrim" aria-hidden="true"></div>
+<aside class="drawer" id="cart" role="dialog" aria-modal="true" aria-labelledby="cart-title" tabindex="-1">
+  <div class="drawer__head">
+    <h2 id="cart-title">Кошик</h2>
+    <button class="icon-btn" id="cart-close" type="button" aria-label="Закрити кошик"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <ul class="drawer__list" id="cart-list"></ul>
+  <div class="drawer__empty" id="cart-empty">
+    <svg aria-hidden="true"><use href="#i-bag"/></svg>
+    <p>Кошик поки порожній.</p>
+    <a class="btn btn--ghost" href="#shop" id="cart-browse">До моделей</a>
+  </div>
+  <div class="drawer__foot" id="cart-foot">
+    <div class="ship-bar" aria-hidden="true"><span id="ship-bar" style="width:0"></span></div>
+    <p class="ship-note" id="ship-note"></p>
+    <div class="drawer__row"><span>Товари</span><span id="cart-subtotal">0 грн</span></div>
+    <div class="drawer__row"><span>Доставка</span><span id="cart-ship">—</span></div>
+    <div class="drawer__row drawer__row--total"><span>Разом</span><span id="cart-total">0 грн</span></div>
+    <button class="btn btn--block" id="checkout" type="button">Оформити замовлення</button>
+  </div>
+</aside>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<button class="to-top" id="to-top" type="button" aria-label="Нагору"><svg aria-hidden="true"><use href="#i-up"/></svg></button>
+
+<script src="app.js"></script>
+</body>
+</html>
