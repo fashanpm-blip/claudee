@@ -36,6 +36,7 @@
       <ul>
         <li><a href="#specs">Цифри</a></li>
         <li><a href="#anatomy">Деталі</a></li>
+        <li><a href="#tester">Тест кнопок</a></li>
         <li><a href="#calc">Калькулятор</a></li>
         <li><a href="#trainer">Тренажер</a></li>
         <li><a href="#compare">Порівняння</a></li>
@@ -51,6 +52,7 @@
 <nav class="mobile-menu" id="mobile-menu" aria-label="Мобільна навігація">
   <a href="#specs">Цифри</a>
   <a href="#anatomy">Деталі</a>
+  <a href="#tester">Тест кнопок</a>
   <a href="#calc">Калькулятор</a>
   <a href="#trainer">Тренажер</a>
   <a href="#compare">Порівняння</a>
@@ -84,10 +86,11 @@
       <div class="hero__visual" data-reveal="scale" style="--delay:200ms">
         <div class="hero__ring" aria-hidden="true"></div>
         <div class="hero__ring hero__ring--2" aria-hidden="true"></div>
-        <img class="hero__photo" id="hero-photo" src="img/superlight2-magenta.webp" width="560" height="989" alt="Мишка Logitech G Pro X Superlight 2 рожевого кольору Magenta, вигляд зверху" fetchpriority="high">
+        <img class="hero__photo mouse-photo" id="hero-photo" src="img/superlight2-magenta.webp" width="560" height="989" alt="Мишка Logitech G Pro X Superlight 2 рожевого кольору Magenta, вигляд зверху" fetchpriority="high">
         <div class="hero__tag hero__tag--1"><b>HERO 2</b> сенсор</div>
         <div class="hero__tag hero__tag--2"><b>0,125 мс</b> відгук</div>
         <div class="hero__tag hero__tag--3"><b>5</b> кнопок</div>
+        <div class="colors colors--hero" role="radiogroup" aria-label="Колір мишки"></div>
       </div>
     </div>
   </section>
@@ -181,7 +184,7 @@
       </div>
       <div class="anatomy">
         <div class="anatomy__stage" data-reveal="scale">
-          <img src="img/superlight2-magenta.webp" width="560" height="989" alt="Superlight 2 зверху з позначеними частинами" loading="lazy">
+          <img class="mouse-photo" src="img/superlight2-magenta.webp" width="560" height="989" alt="Superlight 2 зверху з позначеними частинами" loading="lazy">
           <button class="hotspot" type="button" data-part="0" style="left:27%;top:16%" aria-label="Основні кнопки"><span></span></button>
           <button class="hotspot" type="button" data-part="1" style="left:51%;top:8%" aria-label="Колесо прокрутки"><span></span></button>
           <button class="hotspot" type="button" data-part="2" style="left:4%;top:38%" aria-label="Бокові кнопки"><span></span></button>
@@ -195,8 +198,55 @@
           <li><button class="part" type="button" data-part="2" aria-expanded="false"><span class="part__idx">03</span><span class="part__name">Бокові кнопки</span><span class="part__desc"><span>Дві кнопки під великий палець, за замовчуванням «Назад» і «Вперед». У програмі G HUB на них можна поставити що завгодно. Разом мишка має 5 кнопок.</span></span></button></li>
           <li><button class="part" type="button" data-part="3" aria-expanded="false"><span class="part__idx">04</span><span class="part__name">Індикатор</span><span class="part__desc"><span>Маленька точка-світлодіод. Вона показує стан підключення і заряд батареї, а коли не потрібна, не світиться.</span></span></button></li>
           <li><button class="part" type="button" data-part="4" aria-expanded="false"><span class="part__idx">05</span><span class="part__name">Логотип G</span><span class="part__desc"><span>Просто друк, без RGB-підсвітки. Без підсвітки мишка легша і довше працює від батареї.</span></span></button></li>
-          <li><button class="part" type="button" data-part="5" aria-expanded="false"><span class="part__idx">06</span><span class="part__name">Корпус</span><span class="part__desc"><span>Цільний матовий корпус без дірок: 125 мм завдовжки і 60 г разом з батареєю. Колір Magenta.</span></span></button></li>
+          <li><button class="part" type="button" data-part="5" aria-expanded="false"><span class="part__idx">06</span><span class="part__name">Корпус</span><span class="part__desc"><span>Цільний матовий корпус без дірок: 125 мм завдовжки і 60 г разом з батареєю. Моя мишка кольору Magenta, але перемикачем можна подивитися чорну й білу.</span></span></button></li>
         </ol>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- BUTTON TESTER -->
+  <section class="section" id="tester" aria-labelledby="tester-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="kicker" data-reveal>Тест кнопок</span>
+          <h2 class="section__title" id="tester-title" data-reveal style="--delay:80ms">Натискай по-справжньому</h2>
+        </div>
+        <p class="section__sub" data-reveal style="--delay:160ms">Наведи курсор на мишку і натискай кнопки своєї мишки або крути колесо. Мишка на екрані повторить кожен рух. На телефоні просто торкайся кнопок.</p>
+      </div>
+      <div class="tester" data-reveal>
+        <div class="tester__stage" id="tester-stage" tabindex="0" role="group" aria-label="Інтерактивна мишка. Enter або пробіл натискає ліву кнопку, стрілки вгору та вниз крутять колесо." aria-describedby="tester-last">
+          <img class="mouse-photo" src="img/superlight2-magenta.webp" width="560" height="989" alt="" draggable="false">
+          <div class="press-layer" aria-hidden="true">
+            <span class="zone zone--left" data-zone="left"></span>
+            <span class="zone zone--right" data-zone="right"></span>
+            <span class="zone zone--fwd" data-zone="fwd"></span>
+            <span class="zone zone--back" data-zone="back"></span>
+          </div>
+          <span class="zone zone--wheel" data-zone="middle" aria-hidden="true"><span class="wheel-stripes"></span></span>
+          <span class="scroll-arrow" id="scroll-arrow" aria-hidden="true"></span>
+        </div>
+        <div class="tester__panel">
+          <div class="panel">
+            <span class="spec__label">Колір</span>
+            <div class="colors" role="radiogroup" aria-label="Колір мишки"></div>
+          </div>
+          <div class="panel tester__last">
+            <span class="spec__label">Остання дія</span>
+            <div class="last" id="tester-last" aria-live="polite">Наведи курсор і натисни</div>
+          </div>
+          <div class="counts">
+            <div class="count"><span class="count__label">Ліва</span><span class="count__val" id="c-left">0</span></div>
+            <div class="count"><span class="count__label">Права</span><span class="count__val" id="c-right">0</span></div>
+            <div class="count"><span class="count__label">Колесо (клік)</span><span class="count__val" id="c-middle">0</span></div>
+            <div class="count"><span class="count__label">Вперед</span><span class="count__val" id="c-fwd">0</span></div>
+            <div class="count"><span class="count__label">Назад</span><span class="count__val" id="c-back">0</span></div>
+            <div class="count"><span class="count__label">Прокрутка</span><span class="count__val" id="c-scroll">0</span></div>
+            <div class="count count--wide"><span class="count__label">Кліків за секунду (рекорд)</span><span class="count__val"><span id="c-cps">0</span> <small>/ <span id="c-cps-best">0</span></small></span></div>
+          </div>
+          <button class="btn btn--ghost" id="tester-reset" type="button">Скинути лічильники</button>
+        </div>
       </div>
     </div>
   </section>

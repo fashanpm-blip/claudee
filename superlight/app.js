@@ -28,7 +28,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && menu.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); }
   });
-  window.matchMedia('(min-width: 960px)').addEventListener('change', function (e) { if (e.matches) setMenu(false); });
+  window.matchMedia('(min-width: 1040px)').addEventListener('change', function (e) { if (e.matches) setMenu(false); });
 
   /* ---------------- header, progress, back to top, active nav ---------------- */
   var header = $('#header'), progress = $('.progress'), toTop = $('#to-top'), ticking = false;
@@ -234,11 +234,158 @@
     });
   }
 
+
+  /* ---------------- colour switcher ---------------- */
+  var COLORS = [
+    { id: 'black', name: 'Чорний', dot: '#1d1d22', alt: 'чорного кольору з білим логотипом' },
+    { id: 'white', name: 'Білий', dot: '#eeeef2', alt: 'білого кольору з чорним логотипом' },
+    { id: 'magenta', name: 'Magenta', dot: '#ff2674', alt: 'рожевого кольору Magenta' }
+  ];
+  function initColors() {
+    var groups = $$('.colors'), current = store.get('sl2-color', 'magenta');
+    if (!COLORS.some(function (c) { return c.id === current; })) current = 'magenta';
+    COLORS.forEach(function (c) { if (c.id !== 'magenta') { var i = new Image(); i.src = 'img/superlight2-' + c.id + '.webp'; } });
+    groups.forEach(function (g) {
+      g.innerHTML = COLORS.map(function (c) {
+        return '<button type="button" class="color-opt" role="radio" data-color="' + c.id + '" aria-checked="false" style="--dot:' + c.dot + '">' +
+          '<span class="color-opt__dot" aria-hidden="true"></span><span class="color-opt__name">' + c.name + '</span></button>';
+      }).join('');
+    });
+    function apply(id, animate) {
+      var c = COLORS.filter(function (x) { return x.id === id; })[0];
+      current = id;
+      $$('.color-opt').forEach(function (b) {
+        var on = b.dataset.color === id;
+        b.setAttribute('aria-checked', String(on));
+        b.tabIndex = on ? 0 : -1;
+      });
+      $$('.mouse-photo').forEach(function (img) {
+        img.src = 'img/superlight2-' + id + '.webp';
+        if (img.id === 'hero-photo') img.alt = 'Мишка Logitech G Pro X Superlight 2 ' + c.alt + ', вигляд зверху';
+        if (animate && !reduceMotion.matches) { img.classList.remove('is-swapping'); void img.offsetWidth; img.classList.add('is-swapping'); }
+      });
+    }
+    groups.forEach(function (g) {
+      g.addEventListener('click', function (e) {
+        var b = e.target.closest('.color-opt'); if (!b) return;
+        apply(b.dataset.color, true); store.set('sl2-color', b.dataset.color);
+      });
+      g.addEventListener('keydown', function (e) {
+        var keys = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+        if (!keys[e.key]) return;
+        e.preventDefault();
+        var idx = COLORS.findIndex(function (c) { return c.id === current; });
+        var next = COLORS[(idx + keys[e.key] + COLORS.length) % COLORS.length].id;
+        apply(next, true); store.set('sl2-color', next);
+        g.querySelector('[data-color="' + next + '"]').focus();
+      });
+    });
+    apply(current, false);
+  }
+
+  /* ---------------- button tester ---------------- */
+  function initTester() {
+    var stage = $('#tester-stage'), last = $('#tester-last'), arrow = $('#scroll-arrow');
+    var LABEL = { left: 'Ліва кнопка', right: 'Права кнопка', middle: 'Клік колесом', back: 'Бокова «Назад»', fwd: 'Бокова «Вперед»' };
+    var BTN = { 0: 'left', 1: 'middle', 2: 'right', 3: 'back', 4: 'fwd' };
+    var counts = { left: 0, right: 0, middle: 0, back: 0, fwd: 0, scroll: 0 };
+    var clicks = [], cpsBest = +store.get('sl2-cps', 0) || 0, wheelY = 0, wheelAcc = 0, scrollT, arrowT;
+    $('#c-cps-best').textContent = cpsBest;
+    function zone(name) { return name === 'middle' ? $('.zone--wheel', stage) : $('.zone--' + name, stage); }
+    function say(text) { last.textContent = text; last.classList.remove('flash'); void last.offsetWidth; last.classList.add('flash'); }
+    function bump(key) {
+      var el = $('#c-' + key); el.textContent = counts[key];
+      var box = el.closest('.count'); box.classList.add('bump'); clearTimeout(box._t);
+      box._t = setTimeout(function () { box.classList.remove('bump'); }, 250);
+    }
+    function cps() {
+      var now = performance.now();
+      clicks = clicks.filter(function (t) { return now - t < 1000; });
+      $('#c-cps').textContent = clicks.length;
+      if (clicks.length > cpsBest) { cpsBest = clicks.length; store.set('sl2-cps', cpsBest); $('#c-cps-best').textContent = cpsBest; }
+    }
+    setInterval(function () { if (clicks.length) cps(); }, 250);
+    function press(name) {
+      zone(name).classList.add('is-down');
+      stage.classList.add('is-pressing');
+      counts[name]++; bump(name); say(LABEL[name]);
+      if (name === 'left' || name === 'right') { clicks.push(performance.now()); cps(); }
+    }
+    function release(name) {
+      zone(name).classList.remove('is-down');
+      if (!$('.is-down', stage)) stage.classList.remove('is-pressing');
+    }
+    function releaseAll() { ['left', 'right', 'middle', 'back', 'fwd'].forEach(release); }
+    function scroll(dir) {
+      counts.scroll++; bump('scroll');
+      wheelY += dir < 0 ? -7 : 7;
+      stage.style.setProperty('--wheel-y', wheelY + 'px');
+      stage.classList.add('is-scrolling');
+      arrow.textContent = dir < 0 ? '↑' : '↓';
+      arrow.classList.add('is-on');
+      say(dir < 0 ? 'Колесо вгору' : 'Колесо вниз');
+      clearTimeout(scrollT); clearTimeout(arrowT);
+      scrollT = setTimeout(function () { stage.classList.remove('is-scrolling'); }, 500);
+      arrowT = setTimeout(function () { arrow.classList.remove('is-on'); }, 450);
+    }
+
+    // real mouse: every button, including middle and side buttons
+    stage.addEventListener('mousedown', function (e) {
+      var name = BTN[e.button]; if (!name) return;
+      e.preventDefault();               // no autoscroll / text selection
+      press(name);
+    });
+    window.addEventListener('mouseup', function (e) {
+      var name = BTN[e.button]; if (!name) return;
+      if (stage.contains(e.target) && e.button > 2) e.preventDefault(); // stop browser Back/Forward
+      release(name);
+    });
+    stage.addEventListener('auxclick', function (e) { e.preventDefault(); });
+    stage.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    stage.addEventListener('mouseleave', releaseAll);
+    window.addEventListener('blur', releaseAll);
+
+    // touch / pen: press the zone under the finger
+    stage.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse') return;
+      var r = stage.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      var name = y < .14 && x > .42 && x < .6 ? 'middle' : y < .3 ? (x < .508 ? 'left' : 'right') : x < .12 && y > .33 && y < .5 ? (y < .415 ? 'fwd' : 'back') : null;
+      if (!name) return;
+      press(name);
+      var up = function () { release(name); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); };
+      window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+    });
+
+    // wheel: one tick per notch (trackpads send many small events)
+    stage.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
+      if (Math.abs(dy) >= 60) { scroll(dy); wheelAcc = 0; return; }
+      wheelAcc += dy;
+      if (Math.abs(wheelAcc) >= 60) { scroll(wheelAcc); wheelAcc = 0; }
+    }, { passive: false });
+
+    // keyboard
+    stage.addEventListener('keydown', function (e) {
+      if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) { e.preventDefault(); press('left'); }
+      else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); scroll(e.key === 'ArrowUp' ? -1 : 1); }
+    });
+    stage.addEventListener('keyup', function (e) { if (e.key === 'Enter' || e.key === ' ') release('left'); });
+
+    $('#tester-reset').addEventListener('click', function () {
+      Object.keys(counts).forEach(function (k) { counts[k] = 0; $('#c-' + k).textContent = 0; });
+      clicks = []; $('#c-cps').textContent = 0;
+      say('Лічильники скинуто');
+    });
+  }
+
   /* ---------------- boot ---------------- */
   $('#year').textContent = new Date().getFullYear();
   initReveal();
   initPointerFx();
   initAnatomy();
+  initColors();
+  initTester();
   initCalc();
   initTrainer();
   requestAnimationFrame(function () { requestAnimationFrame(function () { $('.hero').classList.add('is-ready'); }); });
