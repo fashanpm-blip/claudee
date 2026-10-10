@@ -22,47 +22,36 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <linearGradient id="g-shade" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fff" stop-opacity=".28"/>
+      <stop offset="0" stop-color="#fff" stop-opacity=".2"/>
       <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".4"/>
     </linearGradient>
-    <radialGradient id="g-gloss" cx=".35" cy=".2" r=".6">
-      <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
+    <radialGradient id="g-gloss" cx=".5" cy=".3" r=".6">
+      <stop offset="0" stop-color="#fff" stop-opacity=".16"/>
       <stop offset="1" stop-color="#fff" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <symbol id="mouse" viewBox="0 0 200 320">
-    <path style="fill:var(--m-body,#18162c)" d="M100 8C152 8 180 50 183 112c3 60 1 118-12 156-12 30-38 46-71 46s-59-16-71-46C16 230 14 172 17 112 20 50 48 8 100 8Z"/>
-    <path d="M100 8C152 8 180 50 183 112c3 60 1 118-12 156-12 30-38 46-71 46s-59-16-71-46C16 230 14 172 17 112 20 50 48 8 100 8Z" fill="url(#g-shade)"/>
-    <ellipse cx="72" cy="70" rx="44" ry="56" fill="url(#g-gloss)"/>
-    <!-- button split -->
-    <path d="M100 10v118" stroke="#000" stroke-opacity=".55" stroke-width="2.5"/>
-    <path d="M22 122c26 14 52 20 78 20s52-6 78-20" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="2.5"/>
+    <!-- symmetrical ultralight shell, no holes, no RGB (pro esports style) -->
+    <ellipse cx="100" cy="300" rx="70" ry="10" fill="#000" fill-opacity=".35"/>
+    <path style="fill:var(--m-body,#17171d)" d="M100 10C140 10 161 32 166 74C171 116 176 184 175 238C174 288 146 312 100 312C54 312 26 288 25 238C24 184 29 116 34 74C39 32 60 10 100 10Z"/>
+    <path d="M100 10C140 10 161 32 166 74C171 116 176 184 175 238C174 288 146 312 100 312C54 312 26 288 25 238C24 184 29 116 34 74C39 32 60 10 100 10Z" fill="url(#g-shade)"/>
+    <ellipse cx="78" cy="150" rx="30" ry="110" fill="url(#g-gloss)"/>
+    <!-- left / right buttons -->
+    <path d="M100 12V124" stroke="#000" stroke-opacity=".5" stroke-width="2"/>
+    <path d="M102 16V122" stroke="#fff" stroke-opacity=".08" stroke-width="1"/>
+    <path d="M33 102C58 118 80 125 100 125S142 118 167 102" fill="none" stroke="#000" stroke-opacity=".32" stroke-width="1.6"/>
     <!-- scroll wheel -->
-    <rect x="90" y="40" width="20" height="50" rx="10" fill="#0a0a16"/>
-    <clipPath id="wheel-clip"><rect x="92" y="42" width="16" height="46" rx="8"/></clipPath>
-    <g clip-path="url(#wheel-clip)">
-      <g fill="#3b3b55">
-        <rect x="92" y="34" width="16" height="3"/><rect x="92" y="42" width="16" height="3"/><rect x="92" y="50" width="16" height="3"/>
-        <rect x="92" y="58" width="16" height="3"/><rect x="92" y="66" width="16" height="3"/><rect x="92" y="74" width="16" height="3"/>
-        <rect x="92" y="82" width="16" height="3"/><rect x="92" y="90" width="16" height="3"/>
-      </g>
+    <rect x="89" y="40" width="22" height="52" rx="11" fill="#000" fill-opacity=".55"/>
+    <rect x="93" y="44" width="14" height="44" rx="7" fill="#2b2b33"/>
+    <g stroke="#55555f" stroke-width="1.4">
+      <path d="M95 50h10M95 55h10M95 60h10M95 65h10M95 70h10M95 75h10M95 80h10"/>
     </g>
-    <rect x="94" y="100" width="12" height="14" rx="3" fill="#0a0a16"/>
-    <rect x="97" y="104" width="6" height="6" rx="1.5" style="fill:var(--m-accent,#f43f5e)"/>
-    <!-- side buttons -->
-    <rect x="12" y="140" width="9" height="30" rx="4" fill="#0a0a16"/>
-    <rect x="12" y="176" width="9" height="30" rx="4" fill="#0a0a16"/>
-    <!-- honeycomb vents -->
-    <g fill="#000" fill-opacity=".35">
-      <circle cx="80" cy="180" r="5"/><circle cx="100" cy="180" r="5"/><circle cx="120" cy="180" r="5"/>
-      <circle cx="90" cy="196" r="5"/><circle cx="110" cy="196" r="5"/>
-      <circle cx="80" cy="212" r="5"/><circle cx="100" cy="212" r="5"/><circle cx="120" cy="212" r="5"/>
-    </g>
+    <!-- side buttons (left) -->
+    <rect x="22" y="132" width="6" height="32" rx="3" fill="#000" fill-opacity=".55"/>
+    <rect x="22" y="170" width="6" height="32" rx="3" fill="#000" fill-opacity=".55"/>
     <!-- logo -->
-    <path style="fill:var(--m-accent,#f43f5e)" d="M86 240h8l6 14 6-14h8l-11 24h-6z"/>
-    <!-- RGB strip -->
-    <path style="stroke:var(--m-accent,#f43f5e);filter:drop-shadow(0 0 5px var(--m-accent,#f43f5e))" d="M34 262c14 30 38 42 66 42s52-12 66-42" fill="none" stroke-width="4" stroke-linecap="round"/>
+    <path style="fill:var(--m-accent,#f43f5e)" d="M89 232h7l4 10 4-10h7l-9 20h-4z"/>
   </symbol>
 
   <symbol id="i-cart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2M10 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></symbol>
@@ -148,7 +137,7 @@
       <div class="hero__visual" data-reveal="scale" style="--delay:250ms">
         <div class="hero__ring" aria-hidden="true"></div>
         <div class="hero__ring hero__ring--2" aria-hidden="true"></div>
-        <svg class="mouse-svg hero__mouse" viewBox="0 0 200 320" id="hero-mouse" role="img" aria-label="Ігрова мишка VANTA X1 Pro, вигляд зверху" style="--m-body:#18162c;--m-accent:#f43f5e">
+        <svg class="mouse-svg hero__mouse" viewBox="0 0 200 320" id="hero-mouse" role="img" aria-label="Ігрова мишка VANTA X1 Pro, вигляд зверху" style="--m-body:#17171d;--m-accent:#f43f5e">
           <use href="#mouse"/>
         </svg>
         <div class="hero__tag hero__tag--1"><b>0.2 мс</b> затримка кліку</div>
@@ -165,12 +154,12 @@
       <div class="marquee__group">
         <span class="marquee__item">Оптичні перемикачі</span><span class="marquee__item">26K DPI</span>
         <span class="marquee__item">Бездротовий 8K</span><span class="marquee__item">49 грамів</span>
-        <span class="marquee__item">RGB підсвітка</span><span class="marquee__item">2 роки гарантії</span>
+        <span class="marquee__item">Магнієвий корпус</span><span class="marquee__item">2 роки гарантії</span>
       </div>
       <div class="marquee__group">
         <span class="marquee__item">Оптичні перемикачі</span><span class="marquee__item">26K DPI</span>
         <span class="marquee__item">Бездротовий 8K</span><span class="marquee__item">49 грамів</span>
-        <span class="marquee__item">RGB підсвітка</span><span class="marquee__item">2 роки гарантії</span>
+        <span class="marquee__item">Магнієвий корпус</span><span class="marquee__item">2 роки гарантії</span>
       </div>
     </div>
   </div>

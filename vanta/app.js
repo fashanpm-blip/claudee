@@ -23,9 +23,9 @@
       desc: 'Флагман для кіберспорту: бездротова, 49 г, сенсор 26K і 8000 Гц.',
       specs: [['Вага', '49 г'], ['DPI', '26K'], ['Гц', '8000']],
       colors: [
-        { name: 'Чорний', body: '#18162c', accent: '#f43f5e' },
-        { name: 'Білий', body: '#e9e7f2', accent: '#7c3aed' },
-        { name: 'Фіолетовий', body: '#3b1d78', accent: '#a78bfa' }
+        { name: 'Чорний', body: '#17171d', accent: '#f43f5e' },
+        { name: 'Білий', body: '#ecebf0', accent: '#7c3aed' },
+        { name: 'Пурпурний', body: '#d43c8c', accent: '#1b1b22' }
       ]
     },
     {
