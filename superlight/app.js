@@ -131,7 +131,7 @@
       dpiOut.textContent = fmt(d);
       if (!(s > 0)) {
         sens.setAttribute('aria-invalid', 'true');
-        out.cm.textContent = '—'; out.inch.textContent = '—'; out.edpi.textContent = '—';
+        out.cm.textContent = '—'; out.inch.textContent = '—'; out.edpi.textContent = '—'; $('#near-pro').textContent = '—';
         out.chip.textContent = 'Введи число більше 0, наприклад 1,2';
         out.bar.style.setProperty('--w', '0%');
         return;
@@ -141,6 +141,8 @@
       out.cm.textContent = fmt(cm, cm < 100 ? 1 : 0);
       out.inch.textContent = fmt(inch, 2);
       out.edpi.textContent = fmt(Math.round(d * s));
+      var np = yaw === 0.022 ? nearestPro(d * s) : null;
+      $('#near-pro').textContent = np ? np.name + ' (' + fmt(Math.round(np.dpi * np.sens)) + ')' : 'порівняння лише для CS2 і Apex';
       out.chip.textContent = cm < 25 ? 'Висока: швидкі повороти, але важче цілитися'
         : cm <= 50 ? 'Середня, як у багатьох профі'
         : 'Низька: точний приціл, але великі рухи рукою';
@@ -150,6 +152,55 @@
     form.addEventListener('change', update);
     form.addEventListener('submit', function (e) { e.preventDefault(); });
     update();
+    return {
+      set: function (d, sensVal) {
+        $('#g-cs2').checked = true;
+        dpi.value = d; sens.value = String(sensVal).replace('.', ',');
+        update();
+      }
+    };
+  }
+
+  /* ---------------- pro settings (CS2) ---------------- */
+  // Snapshot of csdb.gg data via web search, October 2026. Pros change settings often.
+  var PROS = [
+    { name: 'm0NESY', team: 'Falcons', mouse: 'Logitech G Pro X Superlight 2', sl2: true, dpi: 400, sens: 2.3 },
+    { name: 'kyousuke', team: 'Falcons', mouse: 'Logitech G Pro X Superlight 2', sl2: true, dpi: 800, sens: 1.28 },
+    { name: 's1mple', team: 'легенда NAVI', mouse: 'Logitech G Pro X Superlight 2', sl2: true, dpi: 400, sens: 3.09 },
+    { name: 'donk', team: 'Team Spirit', mouse: 'ZOWIE (власна модель)', sl2: false, dpi: 800, sens: 1.25 },
+    { name: 'ZywOo', team: 'Vitality', mouse: 'Pulsar (власна модель)', sl2: false, dpi: 400, sens: 2 },
+    { name: 'NiKo', team: 'Falcons', mouse: 'Razer DeathAdder V4 Pro', sl2: false, dpi: 800, sens: 1 }
+  ];
+  function initPros(calc) {
+    var grid = $('#pros'); if (!grid) return;
+    grid.innerHTML = PROS.map(function (p, i) {
+      var edpi = Math.round(p.dpi * p.sens), cm = 360 / (edpi * 0.022) * 2.54;
+      return '<article class="pro-card' + (p.sl2 ? ' pro-card--sl2' : '') + '">' +
+        '<div class="pro-card__top"><div><h3 class="pro-card__name">' + p.name + '</h3><span class="pro-card__team">' + p.team + '</span></div>' +
+        (p.sl2 ? '<span class="pro-card__badge">Superlight 2</span>' : '') + '</div>' +
+        '<p class="pro-card__mouse">' + p.mouse + '</p>' +
+        '<dl class="pro-card__nums">' +
+          '<div><dt>DPI</dt><dd>' + p.dpi + '</dd></div>' +
+          '<div><dt>Sens</dt><dd>' + fmt(p.sens, p.sens % 1 ? 2 : 0) + '</dd></div>' +
+          '<div><dt>eDPI</dt><dd>' + fmt(edpi) + '</dd></div>' +
+          '<div><dt>см/360°</dt><dd>' + fmt(cm, 1) + '</dd></div>' +
+        '</dl>' +
+        '<button type="button" class="btn btn--ghost pro-card__try" data-i="' + i + '">Спробувати</button>' +
+      '</article>';
+    }).join('');
+    grid.addEventListener('click', function (e) {
+      var b = e.target.closest('.pro-card__try'); if (!b) return;
+      var p = PROS[+b.dataset.i];
+      calc.set(p.dpi, p.sens);
+      $('#calc-pro').textContent = 'Зараз у калькуляторі налаштування ' + p.name + '.';
+      var target = $('#calc-form');
+      target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'center' });
+      $('#cm360').closest('.panel').classList.remove('flash-panel'); void target.offsetWidth;
+      $('#cm360').closest('.panel').classList.add('flash-panel');
+    });
+  }
+  function nearestPro(edpi) {
+    return PROS.slice().sort(function (a, b) { return Math.abs(a.dpi * a.sens - edpi) - Math.abs(b.dpi * b.sens - edpi); })[0];
   }
 
   /* ---------------- aim trainer ---------------- */
@@ -237,8 +288,8 @@
 
   /* ---------------- colour switcher ---------------- */
   var COLORS = [
-    { id: 'black', name: 'Чорний', dot: '#1d1d22', alt: 'чорного кольору з білим логотипом' },
-    { id: 'white', name: 'Білий', dot: '#eeeef2', alt: 'білого кольору з чорним логотипом' },
+    { id: 'black', name: 'Чорний', dot: '#1d1d22', alt: 'чорного кольору з сірим логотипом' },
+    { id: 'white', name: 'Білий', dot: '#eeeef2', alt: 'білого кольору з сірим логотипом' },
     { id: 'magenta', name: 'Magenta', dot: '#ff2674', alt: 'рожевого кольору Magenta' }
   ];
   function initColors() {
@@ -482,7 +533,7 @@
   initStory();
   initHz();
   initTester();
-  initCalc();
+  initPros(initCalc());
   initTrainer();
   requestAnimationFrame(function () { requestAnimationFrame(function () { $('.hero').classList.add('is-ready'); }); });
   window.__slReady = true;
