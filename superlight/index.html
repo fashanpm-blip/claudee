@@ -70,7 +70,8 @@
           <span class="line"><span style="--delay:160ms">Pro X</span></span>
           <span class="line"><span class="grad-text" style="--delay:280ms">Superlight 2</span></span>
         </h1>
-        <p class="hero__lead" data-reveal style="--delay:400ms">Розбираю свою мишку по деталях. Тут є характеристики з коробки і пояснення, що вони означають. А ще калькулятор чутливості й тренажер прицілювання, щоб перевірити себе.</p>
+        <p class="hero__tagline" data-reveal style="--delay:360ms">60 грамів. 8000 разів на секунду. 95 годин.</p>
+        <p class="hero__lead" data-reveal style="--delay:440ms">Розбираю свою мишку по деталях. Тут є характеристики з коробки і пояснення, що вони означають. А ще калькулятор чутливості й тренажер прицілювання, щоб перевірити себе.</p>
         <div class="hero__cta" data-reveal style="--delay:500ms">
           <a class="btn" href="#anatomy">Роздивитися деталі <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
           <a class="btn btn--ghost" href="#calc">Порахувати чутливість</a>
@@ -84,8 +85,8 @@
       </div>
 
       <div class="hero__visual" data-reveal="scale" style="--delay:200ms">
-        <div class="hero__ring" aria-hidden="true"></div>
-        <div class="hero__ring hero__ring--2" aria-hidden="true"></div>
+        <div class="hero__backtext" aria-hidden="true">SUPER<br>LIGHT</div>
+        <div class="hero__spot" aria-hidden="true"></div>
         <img class="hero__photo mouse-photo" id="hero-photo" src="img/superlight2-magenta.webp" width="560" height="989" alt="Мишка Logitech G Pro X Superlight 2 рожевого кольору Magenta, вигляд зверху" fetchpriority="high">
         <div class="hero__tag hero__tag--1"><b>HERO 2</b> сенсор</div>
         <div class="hero__tag hero__tag--2"><b>0,125 мс</b> відгук</div>
@@ -107,6 +108,38 @@
       </div>
     </div>
   </div>
+
+
+  <!-- STORY: sticky scroll scene -->
+  <section class="story" id="story" aria-labelledby="story-title">
+    <h2 class="sr-only" id="story-title">Три головні цифри</h2>
+    <div class="story__sticky">
+      <div class="story__glow" aria-hidden="true"></div>
+      <div class="container story__grid">
+        <div class="story__media">
+          <img class="mouse-photo story__photo" src="img/superlight2-magenta.webp" width="560" height="989" alt="" loading="lazy">
+        </div>
+        <div class="story__chapters">
+          <article class="chapter" data-i="0">
+            <span class="chapter__eyebrow">01 · Легкість</span>
+            <h3 class="chapter__big">60<small>г</small></h3>
+            <p class="chapter__text">Легша за попередника, а корпус цільний, без дірок. Рука втомлюється менше, а різкий поворот на 180° відбувається майже без зусиль.</p>
+          </article>
+          <article class="chapter" data-i="1">
+            <span class="chapter__eyebrow">02 · Швидкість</span>
+            <h3 class="chapter__big">8000<small>Гц</small></h3>
+            <p class="chapter__text">Бездротово. Мишка повідомляє комп'ютеру, де вона, кожні 0,125 мілісекунди, тобто у 8 разів частіше за звичайну ігрову мишку.</p>
+          </article>
+          <article class="chapter" data-i="2">
+            <span class="chapter__eyebrow">03 · Витривалість</span>
+            <h3 class="chapter__big">95<small>год</small></h3>
+            <p class="chapter__text">Стільки мишка витримує в постійному русі на одному заряді, а це майже чотири доби. Заряджається кабелем USB-C або на килимку POWERPLAY.</p>
+          </article>
+        </div>
+      </div>
+      <div class="story__rail" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+  </section>
 
   <!-- SPECS -->
   <section class="section" id="specs" aria-labelledby="specs-title">
@@ -169,6 +202,35 @@
         </article>
       </div>
       <p class="spec__src">Джерело: коробка Logitech G Pro X Superlight 2 (видання 2025 року). Батарею виміряли при 1 кГц, а швидкість — на килимку Logitech G640, так написано на коробці.</p>
+    </div>
+  </section>
+
+
+  <!-- POLLING RATE VISUALISER -->
+  <section class="section" id="hz" aria-labelledby="hz-title">
+    <div class="container">
+      <div class="section__head">
+        <div>
+          <span class="kicker" data-reveal>Побач різницю</span>
+          <h2 class="section__title" id="hz-title" data-reveal style="--delay:80ms">Що дають 8000 Гц</h2>
+        </div>
+        <p class="section__sub" data-reveal style="--delay:160ms">Тут три мишки роблять однаковий різкий рух тривалістю 40 мс. Точки показують кожне повідомлення, яке мишка надсилає комп'ютеру. Що більше точок, то точніше комп'ютер знає, де твій приціл.</p>
+      </div>
+      <div class="hz" data-reveal>
+        <figure class="hz__item">
+          <canvas class="hz__canvas" data-hz="125" role="img" aria-label="125 Гц: за 40 мілісекунд лише 5 точок, лінія руху ламана"></canvas>
+          <figcaption><span class="hz__rate">125 Гц</span><span class="hz__meta">кожні 8 мс · офісна мишка</span></figcaption>
+        </figure>
+        <figure class="hz__item">
+          <canvas class="hz__canvas" data-hz="1000" role="img" aria-label="1000 Гц: 40 точок, лінія майже плавна"></canvas>
+          <figcaption><span class="hz__rate">1000 Гц</span><span class="hz__meta">кожну 1 мс · звичайна ігрова</span></figcaption>
+        </figure>
+        <figure class="hz__item hz__item--hl">
+          <canvas class="hz__canvas" data-hz="8000" role="img" aria-label="8000 Гц: 320 точок, лінія повністю плавна"></canvas>
+          <figcaption><span class="hz__rate">8000 Гц</span><span class="hz__meta">кожні 0,125 мс · Superlight 2</span></figcaption>
+        </figure>
+      </div>
+      <p class="spec__src">Анімацію сповільнено приблизно в 100 разів, інакше рух тривав би 40 мс і його неможливо було б помітити. Різницю 8000 Гц краще видно на моніторі з частотою 240 Гц і вище.</p>
     </div>
   </section>
 
