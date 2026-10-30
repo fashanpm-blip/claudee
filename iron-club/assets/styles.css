@@ -394,3 +394,11 @@ body { background:
 .timeline__year { font-family: var(--font-head); font-weight: 700; font-size: 28px; color: var(--fg); }
 
 @media (prefers-reduced-motion: reduce) { .pcard:hover .photo img, .split .photo:hover img { transform: none; } }
+
+/* coach cards with real portraits */
+.coach__photo { border-radius: 0; aspect-ratio: 4 / 5; }
+.coach__photo img { object-position: 50% 20%; }
+.coach:hover .coach__photo img { transform: scale(1.04); }
+.coach__loc { display: grid; grid-template-columns: 18px 1fr; gap: 8px; font-size: 14px; color: #d0d0d0; }
+.coach__loc svg { width: 16px; height: 16px; color: var(--orange); margin-top: 3px; }
+.coach__todo { font-size: 14px; color: #ffb38f; border-left: 2px dashed #7a3a1c; padding-left: 10px; }

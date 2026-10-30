@@ -175,7 +175,7 @@ def head(page, title, desc):
 <body data-page="{page}" data-lang="{LANG}">
 {SPRITE}
 <a class="skip-link" href="#main">{L("Skip to content", "Перейти к содержимому")}</a>
-<div class="concept-bar" role="note"><div class="container">{L("Design concept. Prices, coaches, schedule and address are sample content.", "Дизайн-концепт. Цены, тренеры, расписание и адрес — примерный контент.")}</div></div>
+<div class="concept-bar" role="note"><div class="container">{(L("Design concept for review. Prices, schedule and address are sample content.", "Дизайн-концепт для обсуждения. Цены, расписание и адрес — примерный контент.") if COACH_OVERRIDE else L("Design concept. Prices, coaches, schedule and address are sample content.", "Дизайн-концепт. Цены, тренеры, расписание и адрес — примерный контент."))}</div></div>
 """
 
 
@@ -270,7 +270,17 @@ def programs():
     ]
 
 
+COACH_OVERRIDE = None  # list of dicts from --coaches (private client preview only)
+
+
 def coaches():
+    if COACH_OVERRIDE:
+        return [{"name": L(c["name_en"], c["name_ru"]), "role": L(c["role_en"], c["role_ru"]), "bio": None, "tags": [],
+                 "loc": L(c["loc_en"], c["loc_ru"]), "photo": c.get("photo")} for c in COACH_OVERRIDE]
+    return [dict(zip(("name", "role", "bio", "tags"), c), loc=None, photo=None) for c in _sample_coaches()]
+
+
+def _sample_coaches():
     return [
         ("Max Keller", L("Head coach · Strength", "Главный тренер · Сила"), L("Builds strength programmes from the first deadlift to competition prep.", "Строит силовые программы — от первой становой до подготовки к соревнованиям."), [L("Powerlifting", "Пауэрлифтинг"), L("Technique", "Техника")]),
         ("Lena Ortiz", L("HIIT & conditioning", "HIIT и выносливость"), L("Runs the loudest classes in the club and keeps every rep honest.", "Ведёт самые громкие занятия в клубе и следит за каждым повтором."), [L("HIIT", "HIIT"), L("Endurance", "Выносливость")]),
@@ -301,6 +311,22 @@ def founder_cards(short=False):
   <div class="founder__body"><span class="coach__role">{role}</span><h3>{name}</h3>{text}</div>
 </article>""")
     return "".join(out)
+
+
+def coach_card(i, c, full=False):
+    pic = (f'<figure class="photo coach__photo"><img src="{prefix()}assets/img/{c["photo"]}.webp" width="488" height="550" alt="{e(L("Portrait of ", "Портрет: ") + c["name"])}" loading="lazy" decoding="async"></figure>'
+           if c["photo"] else slot("n-coach", L("Portrait of ", "Портрет: ") + c["name"]))
+    loc = f'<p class="coach__loc">{icon("i-pin")}<span>{e(c["loc"])}</span></p>' if c["loc"] else ""
+    extra = ""
+    if full:
+        if c["bio"]:
+            extra = f'<p>{c["bio"]}</p><ul class="tags">{"".join(f"<li>{t}</li>" for t in c["tags"])}</ul>'
+        else:
+            extra = f'<p class="coach__todo">{L("Bio, specialities and certificates: to be written with the trainer.", "Биография, специализация и сертификаты: заполним вместе с тренером.")}</p>'
+    return f"""<article class="coach" data-reveal style="--d:{(i % 4) * 80}ms">
+  {pic}
+  <div class="coach__body"><span class="coach__role">{c["role"]}</span><h3>{c["name"]}</h3>{loc}{extra}</div>
+</article>"""
 
 
 def plans():
@@ -342,7 +368,7 @@ def billing_toggle():
 def timetable():
     D = [L("Mon", "Пн"), L("Tue", "Вт"), L("Wed", "Ср"), L("Thu", "Чт"), L("Fri", "Пт"), L("Sat", "Сб"), L("Sun", "Вс")]
     N = {"strength": L("Strength", "Сила"), "hiit": "HIIT", "mobility": L("Mobility", "Мобильность"), "boxing": L("Boxing", "Бокс")}
-    C = {"strength": "Max Keller", "hiit": "Lena Ortiz", "mobility": "Sara Lind", "boxing": "Daniel Novak"}
+    C = {} if COACH_OVERRIDE else {"strength": "Max Keller", "hiit": "Lena Ortiz", "mobility": "Sara Lind", "boxing": "Daniel Novak"}
     week = [
         [("07:00", "hiit"), ("18:00", "strength"), ("19:30", "mobility")],
         [("07:00", "strength"), ("18:30", "boxing"), ("20:00", "hiit")],
@@ -354,7 +380,7 @@ def timetable():
     ]
     days = []
     for i, cls in enumerate(week):
-        items = "".join(f'<div class="cls" data-type="{t}"><span class="cls__time">{tm}</span><span class="cls__name">{N[t]}</span><span class="cls__coach">{C[t]}</span></div>' for tm, t in cls)
+        items = "".join(f'<div class="cls" data-type="{t}"><span class="cls__time">{tm}</span><span class="cls__name">{N[t]}</span>{f'<span class="cls__coach">{C[t]}</span>' if C else ''}</div>' for tm, t in cls)
         empty = f'<p class="day__empty" hidden>{L("No classes of this type", "Нет занятий этого типа")}</p>'
         days.append(f'<div class="day" data-day="{(i + 1) % 7}"><h3 data-today="{L("Today", "Сегодня")}">{D[i]}</h3>{items}{empty}</div>')
     chips = f'<button class="chip" type="button" data-filter="all" aria-pressed="true">{L("All", "Все")}</button>' + "".join(
@@ -380,10 +406,7 @@ def page_index():
         L("Battle ropes mid-wave, water spray on rubber floor", "Канаты в движении, брызги на резиновом полу"),
         L("Coach spotting a squat, warm light", "Тренер страхует присед, тёплый свет"),
         L("Stretching on mats in the recovery zone", "Растяжка на ковриках в зоне восстановления")])))
-    coach_cards = "".join(f"""<article class="coach" data-reveal style="--d:{i * 80}ms">
-  {slot("n-coach", L("Portrait of ", "Портрет: ") + name)}
-  <div class="coach__body"><span class="coach__role">{role}</span><h3>{name}</h3></div>
-</article>""" for i, (name, role, _d, _t) in enumerate(coaches()))
+    coach_cards = "".join(coach_card(i, c) for i, c in enumerate(coaches()))
     body = f"""<main id="main">
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero__stage">{led_corridor()}</div>
@@ -580,12 +603,9 @@ def page_membership():
 
 
 def page_coaches():
-    cards = "".join(f"""<article class="coach" data-reveal style="--d:{(i % 4) * 80}ms">
-  {slot("n-coach", L("Portrait of ", "Портрет: ") + name)}
-  <div class="coach__body"><span class="coach__role">{role}</span><h3>{name}</h3><p>{d}</p><ul class="tags">{''.join(f'<li>{t}</li>' for t in tags)}</ul></div>
-</article>""" for i, (name, role, d, tags) in enumerate(coaches()))
+    cards = "".join(coach_card(i, c, full=True) for i, c in enumerate(coaches()))
     body = f"""<main id="main">
-  {page_hero(L("Coaches", "Тренеры"), L("The team behind", "Команда за") + ' <span class="accent">' + L("your progress", "твоим прогрессом") + '</span>', L("Every member works with a coach from day one. Names and profiles below are sample content.", "Каждый участник работает с тренером с первого дня. Имена и профили ниже — примерный контент."))}
+  {page_hero(L("Coaches", "Тренеры"), L("The team behind", "Команда за") + ' <span class="accent">' + L("your progress", "твоим прогрессом") + '</span>', (L("Every member works with a coach from day one. Meet the personal trainers.", "Каждый участник работает с тренером с первого дня. Знакомься с персональными тренерами.") if COACH_OVERRIDE else L("Every member works with a coach from day one. Names and profiles below are sample content.", "Каждый участник работает с тренером с первого дня. Имена и профили ниже — примерный контент.")))}
   <section class="section" style="padding-top:56px" aria-labelledby="team-title">
     <div class="container">
       <h2 class="sr-only" id="team-title">{L("Team", "Команда")}</h2>
@@ -762,6 +782,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(ROOT), help="output folder (default: this folder)")
     ap.add_argument("--photos", help="folder with athlete/gym/ropes/coaching/led .webp files for a photo build")
+    ap.add_argument("--coaches", help="JSON file with real coaches (private client preview); photos are taken from its folder/img")
     args = ap.parse_args()
     OUTDIR = Path(args.out)
     if args.photos:
@@ -772,6 +793,13 @@ if __name__ == "__main__":
         if OUTDIR != ROOT:
             for f in ("styles.css", "app.js"):
                 shutil.copy(ROOT / "assets" / f, OUTDIR / "assets" / f)
+    if args.coaches:
+        cpath = Path(args.coaches)
+        COACH_OVERRIDE = json.loads(cpath.read_text(encoding="utf-8"))
+        (OUTDIR / "assets" / "img").mkdir(parents=True, exist_ok=True)
+        for c in COACH_OVERRIDE:
+            if c.get("photo"):
+                shutil.copy(cpath.parent / "img" / f'{c["photo"]}.webp', OUTDIR / "assets" / "img" / f'{c["photo"]}.webp')
     builders = [("index.html", page_index), ("training.html", page_training), ("membership.html", page_membership),
                 ("coaches.html", page_coaches), ("about.html", page_about), ("contact.html", page_contact), ("free-trial.html", page_trial)]
     for lang, out in [("en", OUTDIR), ("ru", OUTDIR / "ru")]:
