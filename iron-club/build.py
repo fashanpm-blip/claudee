@@ -5,8 +5,10 @@ Run:  python3 iron-club/build.py
 English pages land in iron-club/, Russian pages in iron-club/ru/.
 Every text is written as L("English", "Русский") so both languages stay in sync.
 """
+import argparse
 import html
 import json
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -31,6 +33,20 @@ PAGES = [  # file, nav label EN, nav label RU (index is reached via the logo)
 NAV = PAGES[1:6]
 EMAIL = "hello@ironclub.example"
 HOURS = [("Mon–Fri", "Пн–Пт", "06:00–23:00"), ("Sat–Sun", "Сб–Вс", "08:00–21:00")]
+
+
+PHOTO_ON = False
+PHOTO_SIZE = {"athlete": (746, 934), "gym": (750, 720), "ropes": (750, 936), "coaching": (750, 936), "led": (608, 416)}
+
+
+def photo(key, alt, art, caption, cls="", ratio=None):
+    """Real photo when available (private preview build), neon slot otherwise."""
+    if PHOTO_ON and key in PHOTO_SIZE:
+        w, h = PHOTO_SIZE[key]
+        st = f' style="aspect-ratio:{ratio}"' if ratio else ""
+        return (f'<figure class="photo {cls}"{st}><img src="{prefix()}assets/img/{key}.webp" width="{w}" height="{h}" '
+                f'alt="{e(alt)}" loading="lazy" decoding="async"></figure>')
+    return slot(art, caption, cls, ratio)
 
 
 def prefix():
@@ -263,6 +279,30 @@ def coaches():
     ]
 
 
+def founders():
+    return [
+        ("Viktor Hahn", L("Co-founder · Head of training", "Сооснователь · Руководитель тренировок"),
+         L("Former competitive powerlifter with fifteen years of coaching. He designed every programme in the club and still coaches the Saturday strength class.",
+           "Бывший пауэрлифтер, пятнадцать лет тренерского стажа. Разработал все программы клуба и до сих пор сам ведёт субботнюю силовую."),
+         L("“Technique first. The weight will come.”", "«Сначала техника. Вес придёт.»")),
+        ("Mira Sokolova", L("Co-founder · Managing director", "Сооснователь · Управляющий директор"),
+         L("Physiotherapist who built the recovery zone and the movement check every new member goes through. She runs the club day to day.",
+           "Физиотерапевт, создала зону восстановления и проверку движений, которую проходит каждый новичок. Отвечает за работу клуба каждый день."),
+         L("“A good club makes you want to come back tomorrow.”", "«Хороший клуб — это тот, куда хочется вернуться завтра.»")),
+    ]
+
+
+def founder_cards(short=False):
+    out = []
+    for i, (name, role, bio, quote) in enumerate(founders()):
+        text = "" if short else f'<p>{bio}</p><blockquote class="quote">{quote}</blockquote>'
+        out.append(f"""<article class="founder" data-reveal style="--d:{i * 100}ms">
+  {slot("n-coach", L("Portrait of ", "Портрет: ") + name, ratio="1/1")}
+  <div class="founder__body"><span class="coach__role">{role}</span><h3>{name}</h3>{text}</div>
+</article>""")
+    return "".join(out)
+
+
 def plans():
     return [
         ("basic", "Basic", L("For independent training on the gym floor.", "Для самостоятельных тренировок в зале."), 29, False,
@@ -331,8 +371,9 @@ def hours_table():
 
 # ---------------------------------------------------------------- pages
 def page_index():
+    pkeys = {"strength": "athlete", "hiit": "ropes", "personal": "coaching"}
     progs = "".join(f"""<article class="pcard" data-reveal style="--d:{i * 80}ms">
-  {slot(art, cap)}
+  {photo(pkeys.get(key, ""), t + ": " + cap, art, cap)}
   <div class="pcard__body"><span class="pcard__no">{no}</span><h3>{t}</h3><p>{d}</p><a class="text-link" href="training.html#{key}">{L("Explore", "Подробнее")} {icon("i-arrow")}</a></div>
 </article>""" for i, ((no, t, d, art, key), cap) in enumerate(zip(programs(), [
         L("Lifter at the rack, red side light, chalk in the air", "Атлет у стойки, красный боковой свет, магнезия в воздухе"),
@@ -346,7 +387,8 @@ def page_index():
     body = f"""<main id="main">
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero__stage">{led_corridor()}</div>
-    <div class="container">
+    <div class="container hero__grid">
+      <div>
       <span class="kicker">{L("Premium fitness club", "Премиальный фитнес-клуб")}</span>
       <h1 class="h-xl" id="hero-title"><span>{L("Train hard.", "Тренируйся")}</span><span class="accent">{L("Live strong.", "на пределе.")}</span></h1>
       <p class="hero__sub">{L("Your limits are only the beginning.", "Твои пределы — только начало.")}</p>
@@ -360,6 +402,8 @@ def page_index():
         <div><div class="meta-num"><span data-count="4">4</span></div><div class="meta-label">{L("coaches", "тренера")}</div></div>
         <div><div class="meta-num"><span data-count="20">20</span><small>+</small></div><div class="meta-label">{L("classes a week", "занятий в неделю")}</div></div>
       </div>
+      </div>
+      {('<div class="hero__media" data-reveal>' + photo("athlete", L("Athlete doing dumbbell curls under red neon light", "Атлет делает подъём гантели под красным неоновым светом"), "n-dumbbell", "") + '<span class="hero__badge">' + L("Open 7 days", "Открыто 7 дней") + '</span></div>') if PHOTO_ON else ''}
     </div>
   </section>
 
@@ -411,13 +455,24 @@ def page_index():
 
   <section class="section" aria-labelledby="club-title">
     <div class="container split">
-      <div data-reveal>{slot("n-gym", L("The main floor at night, orange LED lines along the ceiling", "Главный зал вечером, оранжевые LED-линии на потолке"))}</div>
+      <div data-reveal>{photo("led", L("The main floor at night with LED lines along the ceiling", "Главный зал вечером, LED-линии на потолке"), "n-gym", L("The main floor at night, orange LED lines along the ceiling", "Главный зал вечером, оранжевые LED-линии на потолке"), ratio="16/11")}</div>
       <div class="prose" data-reveal>
         <span class="kicker">{L("The club", "Клуб")}</span>
         <h2 class="h-l" id="club-title">{L("Built for", "Создан для")} <span class="accent">{L("focus", "фокуса")}</span></h2>
         <p>{L("Free weights, machines, a functional zone and a recovery area with sauna. Dark, quiet light and room to move.", "Свободные веса, тренажёры, функциональная зона и зона восстановления с сауной. Приглушённый свет и много места.")}</p>
         <p><a class="text-link" href="about.html">{L("Inside the club", "Подробнее о клубе")} {icon("i-arrow")}</a></p>
       </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="owners-title">
+    <div class="container">
+      <div class="section__head section__head--split">
+        <div><span class="kicker" data-reveal>{L("The owners", "Владельцы")}</span><h2 class="h-l" id="owners-title" data-reveal>{L("Built by", "Создан")} <span class="accent">{L("lifters", "атлетами")}</span></h2></div>
+        <p class="lead" data-reveal>{L("Iron Club is owned and run by a coach and a physiotherapist. They are on the floor most days.", "Iron Club принадлежит тренеру и физиотерапевту. Они сами почти каждый день в зале.")}</p>
+      </div>
+      <div class="founders founders--short">{founder_cards(short=True)}</div>
+      <p style="margin-top:28px"><a class="text-link" href="about.html#founders">{L("Read their story", "Их история")} {icon("i-arrow")}</a></p>
     </div>
   </section>
   {cta_band()}
@@ -439,7 +494,7 @@ def page_training():
         lis = "".join(f'<li style="display:flex;gap:10px"><span class="accent">{icon("i-check")}</span>{b}</li>' for b in bullets)
         blocks.append(f"""<section class="section{' section--alt' if i % 2 else ''}" id="{key}" aria-labelledby="t-{key}">
   <div class="container split{rev}">
-    <div data-reveal>{slot(art, t)}</div>
+    <div data-reveal>{photo({"strength": "athlete", "hiit": "ropes", "personal": "coaching"}.get(key, ""), t, art, t)}</div>
     <div class="prose" data-reveal>
       <span class="kicker">{no}</span>
       <h2 class="h-l" id="t-{key}">{t}</h2>
@@ -555,7 +610,7 @@ def page_about():
   {page_hero(L("About", "О клубе"), L("More than", "Больше, чем") + ' <span class="accent">' + L("a gym", "просто зал") + '</span>', L("Iron Club is a coached training club. This story is sample content for the concept.", "Iron Club — клуб тренировок с тренерами. Эта история — примерный контент для концепта."))}
   <section class="section" aria-labelledby="story-title">
     <div class="container split">
-      <div data-reveal>{slot("n-gym", L("The club entrance at dusk, logo lit in orange", "Вход в клуб в сумерках, логотип подсвечен оранжевым"))}</div>
+      <div data-reveal>{photo("gym", L("Dumbbell racks along the free-weights floor under orange light", "Ряды гантелей в зоне свободных весов под оранжевой подсветкой"), "n-gym", L("The club entrance at dusk, logo lit in orange", "Вход в клуб в сумерках, логотип подсвечен оранжевым"))}</div>
       <div class="prose" data-reveal>
         <span class="kicker">{L("Our story", "Наша история")}</span>
         <h2 class="h-l" id="story-title">{L("Coaching first", "Тренер — прежде всего")}</h2>
@@ -564,13 +619,28 @@ def page_about():
       </div>
     </div>
   </section>
-  <section class="section section--alt" aria-labelledby="zones-title">
+  <section class="section section--alt" id="founders" aria-labelledby="founders-title">
+    <div class="container">
+      <div class="section__head section__head--split">
+        <div><span class="kicker" data-reveal>{L("The owners", "Владельцы")}</span><h2 class="h-l" id="founders-title" data-reveal>{L("Meet the", "Знакомься:")} <span class="accent">{L("founders", "основатели")}</span></h2></div>
+        <p class="lead" data-reveal>{L("Two people, one idea: a club where coaching comes first.", "Два человека, одна идея: клуб, где главное — работа тренера.")}</p>
+      </div>
+      <div class="founders">{founder_cards()}</div>
+      <ol class="timeline" data-reveal>
+        <li><span class="timeline__year">2019</span><span>{L("Viktor and Mira start coaching together in a rented garage.", "Виктор и Мира начинают тренировать вместе в арендованном гараже.")}</span></li>
+        <li><span class="timeline__year">2021</span><span>{L("Iron Club opens with one floor and twelve racks.", "Открывается Iron Club: один зал и двенадцать стоек.")}</span></li>
+        <li><span class="timeline__year">2023</span><span>{L("The functional zone and group HIIT classes arrive.", "Появляются функциональная зона и групповые HIIT-занятия.")}</span></li>
+        <li><span class="timeline__year">2025</span><span>{L("Recovery zone with sauna opens.", "Открывается зона восстановления с сауной.")}</span></li>
+      </ol>
+    </div>
+  </section>
+  <section class="section" aria-labelledby="zones-title">
     <div class="container">
       <div class="section__head"><span class="kicker" data-reveal>{L("Facilities", "Оснащение")}</span><h2 class="h-l" id="zones-title" data-reveal>{L("Four zones", "Четыре зоны")}</h2></div>
       <div class="zones" data-reveal>{zs}</div>
     </div>
   </section>
-  <section class="section" aria-labelledby="values-title">
+  <section class="section section--alt" aria-labelledby="values-title">
     <div class="container">
       <div class="section__head"><span class="kicker" data-reveal>{L("Values", "Ценности")}</span><h2 class="h-l" id="values-title" data-reveal>{L("What we stand for", "Во что мы верим")}</h2></div>
       <ol class="steps">
@@ -689,12 +759,26 @@ FAVICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect wi
            '<circle cx="16" cy="16" r="10" fill="none" stroke="#ff5a1f" stroke-width="3"/><circle cx="16" cy="16" r="3" fill="#ff5a1f"/></svg>')
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(ROOT), help="output folder (default: this folder)")
+    ap.add_argument("--photos", help="folder with athlete/gym/ropes/coaching/led .webp files for a photo build")
+    args = ap.parse_args()
+    OUTDIR = Path(args.out)
+    if args.photos:
+        PHOTO_ON = True
+        (OUTDIR / "assets" / "img").mkdir(parents=True, exist_ok=True)
+        for k in PHOTO_SIZE:
+            shutil.copy(Path(args.photos) / f"{k}.webp", OUTDIR / "assets" / "img" / f"{k}.webp")
+        if OUTDIR != ROOT:
+            for f in ("styles.css", "app.js"):
+                shutil.copy(ROOT / "assets" / f, OUTDIR / "assets" / f)
     builders = [("index.html", page_index), ("training.html", page_training), ("membership.html", page_membership),
                 ("coaches.html", page_coaches), ("about.html", page_about), ("contact.html", page_contact), ("free-trial.html", page_trial)]
-    for lang, out in [("en", ROOT), ("ru", ROOT / "ru")]:
+    for lang, out in [("en", OUTDIR), ("ru", OUTDIR / "ru")]:
         LANG = lang
         out.mkdir(exist_ok=True)
         for name, fn in builders:
             (out / name).write_text(fn(), encoding="utf-8")
         print("built", lang, len(builders), "pages")
-    (ROOT / "assets" / "favicon.svg").write_text(FAVICON, encoding="utf-8")
+    (OUTDIR / "assets").mkdir(parents=True, exist_ok=True)
+    (OUTDIR / "assets" / "favicon.svg").write_text(FAVICON, encoding="utf-8")
