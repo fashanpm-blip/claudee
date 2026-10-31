@@ -188,5 +188,149 @@
     });
   });
 
+
+  /* ---------- v3 motion ---------- */
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // scroll velocity (px/s), shared by the treadmill and the ticker
+  var vel = 0, lastY = window.scrollY, lastT = performance.now();
+  window.addEventListener('scroll', function () {
+    var t = performance.now(), dy = Math.abs(window.scrollY - lastY), dt = Math.max(16, t - lastT);
+    vel = Math.min(6000, vel * 0.6 + (dy / dt) * 1000 * 0.4);
+    lastY = window.scrollY; lastT = t;
+  }, { passive: true });
+
+  // word-by-word reveal for revealed headlines
+  $$('.h-l').forEach(function (h) {
+    if (!h.closest('[data-reveal]') && !h.hasAttribute('data-reveal')) return;
+    var i = 0;
+    Array.prototype.slice.call(h.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          var w = document.createElement('span'); w.className = 'w'; w.style.setProperty('--wi', i++); w.textContent = part; frag.appendChild(w);
+        });
+        h.replaceChild(frag, n);
+      } else if (n.nodeType === 1) { n.classList.add('w'); n.style.setProperty('--wi', i++); }
+    });
+  });
+
+  // exercise figures: SMIL animations paused until hover / focus / in view (touch)
+  var figCards = $$('.pcard--anim');
+  figCards.forEach(function (card) {
+    var svg = $('.fig__svg', card); if (!svg || !svg.pauseAnimations) return;
+    svg.pauseAnimations();
+    if (reduce.matches) return;
+    var play = function () { card.classList.add('is-playing'); svg.unpauseAnimations(); };
+    var stop = function () { card.classList.remove('is-playing'); svg.pauseAnimations(); };
+    card.addEventListener('pointerenter', play); card.addEventListener('pointerleave', stop);
+    card.addEventListener('focusin', play); card.addEventListener('focusout', stop);
+  });
+  if (!finePointer && !reduce.matches && 'IntersectionObserver' in window) {
+    var figIO = new IntersectionObserver(function (en) {
+      en.forEach(function (x) {
+        var svg = $('.fig__svg', x.target); if (!svg) return;
+        if (x.isIntersecting) { x.target.classList.add('is-playing'); svg.unpauseAnimations(); }
+        else { x.target.classList.remove('is-playing'); svg.pauseAnimations(); }
+      });
+    }, { threshold: 0.6 });
+    figCards.forEach(function (c) { figIO.observe(c); });
+  }
+
+  // 3D tilt on cards
+  if (finePointer && !reduce.matches) {
+    $$('.pcard, .plan, .coach').forEach(function (c) {
+      c.classList.add('tilt');
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        c.style.transform = 'perspective(900px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 8) + 'deg) translateY(-4px)';
+      });
+      c.addEventListener('pointerleave', function () { c.style.transform = ''; });
+    });
+  }
+
+  // ticker speeds up with scrolling
+  var tickerTrack = $('.ticker__track');
+  if (tickerTrack && tickerTrack.getAnimations && !reduce.matches) {
+    (function loop() {
+      var a = tickerTrack.getAnimations()[0];
+      if (a) a.playbackRate = 1 + Math.min(5, vel / 600);
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  // treadmill runner driven by scroll speed
+  var runner = $('#runner');
+  if (runner) {
+    var P = function (id) { return runner.querySelector('#' + id); };
+    var parts = {}; ['torso', 'thighL', 'shinL', 'thighR', 'shinR', 'uarmL', 'farmL', 'uarmR', 'farmR'].forEach(function (k) { parts[k] = P('r-' + k); });
+    var head = P('r-head'), belt = P('run-belt'), readout = P('run-readout'), spEl = $('#run-speed'), dEl = $('#run-dist');
+    var phase = 0, beltOff = 0, dist = 0, speed = 4, visible = false, prev = 0;
+    var set = function (el, a, b) { el.setAttribute('x1', a[0]); el.setAttribute('y1', a[1]); el.setAttribute('x2', b[0]); el.setAttribute('y2', b[1]); };
+    var seg = function (o, len, ang) { return [o[0] + Math.sin(ang) * len, o[1] + Math.cos(ang) * len]; };
+    function pose(th) {
+      var bob = -Math.abs(Math.sin(th)) * 5;
+      var hip = [168, 132 + bob], sh = [176, 82 + bob];
+      set(parts.torso, hip, sh);
+      head.setAttribute('cx', 181); head.setAttribute('cy', 62 + bob);
+      [['L', 0], ['R', Math.PI]].forEach(function (s) {
+        var t = th + s[1];
+        var thigh = 0.62 * Math.sin(t);
+        var bend = 0.25 + 1.25 * (0.5 - 0.5 * Math.cos(t + 0.9));
+        var knee = seg(hip, 44, thigh), foot = seg(knee, 44, thigh - bend);
+        set(parts['thigh' + s[0]], hip, knee); set(parts['shin' + s[0]], knee, foot);
+        var ua = -0.75 * Math.sin(t), elbow = seg(sh, 30, ua), hand = seg(elbow, 27, ua + 1.55);
+        set(parts['uarm' + s[0]], sh, elbow); set(parts['farm' + s[0]], elbow, hand);
+      });
+    }
+    pose(0.6);
+    if (!reduce.matches) {
+      if ('IntersectionObserver' in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; if (visible) { prev = 0; requestAnimationFrame(tick); } }).observe(runner);
+      function tick(t) {
+        if (!visible) return;
+        var dt = prev ? Math.min(0.05, (t - prev) / 1000) : 0; prev = t;
+        vel *= Math.pow(0.12, dt);
+        var target = 4 + Math.min(16, vel / 140);
+        speed += (target - speed) * Math.min(1, dt * 3);
+        phase += dt * Math.PI * 2 * (0.55 + speed * 0.11);
+        beltOff -= dt * speed * 22;
+        dist += dt * speed / 3.6;
+        pose(phase);
+        belt.setAttribute('stroke-dashoffset', beltOff.toFixed(1));
+        var sTxt = speed.toFixed(1);
+        readout.textContent = sTxt; spEl.textContent = sTxt; dEl.textContent = Math.floor(dist);
+        requestAnimationFrame(tick);
+      }
+    }
+  }
+
+  // hero carousel
+  var slidesBox = $('#hero-slides');
+  if (slidesBox) {
+    var slides = $$('.hero__slide', slidesBox), dots = $$('.hero__dot'), pauseBtn = $('#hero-pause'), cur = 0, timer = null, paused = reduce.matches, hovering = false;
+    function go(n) {
+      cur = (n + slides.length) % slides.length;
+      slides.forEach(function (s, i) { s.classList.toggle('is-active', i === cur); });
+      dots.forEach(function (d, i) { if (i === cur) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+    }
+    function schedule() { clearInterval(timer); if (!paused) timer = setInterval(function () { if (!hovering && !document.hidden) go(cur + 1); }, 4500); }
+    dots.forEach(function (d) { d.addEventListener('click', function () { go(+d.dataset.slide); schedule(); }); });
+    pauseBtn.addEventListener('click', function () {
+      paused = !paused;
+      pauseBtn.setAttribute('aria-pressed', String(paused));
+      pauseBtn.setAttribute('aria-label', paused ? T('Play slideshow', 'Запустить слайд-шоу') : T('Pause slideshow', 'Остановить слайд-шоу'));
+      schedule();
+    });
+    if (reduce.matches) { pauseBtn.setAttribute('aria-pressed', 'true'); pauseBtn.setAttribute('aria-label', T('Play slideshow', 'Запустить слайд-шоу')); }
+    var media = slidesBox.parentNode;
+    media.addEventListener('pointerenter', function () { hovering = true; });
+    media.addEventListener('pointerleave', function () { hovering = false; });
+    media.addEventListener('focusin', function () { hovering = true; });
+    media.addEventListener('focusout', function () { hovering = false; });
+    schedule();
+  }
+
   window.__icReady = true;
 })();

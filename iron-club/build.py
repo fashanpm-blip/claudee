@@ -115,6 +115,72 @@ SPRITE = """<svg width="0" height="0" style="position:absolute" aria-hidden="tru
 </defs></svg>"""
 
 
+def exercise_fig(kind):
+    """Neon athlete that performs the exercise; animations start paused (see app.js)."""
+    head = '<circle cx="{x}" cy="{y}" r="8"/>'
+    A = lambda attr, vals, dur="1.4s": f'<animate attributeName="{attr}" values="{vals}" dur="{dur}" repeatCount="indefinite" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1" keyTimes="0;.5;1"/>'
+    if kind == "strength":  # standing biceps curl
+        body = (head.format(x=50, y=16) + '<path d="M50 25v36M50 61l-9 40M50 61l9 40M50 30l-10 20 2 22"/>'
+                '<path d="M50 30l12 21"/>'
+                f'<line x1="62" y1="51" x2="62" y2="74">{A("x2", "62;56;62")}{A("y2", "74;32;74")}</line>'
+                f'<circle cx="62" cy="76" r="5" class="fig__weight">{A("cx", "62;55;62")}{A("cy", "76;28;76")}</circle>')
+    elif kind == "hiit":  # battle ropes, alternating arms
+        body = (head.format(x=46, y=30) + '<path d="M47 39l2 30M49 69l-12 16-2 18M49 69l12 16 2 18"/>'
+                f'<line x1="48" y1="44" x2="70" y2="60">{A("y2", "60;46;60", ".7s")}</line>'
+                f'<line x1="48" y1="44" x2="70" y2="48">{A("y2", "48;60;48", ".7s")}</line>'
+                f'<path class="fig__rope" d="M70 60Q80 50 88 72T100 92">{A("d", "M70 60Q80 50 88 72T100 92;M70 46Q80 72 88 58T100 92;M70 60Q80 50 88 72T100 92", ".7s")}</path>'
+                f'<path class="fig__rope" d="M70 48Q80 72 88 58T100 96">{A("d", "M70 48Q80 72 88 58T100 96;M70 60Q80 50 88 72T100 96;M70 48Q80 72 88 58T100 96", ".7s")}</path>')
+    elif kind == "personal":  # back squat with barbell
+        up = A("transform", "0 0;-3 20;0 0", "1.8s").replace('attributeName="transform"', 'attributeName="transform" type="translate"').replace("<animate ", "<animateTransform ")
+        body = (f'<g>{up}' + head.format(x=50, y=14) + '<path d="M50 23v35"/><path d="M28 27h44" class="fig__bar"/>'
+                '<circle cx="26" cy="27" r="7" class="fig__plate"/><circle cx="74" cy="27" r="7" class="fig__plate"/>'
+                '<path d="M50 28l-12 0M50 28l12 0"/></g>'
+                f'<line x1="50" y1="58" x2="52" y2="80">{A("x1", "50;47;50", "1.8s")}{A("y1", "58;78;58", "1.8s")}{A("x2", "52;64;52", "1.8s")}{A("y2", "80;82;80", "1.8s")}</line>'
+                f'<line x1="52" y1="80" x2="50" y2="104">{A("x1", "52;64;52", "1.8s")}{A("y1", "80;82;80", "1.8s")}</line>'
+                '<path d="M40 104h22" class="fig__floor"/>')
+    else:  # mobility: overhead reach with side bend
+        bend = A("transform", "0 50 62;-16 50 62;0 50 62;16 50 62;0 50 62", "3s").replace('attributeName="transform"', 'attributeName="transform" type="rotate"').replace("<animate ", "<animateTransform ").replace('keySplines=".45 0 .55 1;.45 0 .55 1" keyTimes="0;.5;1"', 'keyTimes="0;.25;.5;.75;1" keySplines=".45 0 .55 1;.45 0 .55 1;.45 0 .55 1;.45 0 .55 1"')
+        body = (f'<g>{bend}' + head.format(x=50, y=22) + '<path d="M50 31v31M50 34l-12-22M50 34l12-22"/></g>'
+                '<path d="M50 62l-14 40M50 62l14 40"/><path d="M22 104h56" class="fig__floor"/>')
+    label = {"strength": L("Biceps curl", "Подъём на бицепс"), "hiit": L("Battle ropes", "Канаты"), "personal": L("Back squat", "Приседания со штангой"), "mobility": L("Side stretch", "Боковая растяжка")}[kind]
+    return (f'<div class="fig" aria-hidden="true"><svg class="fig__svg" viewBox="0 0 104 112" focusable="false"><g class="fig__lines">{body}</g></svg>'
+            f'<span class="fig__label">{label}</span></div>')
+
+
+def treadmill():
+    return f"""<section class="section run" id="cardio" aria-labelledby="run-title">
+  <div class="container run__grid">
+    <div>
+      <span class="kicker" data-reveal>{L("Cardio zone", "Кардиозона")}</span>
+      <h2 class="h-l" id="run-title" data-reveal>{L("Every scroll is", "Каждая прокрутка —")} <span class="accent">{L("a step", "это шаг")}</span></h2>
+      <p class="lead" data-reveal>{L("Scroll the page and the runner picks up speed. Stop, and the runner slows to a walk.", "Листай страницу — и бегун ускоряется. Остановись — и он перейдёт на шаг.")}</p>
+      <dl class="run__stats" data-reveal>
+        <div><dt>{L("Speed", "Скорость")}</dt><dd><span id="run-speed">4.0</span> <small>{L("km/h", "км/ч")}</small></dd></div>
+        <div><dt>{L("Distance", "Дистанция")}</dt><dd><span id="run-dist">0</span> <small>{L("m", "м")}</small></dd></div>
+      </dl>
+    </div>
+    <div class="run__stage" data-reveal>
+      <svg id="runner" viewBox="0 0 360 260" role="img" aria-label="{L('Animated runner on a treadmill', 'Анимированный бегун на беговой дорожке')}">
+        <defs><filter id="rglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <g class="tm" filter="url(#rglow)">
+          <path d="M268 200 L300 72 L322 72" class="tm__rail"/>
+          <rect x="296" y="60" width="40" height="22" rx="5" class="tm__console"/>
+          <text x="316" y="75" text-anchor="middle" class="tm__readout" id="run-readout">4.0</text>
+          <path d="M40 214 H300 a14 14 0 0 1 0 28 H40 a14 14 0 0 1 0 -28 Z" class="tm__deck"/>
+          <path d="M44 214 H296" class="tm__belt" id="run-belt"/>
+          <path d="M60 242 v10 M280 242 v10" class="tm__rail"/>
+        </g>
+        <g class="runner" filter="url(#rglow)">
+          <circle id="r-head" cx="170" cy="62" r="13"/>
+          <line id="r-torso"/><line id="r-thighL"/><line id="r-shinL"/><line id="r-thighR"/><line id="r-shinR"/>
+          <line id="r-uarmL"/><line id="r-farmL"/><line id="r-uarmR"/><line id="r-farmR"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>"""
+
+
 def icon(name):
     vb = ' viewBox="0 0 200 200"' if name.startswith("n-") else ""
     return f'<svg{vb} aria-hidden="true" focusable="false"><use href="#{name}"/></svg>'
@@ -331,11 +397,11 @@ def coach_card(i, c, full=False):
 
 def plans():
     return [
-        ("basic", "Basic", L("For independent training on the gym floor.", "Для самостоятельных тренировок в зале."), 29, False,
+        ("basic", "Basic", L("For independent training on the gym floor.", "Для самостоятельных тренировок в зале."), 19, False,
          [(True, L("Gym floor, 7 days", "Тренажёрный зал, 7 дней")), (True, L("Lockers & showers", "Шкафчики и душ")), (True, L("Intro session with a coach", "Вводная тренировка с тренером")), (False, L("Group classes", "Групповые занятия")), (False, L("Personal training", "Персональные тренировки"))]),
-        ("pro", "Pro", L("The full club: gym floor plus every group class.", "Весь клуб: зал плюс все групповые занятия."), 49, True,
+        ("pro", "Pro", L("The full club: gym floor plus every group class.", "Весь клуб: зал плюс все групповые занятия."), 34, True,
          [(True, L("Everything in Basic", "Всё из Basic")), (True, L("Unlimited group classes", "Безлимитные групповые занятия")), (True, L("Sauna & recovery zone", "Сауна и зона восстановления")), (True, L("Monthly progress check", "Ежемесячная проверка прогресса")), (False, L("Personal training", "Персональные тренировки"))]),
-        ("elite", "Elite", L("Coached every week with a personal plan.", "Тренер каждую неделю и личный план."), 89, False,
+        ("elite", "Elite", L("Coached every week with a personal plan.", "Тренер каждую неделю и личный план."), 59, False,
          [(True, L("Everything in Pro", "Всё из Pro")), (True, L("4 personal sessions a month", "4 персональные тренировки в месяц")), (True, L("Nutrition guidance", "Рекомендации по питанию")), (True, L("2 guest passes a month", "2 гостевых визита в месяц")), (True, L("Priority class booking", "Приоритетная запись на занятия"))]),
     ]
 
@@ -396,10 +462,24 @@ def hours_table():
 
 
 # ---------------------------------------------------------------- pages
+def hero_carousel():
+    slides = [("athlete", L("Athlete doing dumbbell curls under red neon light", "Атлет делает подъём гантели под красным неоновым светом")),
+              ("ropes", L("Battle ropes workout on a dark gym floor", "Тренировка с канатами в тёмном зале")),
+              ("coaching", L("Coach spotting a back squat", "Тренер страхует приседание со штангой")),
+              ("led", L("Gym floor with LED lines on the ceiling", "Зал с LED-линиями на потолке"))]
+    imgs = "".join(f'<img class="hero__slide{" is-active" if i == 0 else ""}" src="{prefix()}assets/img/{k}.webp" width="{PHOTO_SIZE[k][0]}" height="{PHOTO_SIZE[k][1]}" alt="{e(a)}"{"" if i == 0 else " loading=lazy"} decoding="async">' for i, (k, a) in enumerate(slides))
+    dots = "".join(f'<button type="button" class="hero__dot" data-slide="{i}" aria-label="{L("Show photo", "Показать фото")} {i + 1}"{" aria-current=\"true\"" if i == 0 else ""}></button>' for i in range(len(slides)))
+    return f"""<div class="hero__media" data-reveal>
+        <div class="photo hero__slides" id="hero-slides" aria-roledescription="carousel" aria-label="{L('Club photos', 'Фото клуба')}">{imgs}</div>
+        <span class="hero__badge">{L("Open 7 days", "Открыто 7 дней")}</span>
+        <div class="hero__controls"><div class="hero__dots">{dots}</div><button type="button" class="hero__pause" id="hero-pause" aria-pressed="false" aria-label="{L('Pause slideshow', 'Остановить слайд-шоу')}"><span aria-hidden="true">❚❚</span></button></div>
+      </div>"""
+
+
 def page_index():
     pkeys = {"strength": "athlete", "hiit": "ropes", "personal": "coaching"}
-    progs = "".join(f"""<article class="pcard" data-reveal style="--d:{i * 80}ms">
-  {photo(pkeys.get(key, ""), t + ": " + cap, art, cap)}
+    progs = "".join(f"""<article class="pcard pcard--anim" data-reveal style="--d:{i * 80}ms">
+  <div class="pcard__media">{photo(pkeys.get(key, ""), t + ": " + cap, art, cap)}{exercise_fig(key)}</div>
   <div class="pcard__body"><span class="pcard__no">{no}</span><h3>{t}</h3><p>{d}</p><a class="text-link" href="training.html#{key}">{L("Explore", "Подробнее")} {icon("i-arrow")}</a></div>
 </article>""" for i, ((no, t, d, art, key), cap) in enumerate(zip(programs(), [
         L("Lifter at the rack, red side light, chalk in the air", "Атлет у стойки, красный боковой свет, магнезия в воздухе"),
@@ -426,23 +506,25 @@ def page_index():
         <div><div class="meta-num"><span data-count="20">20</span><small>+</small></div><div class="meta-label">{L("classes a week", "занятий в неделю")}</div></div>
       </div>
       </div>
-      {('<div class="hero__media" data-reveal>' + photo("athlete", L("Athlete doing dumbbell curls under red neon light", "Атлет делает подъём гантели под красным неоновым светом"), "n-dumbbell", "") + '<span class="hero__badge">' + L("Open 7 days", "Открыто 7 дней") + '</span></div>') if PHOTO_ON else ''}
+      {hero_carousel() if PHOTO_ON else ''}
     </div>
   </section>
 
   <div class="ticker" aria-hidden="true"><div class="ticker__track">{''.join('<div class="ticker__group">' + ''.join(f'<span class="ticker__item">{w}</span>' for w in [L("Strength", "Сила"), "HIIT", L("Personal training", "Персональные"), L("Mobility", "Мобильность"), L("Recovery", "Восстановление"), L("Boxing", "Бокс")]) + '</div>' for _ in range(2))}</div></div>
 
-  <section class="section" aria-labelledby="prog-title">
+  {treadmill()}
+
+  <section class="section section--alt" aria-labelledby="prog-title">
     <div class="container">
       <div class="section__head section__head--split">
         <div><span class="kicker" data-reveal>{L("Training", "Тренировки")}</span><h2 class="h-l" id="prog-title" data-reveal>{L("Four ways to", "Четыре пути к")} <span class="accent">{L("get stronger", "силе")}</span></h2></div>
-        <p class="lead" data-reveal>{L("Pick one or mix them. Every programme is coached, and every member gets a starting plan.", "Выбери одно направление или комбинируй. Все программы ведут тренеры, а каждый участник получает стартовый план.")}</p>
+        <p class="lead" data-reveal>{L("Hover a card to see the exercise. Every programme is coached, and every member gets a starting plan.", "Наведи на карточку, чтобы увидеть упражнение. Все программы ведут тренеры, а каждый участник получает стартовый план.")}</p>
       </div>
       <div class="cards cards--4">{progs}</div>
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="steps-title">
+  <section class="section" aria-labelledby="steps-title">
     <div class="container">
       <div class="section__head"><span class="kicker" data-reveal>{L("How to start", "Как начать")}</span><h2 class="h-l" id="steps-title" data-reveal>{L("Three steps to your", "Три шага к твоей")} <span class="accent">{L("first result", "первой цели")}</span></h2></div>
       <ol class="steps">
@@ -488,16 +570,6 @@ def page_index():
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="owners-title">
-    <div class="container">
-      <div class="section__head section__head--split">
-        <div><span class="kicker" data-reveal>{L("The owners", "Владельцы")}</span><h2 class="h-l" id="owners-title" data-reveal>{L("Built by", "Создан")} <span class="accent">{L("lifters", "атлетами")}</span></h2></div>
-        <p class="lead" data-reveal>{L("Iron Club is owned and run by a coach and a physiotherapist. They are on the floor most days.", "Iron Club принадлежит тренеру и физиотерапевту. Они сами почти каждый день в зале.")}</p>
-      </div>
-      <div class="founders founders--short">{founder_cards(short=True)}</div>
-      <p style="margin-top:28px"><a class="text-link" href="about.html#founders">{L("Read their story", "Их история")} {icon("i-arrow")}</a></p>
-    </div>
-  </section>
   {cta_band()}
 </main>"""
     return head("index.html", L("Iron Club · Premium fitness club: strength, HIIT, personal training", "Iron Club · Премиальный фитнес-клуб: сила, HIIT, персональные тренировки"),
@@ -639,28 +711,13 @@ def page_about():
       </div>
     </div>
   </section>
-  <section class="section section--alt" id="founders" aria-labelledby="founders-title">
-    <div class="container">
-      <div class="section__head section__head--split">
-        <div><span class="kicker" data-reveal>{L("The owners", "Владельцы")}</span><h2 class="h-l" id="founders-title" data-reveal>{L("Meet the", "Знакомься:")} <span class="accent">{L("founders", "основатели")}</span></h2></div>
-        <p class="lead" data-reveal>{L("Two people, one idea: a club where coaching comes first.", "Два человека, одна идея: клуб, где главное — работа тренера.")}</p>
-      </div>
-      <div class="founders">{founder_cards()}</div>
-      <ol class="timeline" data-reveal>
-        <li><span class="timeline__year">2019</span><span>{L("Viktor and Mira start coaching together in a rented garage.", "Виктор и Мира начинают тренировать вместе в арендованном гараже.")}</span></li>
-        <li><span class="timeline__year">2021</span><span>{L("Iron Club opens with one floor and twelve racks.", "Открывается Iron Club: один зал и двенадцать стоек.")}</span></li>
-        <li><span class="timeline__year">2023</span><span>{L("The functional zone and group HIIT classes arrive.", "Появляются функциональная зона и групповые HIIT-занятия.")}</span></li>
-        <li><span class="timeline__year">2025</span><span>{L("Recovery zone with sauna opens.", "Открывается зона восстановления с сауной.")}</span></li>
-      </ol>
-    </div>
-  </section>
-  <section class="section" aria-labelledby="zones-title">
+  <section class="section section--alt" aria-labelledby="zones-title">
     <div class="container">
       <div class="section__head"><span class="kicker" data-reveal>{L("Facilities", "Оснащение")}</span><h2 class="h-l" id="zones-title" data-reveal>{L("Four zones", "Четыре зоны")}</h2></div>
       <div class="zones" data-reveal>{zs}</div>
     </div>
   </section>
-  <section class="section section--alt" aria-labelledby="values-title">
+  <section class="section" aria-labelledby="values-title">
     <div class="container">
       <div class="section__head"><span class="kicker" data-reveal>{L("Values", "Ценности")}</span><h2 class="h-l" id="values-title" data-reveal>{L("What we stand for", "Во что мы верим")}</h2></div>
       <ol class="steps">
