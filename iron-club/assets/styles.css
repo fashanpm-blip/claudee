@@ -454,8 +454,6 @@ body { background:
 .js .h-l .w { display: inline-block; opacity: 0; transform: translateY(.45em) rotate(2deg); transition: opacity .6s var(--ease), transform .7s var(--ease); transition-delay: calc(var(--wi, 0) * 70ms); }
 .js .h-l.is-in .w, .js .is-in .h-l .w { opacity: 1; transform: none; }
 
-/* 3D tilt */
-.tilt { transform-style: preserve-3d; will-change: transform; }
 
 @media (prefers-reduced-motion: reduce) {
   .js .h-l .w { opacity: 1; transform: none; }

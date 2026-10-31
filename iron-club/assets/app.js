@@ -239,18 +239,6 @@
     figCards.forEach(function (c) { figIO.observe(c); });
   }
 
-  // 3D tilt on cards
-  if (finePointer && !reduce.matches) {
-    $$('.pcard, .plan, .coach').forEach(function (c) {
-      c.classList.add('tilt');
-      c.addEventListener('pointermove', function (e) {
-        var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-        c.style.transform = 'perspective(900px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 8) + 'deg) translateY(-4px)';
-      });
-      c.addEventListener('pointerleave', function () { c.style.transform = ''; });
-    });
-  }
-
   // ticker speeds up with scrolling
   var tickerTrack = $('.ticker__track');
   if (tickerTrack && tickerTrack.getAnimations && !reduce.matches) {
