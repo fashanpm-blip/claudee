@@ -1,5 +1,5 @@
 /* Бюджет студента — offline service worker. Bump VERSION when files change. */
-const VERSION = 'budzet-v3';
+const VERSION = 'budzet-v4';
 const SHELL = ['./', './index.html', './planner.html', './chart.umd.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {

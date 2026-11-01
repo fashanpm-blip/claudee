@@ -5,59 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Учёба и день</title>
 <meta name="description" content="Распорядок дня, задачи и дедлайны, таймер учёбы и привычки для студента. Работает на телефоне и без интернета.">
-<meta name="theme-color" content="#10b981">
+<meta name="theme-color" content="#0b0a08">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Учёба">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
 <style>
-/* Same visual system as the budget page: soft gradient backdrop, frosted cards, emerald accent. */
+/* Black & gold: near-black surfaces, gold accent for actions, one saturated colour per category. Dark is the default look. */
 :root {
-  --bg-a: #e9fbf3; --bg-b: #eef1ff; --bg-c: #fdf1f7;
-  --card: rgba(255, 255, 255, .78); --card-solid: #ffffff; --soft: #f1f5f9; --line: rgba(15, 23, 42, .08);
-  --fg: #1e293b; --muted: #5f6f84;
-  --accent: #10b981; --accent-2: #14b8a6; --accent-ink: #047857; --on-accent: #ffffff; --btn-a: #047857; --btn-b: #0f766e;
-  --danger: #e11d48; --warn: #b45309;
-  --t-study: #6366f1; --t-class: #0ea5e9; --t-sport: #f97316; --t-food: #f59e0b; --t-work: #64748b; --t-sleep: #8b5cf6; --t-rest: #ec4899; --t-other: #14b8a6;
-  --shadow: 0 1px 2px rgba(30, 41, 59, .04), 0 12px 32px -16px rgba(30, 41, 59, .18);
+  --bg: #0b0a08; --glow: rgba(229, 184, 75, .16);
+  --card: #15130f; --card-2: #1c1914; --soft: #262119; --line: rgba(236, 204, 130, .13); --line-2: rgba(236, 204, 130, .26);
+  --fg: #f6f0e3; --muted: #b5aa92;
+  --gold: #e5b84b; --gold-ink: #f0c95e; --accent: #e5b84b;
+  --btn-bg: linear-gradient(135deg, #f6d987, #e0ae45 52%, #b9852a); --btn-fg: #1a1406; --toast-acc: #85600f; --btn-shadow: 0 10px 26px -12px rgba(229, 184, 75, .65);
+  --danger: #ff6b6b;
+  --c-day: #e5b84b; --c-tasks: #5b9bff; --c-study: #34d6a8; --c-habits: #ff7a45;
+  --t-class: #5b9bff; --t-study: #f2c14e; --t-sport: #ff5d5d; --t-food: #ff9f43; --t-work: #b18cff; --t-sleep: #7f8cff; --t-rest: #34d6a8; --t-other: #a8a29e;
+  --shadow: 0 1px 0 rgba(255, 236, 190, .04) inset, 0 18px 40px -24px rgba(0, 0, 0, .9);
   --radius: 22px; --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-a: #0b1324; --bg-b: #0d2626; --bg-c: #1b1735;
-    --card: rgba(22, 31, 46, .72); --card-solid: #172131; --soft: #1f2b3d; --line: rgba(226, 232, 240, .08);
-    --fg: #e5edf6; --muted: #9fb0c3; --accent: #34d399; --accent-2: #2dd4bf; --accent-ink: #6ee7b7; --on-accent: #052e22; --btn-a: #34d399; --btn-b: #2dd4bf;
-    --danger: #fb7185; --warn: #fbbf24;
-    --t-study: #a5b4fc; --t-class: #7dd3fc; --t-sport: #fdba74; --t-food: #fcd34d; --t-work: #cbd5e1; --t-sleep: #c4b5fd; --t-rest: #f9a8d4; --t-other: #5eead4;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -18px rgba(0, 0, 0, .7);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg-a: #0b1324; --bg-b: #0d2626; --bg-c: #1b1735;
-  --card: rgba(22, 31, 46, .72); --card-solid: #172131; --soft: #1f2b3d; --line: rgba(226, 232, 240, .08);
-  --fg: #e5edf6; --muted: #9fb0c3; --accent: #34d399; --accent-2: #2dd4bf; --accent-ink: #6ee7b7; --on-accent: #052e22; --btn-a: #34d399; --btn-b: #2dd4bf;
-  --danger: #fb7185; --warn: #fbbf24;
-  --t-study: #a5b4fc; --t-class: #7dd3fc; --t-sport: #fdba74; --t-food: #fcd34d; --t-work: #cbd5e1; --t-sleep: #c4b5fd; --t-rest: #f9a8d4; --t-other: #5eead4;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -18px rgba(0, 0, 0, .7);
   color-scheme: dark;
 }
+:root[data-theme="light"] {
+  --bg: #f5f0e6; --glow: rgba(196, 146, 40, .18);
+  --card: #fffdf8; --card-2: #faf5ea; --soft: #efe6d3; --line: rgba(70, 52, 12, .12); --line-2: rgba(70, 52, 12, .24);
+  --fg: #1b1710; --muted: #675b43;
+  --gold: #b8862b; --gold-ink: #85600f; --accent: #a87a1c;
+  --btn-bg: linear-gradient(135deg, #2a241a, #0f0d09); --btn-fg: #f3d27a; --toast-acc: #f3d27a; --btn-shadow: 0 10px 24px -14px rgba(20, 16, 8, .7);
+  --danger: #c81e1e;
+  --c-day: #a87a1c; --c-tasks: #2563eb; --c-study: #047857; --c-habits: #c2410c;
+  --t-class: #2563eb; --t-study: #a16207; --t-sport: #dc2626; --t-food: #c2410c; --t-work: #7c3aed; --t-sleep: #4f46e5; --t-rest: #047857; --t-other: #78716c;
+  --shadow: 0 1px 2px rgba(60, 44, 10, .05), 0 16px 34px -22px rgba(60, 44, 10, .35);
+  color-scheme: light;
+}
 * { box-sizing: border-box; }
-html { min-height: 100%; background: var(--bg-a); }
+html { min-height: 100%; background: var(--bg); }
 body {
-  margin: 0; min-height: 100vh; color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.55;
-  background: radial-gradient(900px 600px at 0% 0%, var(--bg-a), transparent 70%), radial-gradient(800px 700px at 100% 20%, var(--bg-b), transparent 70%), radial-gradient(900px 700px at 40% 100%, var(--bg-c), transparent 70%), var(--bg-a);
-  background-attachment: fixed;
+  margin: 0; min-height: 100vh; color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.5;
+  background: radial-gradient(1100px 520px at 50% -160px, var(--glow), transparent 72%), var(--bg); background-attachment: fixed;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 56px;
   -webkit-font-smoothing: antialiased;
 }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg-a); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
 h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; }
 p { margin: 0; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -66,258 +60,390 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .num { font-variant-numeric: tabular-nums; }
-.wrap { max-width: 1180px; margin: 0 auto; }
+.wrap { max-width: 1120px; margin: 0 auto; }
+.i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.i--sm { width: 16px; height: 16px; }
+.i--lg { width: 24px; height: 24px; }
 
 /* header + app switch */
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); background: color-mix(in srgb, var(--bg-a) 70%, transparent); }
-.top__in { max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; padding-block: 14px; }
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand__logo { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; font-size: 22px; background: linear-gradient(135deg, #6366f1, var(--accent-2) 60%, var(--accent)); box-shadow: var(--shadow); }
-.brand h1 { font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
-.brand p { font-size: 13px; color: var(--muted); }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); background: color-mix(in srgb, var(--bg) 82%, transparent); border-bottom: 1px solid var(--line); }
+.top__in { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; padding-block: 12px; }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand__logo { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; background: var(--btn-bg); color: var(--btn-fg); box-shadow: var(--btn-shadow); }
+.brand h1 { font-size: 18px; font-weight: 800; letter-spacing: -.02em; white-space: nowrap; }
+.brand p { font-size: 12.5px; color: var(--muted); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand > div { min-width: 0; }
 .controls { display: flex; align-items: center; gap: 8px; }
-.pill { display: flex; align-items: center; gap: 2px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 4px; box-shadow: var(--shadow); }
-.icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 0; background: transparent; display: grid; place-items: center; font-size: 16px; transition: background .2s; }
-.icon-btn:hover { background: var(--soft); }
-.theme-btn { width: 50px; height: 50px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); box-shadow: var(--shadow); font-size: 20px; }
+.icon-btn { width: 44px; height: 44px; border-radius: 12px; border: 0; background: transparent; display: grid; place-items: center; color: var(--muted); transition: background .2s, color .2s; }
+.icon-btn:hover { background: var(--soft); color: var(--fg); }
+.theme-btn { width: 46px; height: 46px; border-radius: 14px; border: 1px solid var(--line-2); background: var(--card); color: var(--gold-ink); display: grid; place-items: center; }
 .appnav { display: flex; gap: 4px; }
-.appnav a { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; color: var(--muted); }
-.appnav a[aria-current="page"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
+.appnav a { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; color: var(--muted); }
+.appnav a[aria-current="page"] { background: var(--btn-bg); color: var(--btn-fg); }
 .appnav a:not([aria-current]):hover { background: var(--soft); color: var(--fg); }
-.appnav--top { display: none; }
+.appnav--top { display: none; padding: 4px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
 @media (min-width: 760px) { .appnav--top { display: flex; } }
-.appnav--bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; justify-content: center; padding: 8px max(12px, env(safe-area-inset-left, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--card-solid) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
-.appnav--bottom a { flex: 1; max-width: 220px; justify-content: center; min-height: 46px; }
+.appnav--bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; justify-content: center; padding: 8px max(12px, env(safe-area-inset-left, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--card) 92%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
+.appnav--bottom a { flex: 1; max-width: 220px; justify-content: center; min-height: 48px; }
 @media (min-width: 760px) { .appnav--bottom { display: none; } }
-@media (max-width: 759px) { body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } }
+@media (max-width: 759px) { body { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); } }
 
-/* cards */
-.card { background: var(--card); border: 1px solid var(--line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); min-width: 0; }
-.card__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-.card h2 { font-size: 16.5px; font-weight: 700; letter-spacing: -.01em; }
+/* surfaces */
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.panel-head h2, .card h2 { font-size: 18px; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
 .hint { font-size: 13px; color: var(--muted); }
-.stack { display: grid; gap: 22px; }
+.stack { display: grid; gap: 18px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 
-/* today summary */
-.today { display: grid; gap: 14px; grid-template-columns: repeat(2, 1fr); margin-top: 10px; }
-@media (min-width: 900px) { .today { grid-template-columns: 1.6fr 1fr 1fr 1fr; } }
-.today .card { padding: 16px 18px; display: grid; gap: 6px; }
-.today .lbl { font-size: 12.5px; font-weight: 600; color: var(--muted); }
-.today .val { font-size: 20px; font-weight: 800; letter-spacing: -.02em; overflow-wrap: anywhere; }
-.today .sub { font-size: 13px; color: var(--muted); }
-.today .now { grid-column: 1 / -1; }
-@media (min-width: 900px) { .today .now { grid-column: auto; } }
+/* square icon (category colour) */
+.sq { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex: none; color: var(--tc, var(--gold)); background: color-mix(in srgb, var(--tc, var(--gold)) 16%, var(--card)); border: 1px solid color-mix(in srgb, var(--tc, var(--gold)) 30%, transparent); }
 
-/* tabs */
-.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px; margin: 22px 0 18px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); scrollbar-width: none; }
-.tabs::-webkit-scrollbar { display: none; }
-.tab { flex: 1 0 auto; min-height: 46px; padding: 0 16px; border: 0; border-radius: 14px; background: transparent; font-weight: 700; color: var(--muted); white-space: nowrap; }
-.tab[aria-selected="true"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
-.tab:not([aria-selected="true"]):hover { background: var(--soft); color: var(--fg); }
+/* hero: clock + now */
+.hero { margin-top: 16px; display: grid; gap: 16px; position: relative; overflow: hidden; background: linear-gradient(140deg, color-mix(in srgb, var(--gold) 14%, var(--card)), var(--card) 55%); border-color: var(--line-2); }
+@media (min-width: 760px) { .hero { grid-template-columns: auto 1fr; align-items: center; gap: 28px; padding: 24px 28px; } }
+.hero__clock b { display: block; font-size: 52px; font-weight: 900; letter-spacing: -.04em; line-height: 1; color: var(--gold-ink); }
+.hero__clock span { display: block; margin-top: 6px; font-size: 14px; font-weight: 600; color: var(--muted); }
+@media (min-width: 760px) { .hero__clock { padding-right: 28px; border-right: 1px solid var(--line-2); } }
+.hero__now { display: grid; gap: 8px; min-width: 0; }
+.hero__cur { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.hero__cur b { font-size: 19px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.hero__next { font-size: 14px; color: var(--muted); }
+.meter { height: 8px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.meter span { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--btn-bg); transition: width .6s cubic-bezier(.22, 1, .36, 1); }
+.meter-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 600; color: var(--muted); }
+
+/* nav tiles (tabs) */
+.tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 18px 0; }
+@media (min-width: 760px) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+.tile { position: relative; display: grid; gap: 2px; justify-items: start; text-align: left; padding: 16px; min-height: 140px; border-radius: 20px; border: 1px solid var(--line); background: var(--card); box-shadow: var(--shadow); color: var(--fg); transition: transform .15s, border-color .2s, background .2s; overflow: hidden; }
+.tile:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--tc) 45%, transparent); }
+.tile .sq { margin-bottom: 10px; }
+.tile__lbl { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.tile__val { font-size: 26px; font-weight: 900; letter-spacing: -.03em; line-height: 1.15; }
+.tile__sub { font-size: 12.5px; color: var(--muted); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.tile[aria-selected="true"] { border-color: var(--tc); background: linear-gradient(160deg, color-mix(in srgb, var(--tc) 20%, var(--card)), var(--card) 70%); }
+.tile[aria-selected="true"]::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--tc); }
+.tile[aria-selected="true"] .tile__lbl { color: var(--fg); }
 
 /* inputs + buttons */
-.input { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-solid); transition: border-color .2s, box-shadow .2s; }
-.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent); }
+.input { width: 100%; min-height: 50px; padding: 10px 14px; border-radius: 14px; border: 1.5px solid var(--line-2); background: var(--card-2); transition: border-color .2s, box-shadow .2s; }
+.input::placeholder { color: color-mix(in srgb, var(--muted) 85%, transparent); }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
 .input[aria-invalid="true"] { border-color: var(--danger); }
-textarea.input { min-height: 80px; resize: vertical; }
+select.input { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
 .field { display: grid; gap: 6px; min-width: 0; }
 fieldset.field { border: 0; padding: 0; margin: 0; }
-.field label, .field legend { font-size: 13px; font-weight: 600; color: var(--muted); padding: 0; }
+.field label, .field legend { font-size: 13px; font-weight: 700; color: var(--muted); padding: 0; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .error { font-size: 13px; color: var(--danger); font-weight: 600; }
 .error:empty { display: none; }
-.btn { min-height: 48px; padding: 0 18px; border-radius: 14px; border: 0; background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--btn-a) 80%, transparent); transition: filter .2s, transform .1s; }
-.btn:hover { filter: brightness(1.05); }
+.btn { min-height: 50px; padding: 0 20px; border-radius: 14px; border: 0; background: var(--btn-bg); color: var(--btn-fg); font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--btn-shadow); transition: filter .2s, transform .1s; white-space: nowrap; }
+.btn:hover { filter: brightness(1.07); }
 .btn:active { transform: translateY(1px) scale(.99); }
 .btn--ghost { background: var(--soft); color: var(--fg); box-shadow: none; }
-.btn--danger { background: color-mix(in srgb, var(--danger) 12%, var(--card-solid)); color: var(--danger); box-shadow: none; }
-.btn--sm { min-height: 40px; padding: 0 14px; border-radius: 12px; font-size: 14px; }
+.btn--danger { background: color-mix(in srgb, var(--danger) 14%, var(--card)); color: var(--danger); box-shadow: none; }
+.btn--sm { min-height: 42px; padding: 0 14px; border-radius: 12px; font-size: 14px; }
+.btn--wide { width: 100%; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.chip { min-height: 38px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card-solid); font-size: 13.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-.chip[aria-pressed="true"], .chip[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--card-solid)); color: var(--fg); }
-.empty { text-align: center; padding: 22px 12px; color: var(--muted); display: grid; gap: 12px; justify-items: center; }
-.empty b { font-size: 34px; }
+.chip { min-height: 40px; padding: 0 13px; border-radius: 12px; border: 1.5px solid var(--line-2); background: var(--card-2); font-size: 13.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 7px; color: var(--fg); }
+.chip:hover { border-color: var(--gold); }
+.chip[aria-pressed="true"], .chip[aria-checked="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, var(--card)); color: var(--fg); }
+.chip .i { color: var(--gold-ink); }
+.seg { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--card-2); border: 1px solid var(--line); flex-wrap: wrap; }
+.seg button { flex: 1 0 auto; min-height: 40px; padding: 0 12px; border: 0; border-radius: 10px; background: transparent; font-weight: 700; font-size: 13.5px; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.seg button[aria-checked="true"], .seg button[aria-pressed="true"] { background: var(--btn-bg); color: var(--btn-fg); }
+.seg button:not([aria-checked="true"]):not([aria-pressed="true"]):hover { background: var(--soft); color: var(--fg); }
+.empty { text-align: center; padding: 26px 12px; color: var(--muted); display: grid; gap: 14px; justify-items: center; }
+.empty .sq { width: 56px; height: 56px; border-radius: 16px; }
+.empty .i { width: 26px; height: 26px; }
 
-/* ---------- day timeline ---------- */
-.daybar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: space-between; margin-bottom: 14px; }
-.date-btn { min-height: 44px; padding: 0 14px; border-radius: 12px; border: 0; background: transparent; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
-.date-btn:hover { background: var(--soft); }
-.timeline { position: relative; margin-left: 52px; border-left: 1.5px solid var(--line); }
-.hour { position: absolute; left: -52px; right: 0; height: 0; border-top: 1px dashed var(--line); }
-.hour span { position: absolute; left: 0; top: -9px; width: 44px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.block { position: absolute; border: 0; border-radius: 14px; padding: 6px 10px; text-align: left; overflow: hidden; display: grid; align-content: start; gap: 1px;
-  background: color-mix(in srgb, var(--tc) 18%, var(--card-solid)); border-left: 4px solid var(--tc); box-shadow: 0 6px 16px -12px rgba(15, 23, 42, .5); transition: transform .15s, box-shadow .2s; }
-.block:hover { transform: translateX(2px); box-shadow: 0 10px 24px -14px rgba(15, 23, 42, .6); }
-.block__t { font-weight: 700; font-size: 14px; line-height: 1.25; display: flex; gap: 6px; align-items: center; }
-.block__time { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.block.is-short { grid-auto-flow: column; justify-content: start; align-items: center; gap: 8px; padding-block: 4px; }
-.block.is-done { opacity: .62; }
-.block.is-done .block__t span:last-child { text-decoration: line-through; }
-.block.is-now { box-shadow: 0 0 0 2px var(--tc), 0 10px 24px -12px rgba(15, 23, 42, .5); }
-.nowline { position: absolute; left: -6px; right: 0; height: 2px; background: var(--danger); z-index: 3; pointer-events: none; }
-.nowline::before { content: ""; position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 50%; background: var(--danger); }
-.day-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+/* ---------- day: week strip + agenda ---------- */
+.date-btn { min-height: 40px; padding: 0 10px; margin-left: -10px; border-radius: 10px; border: 0; background: transparent; font-weight: 700; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+.date-btn:hover { background: var(--soft); color: var(--fg); }
+.week-strip { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 4px; margin-bottom: 18px; }
+.week-strip .icon-btn { width: 36px; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.dsq { position: relative; min-height: 64px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-2); display: grid; place-content: center; justify-items: center; gap: 2px; padding: 0; }
+.dsq small { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.dsq b { font-size: 18px; font-weight: 800; line-height: 1.1; }
+.dsq i { position: absolute; bottom: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+.dsq.is-today { border-color: var(--gold); }
+.dsq[aria-pressed="true"] { background: var(--btn-bg); border-color: transparent; color: var(--btn-fg); }
+.dsq[aria-pressed="true"] small { color: var(--btn-fg); }
+.dsq[aria-pressed="true"] i { background: var(--btn-fg); }
+.agenda { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ag { display: grid; grid-template-columns: 54px 1fr auto; gap: 10px; align-items: stretch; }
+.ag__time { display: grid; align-content: center; text-align: right; font-variant-numeric: tabular-nums; }
+.ag__time b { font-size: 15px; font-weight: 800; }
+.ag__time span { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.ag__body { display: flex; align-items: center; gap: 12px; min-width: 0; text-align: left; padding: 10px 12px; border-radius: 16px; border: 1px solid var(--line); border-left: 4px solid var(--tc); background: var(--card-2); transition: border-color .2s, transform .15s; }
+.ag__body:hover { transform: translateX(2px); }
+.ag__txt { display: grid; min-width: 0; }
+.ag__title { font-weight: 700; overflow-wrap: anywhere; line-height: 1.3; }
+.ag__meta { font-size: 12.5px; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ag__badge { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--gold); color: #1a1406; }
+.ag.is-now .ag__body { border-color: var(--gold); border-left-color: var(--tc); background: linear-gradient(120deg, color-mix(in srgb, var(--gold) 14%, var(--card-2)), var(--card-2)); }
+.ag.is-done .ag__title { text-decoration: line-through; color: var(--muted); }
+.ag.is-done .sq { opacity: .55; }
+.tick { width: 48px; border-radius: 14px; border: 1.5px solid var(--line-2); background: var(--card-2); display: grid; place-items: center; color: color-mix(in srgb, var(--muted) 55%, transparent); padding: 0; transition: background .2s, color .2s, border-color .2s; }
+.tick:hover { border-color: var(--gold); color: color-mix(in srgb, var(--gold) 60%, transparent); }
+.tick[aria-checked="true"] { background: var(--btn-bg); border-color: transparent; color: var(--btn-fg); }
+.gap { display: flex; align-items: center; gap: 10px; padding-left: 64px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.gap::after { content: ""; flex: 1; border-top: 1px dashed var(--line-2); }
+.nowmark { display: flex; align-items: center; gap: 8px; padding-left: 64px; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); }
+.nowmark::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 25%, transparent); }
+.nowmark::after { content: ""; flex: 1; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); }
+@media (max-width: 600px) {
+  .card { padding: 16px 14px; }
+  .ag { grid-template-columns: 42px 1fr 42px; gap: 8px; }
+  .ag__time b { font-size: 14px; } .ag__time span { font-size: 12px; }
+  .ag__body { padding: 9px 10px; gap: 10px; }
+  .ag__body .sq { width: 36px; height: 36px; border-radius: 10px; }
+  .tick { width: 42px; }
+  .gap, .nowmark { padding-left: 50px; }
+  .card#panel-day { padding-inline: 10px; }
+  .week-strip { grid-template-columns: 24px 1fr 24px; gap: 0; }
+  .week-strip .icon-btn { width: 24px; }
+  .days { gap: 4px; }
+  .dsq { min-height: 58px; border-radius: 12px; }
+  .hero__clock b { font-size: 44px; }
+  .task-form .add-txt { display: none; }
+  .task-form__row .btn { padding: 0 16px; }
+  #task-when { flex-wrap: nowrap; }
+  #task-when button { flex: 1 1 0; padding: 0 4px; font-size: 12.5px; min-width: 0; white-space: nowrap; }
+  #b-repeat { display: grid; grid-template-columns: 1fr 1fr; }
+}
+.day-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.day-foot .btn { flex: 1; }
 
 /* ---------- tasks ---------- */
-.add-row { display: grid; gap: 10px; grid-template-columns: 1fr; margin-bottom: 18px; }
-@media (min-width: 700px) { .add-row { grid-template-columns: 1fr auto; } }
-.group { margin-top: 14px; }
-.group h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; display: flex; gap: 8px; align-items: center; }
-.group h3.is-bad { color: var(--danger); }
-.tasks { list-style: none; margin: 0; padding: 0; display: grid; }
-.task { display: grid; grid-template-columns: 44px 1fr auto; gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
-.task:first-child { border-top: 0; }
-.check { width: 44px; height: 44px; border: 0; background: transparent; display: grid; place-items: center; padding: 0; }
-.check span { width: 26px; height: 26px; border-radius: 9px; border: 2px solid color-mix(in srgb, var(--muted) 60%, transparent); display: grid; place-items: center; font-size: 15px; color: var(--on-accent); transition: background .2s, border-color .2s, transform .2s; }
-.check[aria-checked="true"] span { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); border-color: transparent; transform: scale(1.06); }
+.task-form { display: grid; gap: 12px; margin-bottom: 8px; padding: 14px; border-radius: 18px; background: var(--card-2); border: 1px solid var(--line); }
+.task-form__row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.task-form__row .input { background: var(--card); }
+.task-form__opts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.task-form__opts .seg { flex: 1 1 320px; background: var(--card); }
+.task-form__opts select.chip { appearance: none; -webkit-appearance: none; padding-right: 13px; max-width: 100%; }
+.group { margin-top: 18px; }
+.group h3 { font-size: 12.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 800; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+.group h3::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--gc, var(--muted)); }
+.tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.task { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; padding: 8px 8px 8px 10px; border-radius: 16px; background: var(--card-2); border: 1px solid var(--line); border-left: 4px solid var(--gc, var(--line-2)); }
+.task .tick { height: 44px; width: 44px; }
 .task__main { min-width: 0; }
-.task__title { font-weight: 600; overflow-wrap: anywhere; }
+.task__title { font-weight: 700; overflow-wrap: anywhere; line-height: 1.35; }
 .task.is-done .task__title { text-decoration: line-through; color: var(--muted); }
-.task__meta { font-size: 13px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
-.task__meta .is-bad { color: var(--danger); font-weight: 700; }
-.prio-high { color: var(--danger); }
+.task__meta { font-size: 12.5px; color: var(--muted); font-weight: 600; display: flex; gap: 6px 12px; flex-wrap: wrap; margin-top: 2px; }
+.task__meta span { display: inline-flex; align-items: center; gap: 4px; }
+.task__meta .is-bad { color: var(--danger); }
+.task__meta .is-prio { color: var(--gold-ink); }
 
 /* ---------- study ---------- */
-.study { display: grid; gap: 22px; }
+.study { display: grid; gap: 18px; }
 @media (min-width: 980px) { .study { grid-template-columns: 380px 1fr; align-items: start; } }
 .timer { display: grid; justify-items: center; gap: 14px; text-align: center; }
+.timer .seg { width: 100%; }
 .ring { position: relative; width: 230px; height: 230px; max-width: 100%; }
 .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.ring__bg { fill: none; stroke: var(--soft); stroke-width: 14; }
-.ring__fg { fill: none; stroke: url(#ringGrad); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset .4s linear; }
+.ring__bg { fill: none; stroke: var(--soft); stroke-width: 12; }
+.ring__fg { fill: none; stroke: url(#ringGrad); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .4s linear; }
 .ring__txt { position: absolute; inset: 0; display: grid; place-content: center; gap: 2px; }
-.ring__time { font-size: 46px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.ring__mode { font-size: 13px; font-weight: 700; color: var(--muted); }
-.timer .chips { justify-content: center; }
-.timer__btns { display: flex; gap: 8px; }
+.ring__time { font-size: 48px; font-weight: 900; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.ring__mode { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--gold-ink); }
+.timer__btns { display: flex; gap: 8px; width: 100%; }
+.timer__btns .btn { flex: 1; }
 .subjects { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.subj { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; }
-.subj__icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: var(--soft); }
+.subj { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; }
+.subj__icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: var(--soft); border: 1px solid var(--line); }
 .subj__name { font-weight: 700; display: flex; justify-content: space-between; gap: 8px; }
 .subj__name span { font-weight: 600; font-size: 13px; color: var(--muted); }
-.progress { height: 9px; border-radius: 999px; background: var(--soft); overflow: hidden; margin-top: 6px; }
-.progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .6s cubic-bezier(.22, 1, .36, 1); }
+.progress { height: 8px; border-radius: 999px; background: var(--soft); overflow: hidden; margin-top: 6px; }
+.progress span { display: block; height: 100%; border-radius: inherit; background: var(--btn-bg); transition: width .6s cubic-bezier(.22, 1, .36, 1); }
+:root[data-theme="light"] .progress span, :root[data-theme="light"] .meter span { background: linear-gradient(90deg, #c99a3a, #85600f); }
 .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-.kpi { background: var(--soft); border-radius: 14px; padding: 12px; }
-.kpi b { display: block; font-size: 20px; font-weight: 800; }
-.kpi span { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.kpi { background: var(--card-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+.kpi b { display: block; font-size: 21px; font-weight: 900; letter-spacing: -.02em; }
+.kpi span { font-size: 12px; color: var(--muted); font-weight: 700; }
 .chart-box { position: relative; height: 220px; }
 .emoji-pick { display: flex; gap: 6px; flex-wrap: wrap; }
-.emoji-pick button { width: 44px; height: 44px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card-solid); font-size: 20px; }
-.emoji-pick button[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--card-solid)); }
+.emoji-pick button { width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid var(--line-2); background: var(--card-2); font-size: 20px; }
+.emoji-pick button[aria-checked="true"] { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, var(--card)); }
 
 /* ---------- habits ---------- */
-.habits { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.habit { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
-.habit:first-child { border-top: 0; }
-.habit__name { font-weight: 700; display: flex; gap: 8px; align-items: center; }
-.habit__streak { font-size: 13px; color: var(--muted); font-weight: 600; }
-.week { display: flex; gap: 4px; }
-.wday { width: 40px; height: 48px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--card-solid); display: grid; place-items: center; align-content: center; gap: 0; padding: 0; }
-.wday small { font-size: 10.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
-.wday span { font-size: 15px; line-height: 1.2; }
-.wday[aria-pressed="true"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); border-color: transparent; color: var(--on-accent); }
-.wday[aria-pressed="true"] small { color: var(--on-accent); }
-.wday.is-today { border-color: var(--accent); }
-@media (max-width: 520px) { .habit { grid-template-columns: 1fr; } .week { justify-content: space-between; } .wday { width: auto; flex: 1; } }
+.habits { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.habit { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px; border-radius: 18px; background: var(--card-2); border: 1px solid var(--line); }
+.habit__head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.habit__name { font-weight: 700; overflow-wrap: anywhere; }
+.habit__streak { font-size: 12.5px; color: var(--muted); font-weight: 700; display: flex; align-items: center; gap: 4px; }
+.habit__streak.is-hot { color: var(--c-habits); }
+.week { display: flex; gap: 5px; }
+.wday { width: 42px; height: 52px; border-radius: 12px; border: 1.5px solid var(--line-2); background: var(--card); display: grid; place-items: center; align-content: center; gap: 0; padding: 0; }
+.wday small { font-size: 10.5px; color: var(--muted); font-weight: 800; text-transform: uppercase; }
+.wday span { font-size: 15px; font-weight: 800; line-height: 1.2; display: grid; place-items: center; }
+.wday[aria-pressed="true"] { background: var(--btn-bg); border-color: transparent; color: var(--btn-fg); }
+.wday[aria-pressed="true"] small { color: var(--btn-fg); }
+.wday.is-today { border-color: var(--gold); }
+@media (max-width: 560px) { .habit { grid-template-columns: 1fr; } .week { justify-content: space-between; } .wday { width: auto; flex: 1; } }
 
 /* ---------- sheet (dialog) + popover ---------- */
-.scrim { position: fixed; inset: 0; z-index: 45; background: rgba(15, 23, 42, .32); }
-.sheet { position: fixed; z-index: 50; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(460px, calc(100vw - 24px)); max-height: calc(100vh - 40px); overflow: auto; background: var(--card-solid); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 30px 60px -20px rgba(15, 23, 42, .5); padding: 20px; display: grid; gap: 14px; animation: pop-in .22s cubic-bezier(.22, 1, .36, 1); }
+.scrim { position: fixed; inset: 0; z-index: 45; background: rgba(0, 0, 0, .6); backdrop-filter: blur(2px); }
+.sheet { position: fixed; z-index: 50; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, calc(100vw - 24px)); max-height: calc(100vh - 40px); overflow: auto; background: var(--card); border: 1px solid var(--line-2); border-radius: 24px; box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .8); padding: 20px; display: grid; gap: 14px; animation: pop-in .22s cubic-bezier(.22, 1, .36, 1); }
 @keyframes pop-in { from { opacity: 0; transform: translate(-50%, -48%) scale(.98); } }
-.sheet h2 { font-size: 18px; font-weight: 800; }
+.sheet h2 { font-size: 19px; font-weight: 800; }
 .sheet__actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .sheet__actions .btn { flex: 1; }
-.pop { position: fixed; z-index: 55; width: 320px; max-width: calc(100vw - 24px); background: var(--card-solid); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 30px 60px -20px rgba(15, 23, 42, .45); padding: 14px; }
+.pop { position: fixed; z-index: 55; width: 320px; max-width: calc(100vw - 24px); background: var(--card); border: 1px solid var(--line-2); border-radius: 22px; box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .8); padding: 14px; }
 @media (max-width: 600px) {
-  .sheet { left: 0; right: 0; top: auto; bottom: 0; transform: none; width: 100%; max-height: 88vh; border-radius: 26px 26px 0 0; padding: 20px max(16px, env(safe-area-inset-left, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); animation-name: sheet-in; }
+  .sheet { left: 0; right: 0; top: auto; bottom: 0; transform: none; width: 100%; max-height: 90vh; border-radius: 26px 26px 0 0; padding: 20px max(16px, env(safe-area-inset-left, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)); animation-name: sheet-in; }
   .pop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: 100%; max-width: none; border-radius: 26px 26px 0 0; padding: 18px max(16px, env(safe-area-inset-left, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)); animation: sheet-in .25s cubic-bezier(.22, 1, .36, 1); }
   @keyframes sheet-in { from { transform: translateY(100%); } }
 }
 .pop__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .pop__title { font-weight: 800; }
 .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.cal__dow { font-size: 11.5px; font-weight: 700; color: var(--muted); text-align: center; padding: 4px 0; text-transform: uppercase; }
-.cal__day { position: relative; aspect-ratio: 1; min-height: 38px; border: 0; border-radius: 12px; background: transparent; font-weight: 600; font-size: 14px; }
+.cal__dow { font-size: 11.5px; font-weight: 800; color: var(--muted); text-align: center; padding: 4px 0; text-transform: uppercase; }
+.cal__day { position: relative; aspect-ratio: 1; min-height: 38px; border: 0; border-radius: 12px; background: transparent; font-weight: 700; font-size: 14px; }
 .cal__day:hover { background: var(--soft); }
 .cal__day.is-out { visibility: hidden; }
-.cal__day.is-today { box-shadow: inset 0 0 0 1.5px var(--accent); }
-.cal__day[aria-selected="true"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
+.cal__day.is-today { box-shadow: inset 0 0 0 1.5px var(--gold); }
+.cal__day[aria-selected="true"] { background: var(--btn-bg); color: var(--btn-fg); }
 .type-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.type-pick button { min-height: 58px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-solid); display: grid; justify-items: center; align-content: center; gap: 2px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
-.type-pick button b { font-size: 20px; line-height: 1.1; }
-.type-pick button[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--card-solid)); color: var(--fg); }
+.type-pick button { min-height: 74px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-2); display: grid; justify-items: center; align-content: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); padding: 6px 2px; }
+.type-pick button .sq { width: 34px; height: 34px; border-radius: 10px; }
+.type-pick button[aria-checked="true"] { border-color: var(--tc); background: color-mix(in srgb, var(--tc) 16%, var(--card)); color: var(--fg); }
 
 /* toast */
-.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-radius: 16px; background: var(--fg); color: var(--card-solid); box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .45); transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); }
-@media (max-width: 759px) { .toast { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); } .top__in { flex-wrap: nowrap; } .brand, .brand > div { min-width: 0; } .brand h1, .brand p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-radius: 16px; background: var(--fg); color: var(--bg); font-weight: 600; box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .6); transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); }
+@media (max-width: 759px) { .toast { bottom: calc(90px + env(safe-area-inset-bottom, 0px)); } }
 .sheet:not([hidden]) ~ .toast, .pop:not([hidden]) ~ .toast { bottom: auto; top: calc(16px + env(safe-area-inset-top, 0px)); }
 .toast.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
-.toast button { border: 0; background: transparent; color: var(--accent); font-weight: 800; padding: 8px; border-radius: 8px; }
+.toast button { border: 0; background: transparent; color: var(--toast-acc); font-weight: 800; padding: 8px; border-radius: 8px; }
 .foot { margin-top: 26px; text-align: center; font-size: 13px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
+<!-- icon sprite (stroke icons drawn in the Lucide style) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4M3 7l2 2 4-4M13 6h8M13 12h8M13 18h8"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></symbol>
+  <symbol id="i-case" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4zM6 2v2M10 2v2M14 2v2"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m6 3 14 9-14 9z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"/></symbol>
+</svg>
+
 <header class="top">
   <div class="top__in">
     <div class="brand">
-      <div class="brand__logo" aria-hidden="true">📚</div>
-      <div><h1>Учёба и день</h1><p id="hello">Твой распорядок, задачи и учёба</p></div>
+      <div class="brand__logo" aria-hidden="true"><svg class="i i--lg"><use href="#i-target"/></svg></div>
+      <div><h1>Учёба и день</h1><p>План · задачи · фокус</p></div>
     </div>
     <div class="controls">
-      <nav class="pill appnav appnav--top" aria-label="Разделы приложения"><a href="index.html">💸 Бюджет</a><a href="planner.html" aria-current="page">📚 Учёба и день</a></nav>
-      <button class="theme-btn" type="button" id="theme" aria-label="Включить тёмную тему">🌙</button>
+      <nav class="appnav appnav--top" aria-label="Разделы приложения"><a href="index.html"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg>Бюджет</a><a href="planner.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg>Учёба и день</a></nav>
+      <button class="theme-btn" type="button" id="theme" aria-label="Включить светлую тему"><svg class="i"><use href="#i-sun"/></svg></button>
     </div>
   </div>
 </header>
 
 <div class="wrap">
-  <section class="today" aria-label="Сегодня">
-    <div class="card now"><span class="lbl">⏰ Сейчас по плану</span><span class="val" id="t-now">—</span><span class="sub" id="t-next"></span></div>
-    <div class="card"><span class="lbl">✅ Задачи на сегодня</span><span class="val num" id="t-tasks">0</span><span class="sub" id="t-tasks-sub"></span></div>
-    <div class="card"><span class="lbl">⏱️ Учёба сегодня</span><span class="val num" id="t-study">0 мин</span><span class="sub" id="t-streak"></span></div>
-    <div class="card"><span class="lbl">🔁 Привычки</span><span class="val num" id="t-habits">0/0</span><span class="sub">отмечено сегодня</span></div>
+  <section class="card hero" aria-label="Сейчас">
+    <div class="hero__clock"><b class="num" id="t-clock">00:00</b><span id="hello">Добрый день</span></div>
+    <div class="hero__now">
+      <span class="eyebrow">Сейчас по плану</span>
+      <div class="hero__cur"><span class="sq" id="t-now-ic" aria-hidden="true"><svg class="i"><use href="#i-clock"/></svg></span><b id="t-now">—</b></div>
+      <span class="hero__next" id="t-next"></span>
+      <div class="meter" aria-hidden="true"><span id="t-meter"></span></div>
+      <div class="meter-row"><span>План дня</span><span class="num" id="t-meter-l">0 из 0 выполнено</span></div>
+    </div>
   </section>
 
-  <div class="tabs" role="tablist" aria-label="Разделы">
-    <button class="tab" role="tab" id="tab-day" aria-controls="panel-day" aria-selected="true">🗓️ Распорядок</button>
-    <button class="tab" role="tab" id="tab-tasks" aria-controls="panel-tasks" aria-selected="false" tabindex="-1">✅ Задачи</button>
-    <button class="tab" role="tab" id="tab-study" aria-controls="panel-study" aria-selected="false" tabindex="-1">⏱️ Учёба</button>
-    <button class="tab" role="tab" id="tab-habits" aria-controls="panel-habits" aria-selected="false" tabindex="-1">🔁 Привычки</button>
+  <div class="tiles" role="tablist" aria-label="Разделы">
+    <button class="tile" role="tab" id="tab-day" aria-controls="panel-day" aria-selected="true" style="--tc:var(--c-day)">
+      <span class="sq" aria-hidden="true"><svg class="i"><use href="#i-cal"/></svg></span>
+      <span class="tile__lbl">Распорядок</span><span class="tile__val num" id="t-day">0</span><span class="tile__sub" id="t-day-sub">дел сегодня</span>
+    </button>
+    <button class="tile" role="tab" id="tab-tasks" aria-controls="panel-tasks" aria-selected="false" tabindex="-1" style="--tc:var(--c-tasks)">
+      <span class="sq" aria-hidden="true"><svg class="i"><use href="#i-list"/></svg></span>
+      <span class="tile__lbl">Задачи</span><span class="tile__val num" id="t-tasks">0</span><span class="tile__sub" id="t-tasks-sub">на сегодня</span>
+    </button>
+    <button class="tile" role="tab" id="tab-study" aria-controls="panel-study" aria-selected="false" tabindex="-1" style="--tc:var(--c-study)">
+      <span class="sq" aria-hidden="true"><svg class="i"><use href="#i-timer"/></svg></span>
+      <span class="tile__lbl">Учёба</span><span class="tile__val num" id="t-study">0 мин</span><span class="tile__sub" id="t-streak">сегодня</span>
+    </button>
+    <button class="tile" role="tab" id="tab-habits" aria-controls="panel-habits" aria-selected="false" tabindex="-1" style="--tc:var(--c-habits)">
+      <span class="sq" aria-hidden="true"><svg class="i"><use href="#i-flame"/></svg></span>
+      <span class="tile__lbl">Привычки</span><span class="tile__val num" id="t-habits">0/0</span><span class="tile__sub">отмечено сегодня</span>
+    </button>
   </div>
 
   <!-- DAY -->
   <section class="card" id="panel-day" role="tabpanel" aria-labelledby="tab-day">
-    <div class="daybar">
-      <div class="pill" role="group" aria-label="День">
-        <button class="icon-btn" type="button" id="day-prev" aria-label="Предыдущий день">◀️</button>
-        <button class="date-btn" type="button" id="day-btn" aria-haspopup="dialog" aria-expanded="false"><span aria-hidden="true">📅</span><span id="day-label">Сегодня</span></button>
-        <button class="icon-btn" type="button" id="day-next" aria-label="Следующий день">▶️</button>
+    <div class="panel-head">
+      <div>
+        <h2>Распорядок</h2>
+        <button class="date-btn" type="button" id="day-btn" aria-haspopup="dialog" aria-expanded="false"><svg class="i i--sm" aria-hidden="true"><use href="#i-cal"/></svg><span id="day-label">Сегодня</span><svg class="i i--sm" aria-hidden="true"><use href="#i-down"/></svg></button>
       </div>
-      <div class="chips"><button class="chip" type="button" id="day-today">Сегодня</button><button class="btn btn--sm" type="button" id="add-block">➕ Добавить дело</button></div>
+      <div class="chips"><button class="chip" type="button" id="day-today" hidden>К сегодня</button><button class="btn btn--sm" type="button" id="add-block"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Добавить</button></div>
     </div>
-    <div class="timeline" id="timeline"></div>
-    <div class="empty" id="day-empty" hidden><b aria-hidden="true">🗓️</b><p>На этот день пока ничего не запланировано.</p>
-      <div class="chips" style="justify-content:center"><button class="btn btn--sm" type="button" id="day-add2">➕ Добавить дело</button><button class="btn btn--ghost btn--sm" type="button" id="day-sample">✨ Типичный день студента</button></div></div>
+    <div class="week-strip">
+      <button class="icon-btn" type="button" id="week-prev" aria-label="Предыдущая неделя"><svg class="i"><use href="#i-left"/></svg></button>
+      <div class="days" id="days" role="group" aria-label="Дни недели"></div>
+      <button class="icon-btn" type="button" id="week-next" aria-label="Следующая неделя"><svg class="i"><use href="#i-right"/></svg></button>
+    </div>
+    <ol class="agenda" id="agenda" aria-label="Дела на день"></ol>
+    <div class="empty" id="day-empty" hidden><span class="sq" style="--tc:var(--c-day)" aria-hidden="true"><svg class="i"><use href="#i-cal"/></svg></span><p>На этот день пока ничего не запланировано.</p>
+      <div class="chips" style="justify-content:center"><button class="btn btn--sm" type="button" id="day-add2"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Добавить дело</button><button class="btn btn--ghost btn--sm" type="button" id="day-sample"><svg class="i" aria-hidden="true"><use href="#i-spark"/></svg>Пример дня студента</button></div></div>
   </section>
 
   <!-- TASKS -->
   <section class="card" id="panel-tasks" role="tabpanel" aria-labelledby="tab-tasks" hidden>
-    <div class="card__head"><h2>✅ Задачи и дедлайны</h2><span class="hint num" id="tasks-count"></span></div>
-    <form class="add-row" id="task-form" novalidate>
-      <label class="sr-only" for="task-title">Новая задача</label>
-      <input class="input" id="task-title" placeholder="Что нужно сделать? напр. сдать реферат по истории" maxlength="120" autocomplete="off">
-      <button class="btn" type="submit">Добавить</button>
-      <div class="chips" style="grid-column:1/-1">
-        <button class="chip" type="button" id="task-due-btn" aria-haspopup="dialog" aria-expanded="false">📅 <span id="task-due-label">Без срока</span></button>
-        <select class="chip" id="task-subject" aria-label="Предмет"><option value="">📚 Без предмета</option></select>
-        <button class="chip" type="button" id="task-prio" aria-pressed="false">🔥 Важно</button>
+    <div class="panel-head"><h2>Задачи</h2><span class="hint num" id="tasks-count"></span></div>
+    <form class="task-form" id="task-form" novalidate>
+      <div class="task-form__row">
+        <label class="sr-only" for="task-title">Новая задача</label>
+        <input class="input" id="task-title" placeholder="Что нужно сделать?" maxlength="120" autocomplete="off">
+        <button class="btn" type="submit" aria-label="Добавить задачу"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg><span class="add-txt">Добавить</span></button>
       </div>
+      <div class="task-form__opts">
+        <div class="seg" id="task-when" role="radiogroup" aria-label="Срок">
+          <button type="button" role="radio" data-when="today" aria-checked="true">Сегодня</button>
+          <button type="button" role="radio" data-when="tomorrow" aria-checked="false">Завтра</button>
+          <button type="button" role="radio" data-when="date" id="task-due-btn" aria-checked="false" aria-haspopup="dialog" aria-expanded="false"><svg class="i i--sm" aria-hidden="true"><use href="#i-cal"/></svg><span id="task-due-label">Дата</span></button>
+          <button type="button" role="radio" data-when="none" aria-checked="false">Без срока</button>
+        </div>
+        <button class="chip" type="button" id="task-prio" aria-pressed="false"><svg class="i i--sm" aria-hidden="true"><use href="#i-flag"/></svg>Важно</button>
+        <select class="chip" id="task-subject" aria-label="Предмет"><option value="">Без предмета</option></select>
+      </div>
+      <p class="error" id="task-error"></p>
     </form>
-    <p class="error" id="task-error"></p>
     <div id="task-groups"></div>
-    <div class="empty" id="tasks-empty" hidden><b aria-hidden="true">🎉</b><p>Задач нет. Добавь первую: домашку, реферат или экзамен с датой.</p></div>
+    <div class="empty" id="tasks-empty" hidden><span class="sq" style="--tc:var(--c-tasks)" aria-hidden="true"><svg class="i"><use href="#i-list"/></svg></span><p>Задач нет. Впиши первую: домашку, реферат или экзамен.</p></div>
   </section>
 
   <!-- STUDY -->
@@ -325,34 +451,30 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     <div class="study">
       <div class="card timer" aria-labelledby="timer-title">
         <h2 id="timer-title" class="sr-only">Таймер учёбы</h2>
-        <div class="chips" role="group" aria-label="Режим таймера">
-          <button class="chip" type="button" data-mode="focus" aria-pressed="true">📖 Учёба</button>
-          <button class="chip" type="button" data-mode="short" aria-pressed="false">☕ Перерыв</button>
-          <button class="chip" type="button" data-mode="long" aria-pressed="false">🛋️ Длинный</button>
+        <div class="seg" role="group" aria-label="Режим таймера">
+          <button type="button" data-mode="focus" aria-pressed="true">Фокус</button>
+          <button type="button" data-mode="short" aria-pressed="false">Перерыв</button>
+          <button type="button" data-mode="long" aria-pressed="false">Длинный</button>
         </div>
         <div class="ring">
-          <svg viewBox="0 0 230 230" aria-hidden="true"><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+          <svg viewBox="0 0 230 230" aria-hidden="true"><defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d987"/><stop offset=".55" stop-color="#e0ae45"/><stop offset="1" stop-color="#9c6d1c"/></linearGradient></defs>
             <circle class="ring__bg" cx="115" cy="115" r="100"/><circle class="ring__fg" id="ring-fg" cx="115" cy="115" r="100" stroke-dasharray="628.3" stroke-dashoffset="0"/></svg>
           <div class="ring__txt"><span class="ring__time" id="timer-time" role="timer" aria-live="off">25:00</span><span class="ring__mode" id="timer-mode">Фокус</span></div>
         </div>
-        <div class="field" style="width:100%">
-          <label for="timer-subject">Предмет</label>
-          <select class="input" id="timer-subject"><option value="">Без предмета</option></select>
-        </div>
-        <div class="field" style="width:100%">
-          <label for="focus-len">Длина учёбы</label>
-          <select class="input" id="focus-len"><option value="15">15 минут</option><option value="25" selected>25 минут</option><option value="45">45 минут</option><option value="50">50 минут</option><option value="90">90 минут</option></select>
+        <div class="row2" style="width:100%;text-align:left">
+          <div class="field"><label for="timer-subject">Предмет</label><select class="input" id="timer-subject"><option value="">Без предмета</option></select></div>
+          <div class="field"><label for="focus-len">Длина фокуса</label><select class="input" id="focus-len"><option value="15">15 минут</option><option value="25" selected>25 минут</option><option value="45">45 минут</option><option value="50">50 минут</option><option value="90">90 минут</option></select></div>
         </div>
         <div class="timer__btns">
-          <button class="btn" type="button" id="timer-start">▶️ Старт</button>
-          <button class="btn btn--ghost" type="button" id="timer-reset">↺ Сброс</button>
+          <button class="btn" type="button" id="timer-start">Старт</button>
+          <button class="btn btn--ghost" type="button" id="timer-reset" aria-label="Сбросить таймер"><svg class="i" aria-hidden="true"><use href="#i-reset"/></svg>Сброс</button>
         </div>
         <p class="hint" id="timer-hint" aria-live="polite">Включи таймер и учись без телефона. Время запишется в статистику.</p>
-        <button class="btn btn--ghost btn--sm" type="button" id="manual-add">✍️ Записать время вручную</button>
+        <button class="btn btn--ghost btn--sm" type="button" id="manual-add"><svg class="i" aria-hidden="true"><use href="#i-pen"/></svg>Записать время вручную</button>
       </div>
       <div class="stack">
         <div class="card" aria-labelledby="week-title">
-          <div class="card__head"><h2 id="week-title">📈 Эта неделя</h2><span class="hint" id="week-range"></span></div>
+          <div class="panel-head"><h2 id="week-title"><span class="sq" style="--tc:var(--c-study)" aria-hidden="true"><svg class="i"><use href="#i-chart"/></svg></span>Эта неделя</h2><span class="hint" id="week-range"></span></div>
           <div class="kpis">
             <div class="kpi"><b class="num" id="k-week">0 ч</b><span>за неделю</span></div>
             <div class="kpi"><b class="num" id="k-today">0 мин</b><span>сегодня</span></div>
@@ -361,9 +483,9 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
           <div class="chart-box"><canvas id="study-chart" role="img" aria-label="Минуты учёбы за последние 7 дней"></canvas></div>
         </div>
         <div class="card" aria-labelledby="subj-title">
-          <div class="card__head"><h2 id="subj-title">🎯 Предметы и цели на неделю</h2><button class="btn btn--sm" type="button" id="add-subject">➕ Предмет</button></div>
+          <div class="panel-head"><h2 id="subj-title"><span class="sq" style="--tc:var(--c-day)" aria-hidden="true"><svg class="i"><use href="#i-target"/></svg></span>Предметы и цели</h2><button class="btn btn--sm" type="button" id="add-subject"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Предмет</button></div>
           <ul class="subjects" id="subjects"></ul>
-          <div class="empty" id="subj-empty" hidden><b aria-hidden="true">📚</b><p>Добавь предметы, чтобы видеть, сколько времени уходит на каждый.</p></div>
+          <div class="empty" id="subj-empty" hidden><p>Добавь предметы, чтобы видеть, сколько времени уходит на каждый.</p></div>
         </div>
       </div>
     </div>
@@ -371,59 +493,59 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
 
   <!-- HABITS -->
   <section class="card" id="panel-habits" role="tabpanel" aria-labelledby="tab-habits" hidden>
-    <div class="card__head"><h2>🔁 Привычки</h2><button class="btn btn--sm" type="button" id="add-habit">➕ Привычка</button></div>
+    <div class="panel-head"><h2>Привычки</h2><button class="btn btn--sm" type="button" id="add-habit"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Привычка</button></div>
     <ul class="habits" id="habit-list"></ul>
-    <div class="empty" id="habits-empty" hidden><b aria-hidden="true">🌱</b><p>Маленькие ежедневные дела: вода, спорт, сон, чтение.</p><button class="btn btn--ghost btn--sm" type="button" id="habit-sample">✨ Добавить базовые привычки</button></div>
+    <div class="empty" id="habits-empty" hidden><span class="sq" style="--tc:var(--c-habits)" aria-hidden="true"><svg class="i"><use href="#i-flame"/></svg></span><p>Маленькие ежедневные дела: вода, спорт, сон, чтение.</p><button class="btn btn--ghost btn--sm" type="button" id="habit-sample"><svg class="i" aria-hidden="true"><use href="#i-spark"/></svg>Добавить базовые привычки</button></div>
   </section>
   <p class="foot">Все данные хранятся только на этом устройстве.</p>
 </div>
 
-<nav class="appnav appnav--bottom" aria-label="Разделы приложения"><a href="index.html">💸 Бюджет</a><a href="planner.html" aria-current="page">📚 Учёба и день</a></nav>
+<nav class="appnav appnav--bottom" aria-label="Разделы приложения"><a href="index.html"><svg class="i" aria-hidden="true"><use href="#i-wallet"/></svg>Бюджет</a><a href="planner.html" aria-current="page"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg>Учёба и день</a></nav>
 
 <!-- dialogs -->
 <div class="scrim" id="scrim" hidden></div>
 <form class="sheet" id="block-sheet" role="dialog" aria-modal="true" aria-labelledby="block-sheet-title" novalidate hidden>
-  <h2 id="block-sheet-title">➕ Новое дело</h2>
+  <h2 id="block-sheet-title">Новое дело</h2>
   <div class="field"><label for="b-title">Название</label><input class="input" id="b-title" maxlength="60" placeholder="напр. Пара: математика" autocomplete="off"><p class="error" id="b-title-err"></p></div>
-  <fieldset class="field"><legend>Тип</legend><div class="type-pick" id="b-types" role="radiogroup" aria-label="Тип"></div></fieldset>
+  <fieldset class="field"><legend>Категория</legend><div class="type-pick" id="b-types" role="radiogroup" aria-label="Категория"></div></fieldset>
   <div class="row2">
     <div class="field"><label for="b-start">Начало</label><input class="input num" type="time" id="b-start" step="300" value="09:00"></div>
     <div class="field"><label for="b-end">Конец</label><input class="input num" type="time" id="b-end" step="300" value="10:00"></div>
   </div>
+  <div class="chips" id="b-durs" aria-label="Быстрая длительность"><button class="chip" type="button" data-dur="30">30 мин</button><button class="chip" type="button" data-dur="60">1 ч</button><button class="chip" type="button" data-dur="90">1,5 ч</button><button class="chip" type="button" data-dur="120">2 ч</button></div>
   <p class="error" id="b-time-err"></p>
-  <div class="field"><label for="b-repeat">Повторять</label>
-    <select class="input" id="b-repeat"><option value="none">Только в этот день</option><option value="daily">Каждый день</option><option value="weekdays">По будням (пн–пт)</option><option value="weekly">Каждую неделю в этот день</option></select></div>
+  <fieldset class="field"><legend>Повторять</legend><div class="seg" id="b-repeat" role="radiogroup" aria-label="Повторять"></div></fieldset>
   <div class="sheet__actions">
     <button class="btn" type="submit" id="b-save">Сохранить</button>
     <button class="btn btn--ghost" type="button" data-close>Отмена</button>
   </div>
   <div class="sheet__actions" id="b-edit-actions" hidden>
-    <button class="btn btn--ghost btn--sm" type="button" id="b-done">✔️ Отметить выполненным</button>
-    <button class="btn btn--danger btn--sm" type="button" id="b-del">🗑️ Удалить</button>
+    <button class="btn btn--ghost btn--sm" type="button" id="b-done">Отметить выполненным</button>
+    <button class="btn btn--danger btn--sm" type="button" id="b-del"><svg class="i i--sm" aria-hidden="true"><use href="#i-trash"/></svg>Удалить</button>
   </div>
 </form>
 <form class="sheet" id="subj-sheet" role="dialog" aria-modal="true" aria-labelledby="subj-sheet-title" novalidate hidden>
-  <h2 id="subj-sheet-title">📚 Предмет</h2>
+  <h2 id="subj-sheet-title">Предмет</h2>
   <div class="field"><label for="s-name">Название</label><input class="input" id="s-name" maxlength="40" placeholder="напр. Математика" autocomplete="off"><p class="error" id="s-name-err"></p></div>
   <fieldset class="field"><legend>Значок</legend><div class="emoji-pick" id="s-emoji" role="radiogroup" aria-label="Значок"></div></fieldset>
   <div class="field"><label for="s-goal">Цель в неделю, часов</label><input class="input num" id="s-goal" inputmode="decimal" placeholder="напр. 4" autocomplete="off"><p class="error" id="s-goal-err"></p></div>
   <div class="sheet__actions"><button class="btn" type="submit">Сохранить</button><button class="btn btn--ghost" type="button" data-close>Отмена</button></div>
-  <div class="sheet__actions" id="s-edit-actions" hidden><button class="btn btn--danger btn--sm" type="button" id="s-del">🗑️ Удалить предмет</button></div>
+  <div class="sheet__actions" id="s-edit-actions" hidden><button class="btn btn--danger btn--sm" type="button" id="s-del"><svg class="i i--sm" aria-hidden="true"><use href="#i-trash"/></svg>Удалить предмет</button></div>
 </form>
 <form class="sheet" id="manual-sheet" role="dialog" aria-modal="true" aria-labelledby="manual-title" novalidate hidden>
-  <h2 id="manual-title">✍️ Записать учёбу</h2>
+  <h2 id="manual-title">Записать учёбу</h2>
   <div class="field"><label for="m-subject">Предмет</label><select class="input" id="m-subject"><option value="">Без предмета</option></select></div>
   <div class="field"><label for="m-min">Сколько минут</label><input class="input num" id="m-min" inputmode="numeric" placeholder="напр. 40" autocomplete="off"><p class="error" id="m-min-err"></p></div>
   <div class="sheet__actions"><button class="btn" type="submit">Записать на сегодня</button><button class="btn btn--ghost" type="button" data-close>Отмена</button></div>
 </form>
 <form class="sheet" id="habit-sheet" role="dialog" aria-modal="true" aria-labelledby="habit-title" novalidate hidden>
-  <h2 id="habit-title">🔁 Новая привычка</h2>
+  <h2 id="habit-title">Новая привычка</h2>
   <div class="field"><label for="h-name">Название</label><input class="input" id="h-name" maxlength="40" placeholder="напр. Выпить 2 литра воды" autocomplete="off"><p class="error" id="h-name-err"></p></div>
   <fieldset class="field"><legend>Значок</legend><div class="emoji-pick" id="h-emoji" role="radiogroup" aria-label="Значок"></div></fieldset>
   <div class="sheet__actions"><button class="btn" type="submit">Добавить</button><button class="btn btn--ghost" type="button" data-close>Отмена</button></div>
 </form>
 <div class="pop" id="date-pop" role="dialog" aria-modal="true" aria-label="Выбор даты" hidden>
-  <div class="pop__head"><button class="icon-btn" type="button" id="dp-prev" aria-label="Предыдущий месяц">◀️</button><span class="pop__title" id="dp-title"></span><button class="icon-btn" type="button" id="dp-next" aria-label="Следующий месяц">▶️</button></div>
+  <div class="pop__head"><button class="icon-btn" type="button" id="dp-prev" aria-label="Предыдущий месяц"><svg class="i"><use href="#i-left"/></svg></button><span class="pop__title" id="dp-title"></span><button class="icon-btn" type="button" id="dp-next" aria-label="Следующий месяц"><svg class="i"><use href="#i-right"/></svg></button></div>
   <div class="cal" id="dp-grid"></div>
   <div class="chips" id="dp-extra" style="margin-top:10px" hidden><button class="chip" type="button" id="dp-none">Без срока</button></div>
 </div>
@@ -445,6 +567,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   var obj = function (k) { var v = store.get(k, {}); return v && typeof v === 'object' && !Array.isArray(v) ? v : {}; };
   var blocks = arr(KEY.blocks), doneMap = obj(KEY.done), tasks = arr(KEY.tasks), subjects = arr(KEY.subjects), sessions = arr(KEY.sessions), habits = arr(KEY.habits), hlog = obj(KEY.hlog);
   function saveAll() { store.set(KEY.blocks, blocks); store.set(KEY.done, doneMap); store.set(KEY.tasks, tasks); store.set(KEY.subjects, subjects); store.set(KEY.sessions, sessions); store.set(KEY.habits, habits); store.set(KEY.hlog, hlog); }
+  function ic(name, cls) { return '<svg class="i' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#i-' + name + '"/></svg>'; }
 
   /* ---------- dates ---------- */
   function pad(n) { return String(n).padStart(2, '0'); }
@@ -470,17 +593,25 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   function mins(m) { return m < 60 ? m + ' мин' : Math.floor(m / 60) + ' ч' + (m % 60 ? ' ' + (m % 60) + ' мин' : ''); }
   function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 
-  /* ---------- theme (shared with the budget page) ---------- */
+  /* ---------- theme (shared with the budget page; black & gold by default) ---------- */
   var themeBtn = $('theme');
   var st = store.get(KEY.theme, null);
   if (st === 'dark' || st === 'light') document.documentElement.setAttribute('data-theme', st);
-  function curTheme() { return document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
-  function paintTheme() { var d = curTheme() === 'dark'; themeBtn.textContent = d ? '☀️' : '🌙'; themeBtn.setAttribute('aria-label', d ? 'Включить светлую тему' : 'Включить тёмную тему'); }
+  function curTheme() { return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+  function paintTheme() {
+    var d = curTheme() === 'dark';
+    themeBtn.innerHTML = ic(d ? 'sun' : 'moon'); themeBtn.setAttribute('aria-label', d ? 'Включить светлую тему' : 'Включить тёмную тему');
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', d ? '#0b0a08' : '#f5f0e6');
+  }
   themeBtn.addEventListener('click', function () { var n = curTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); store.set(KEY.theme, n); });
   new MutationObserver(function () { paintTheme(); renderStudy(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   paintTheme();
-  var h = new Date().getHours();
-  $('hello').textContent = (h < 5 ? 'Доброй ночи' : h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер') + '! ' + cap(fWd.format(new Date())) + ', ' + fDay.format(new Date());
+  function paintHello() {
+    var d = new Date(), h = d.getHours();
+    $('hello').textContent = (h < 5 ? 'Доброй ночи' : h < 12 ? 'Доброе утро' : h < 18 ? 'Добрый день' : 'Добрый вечер') + '! ' + cap(fWd.format(d)) + ', ' + fDay.format(d);
+    $('t-clock').textContent = pad(h) + ':' + pad(d.getMinutes());
+  }
+  paintHello();
 
   /* ---------- toast ---------- */
   var toastT, undoFn = null;
@@ -491,7 +622,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   }
   $('toast-undo').addEventListener('click', function () { if (undoFn) undoFn(); $('toast').classList.remove('is-on'); undoFn = null; });
 
-  /* ---------- tabs (hash: #day #tasks #study #habits) ---------- */
+  /* ---------- tiles = tabs (hash: #day #tasks #study #habits) ---------- */
   var TABS = ['day', 'tasks', 'study', 'habits'];
   function showTab(name, focus) {
     if (TABS.indexOf(name) < 0) name = 'day';
@@ -502,7 +633,6 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     if (focus) $('tab-' + name).focus();
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
     if (name === 'study') renderStudy();
-    if (name === 'day') scrollToNow();
   }
   TABS.forEach(function (t, i) {
     $('tab-' + t).addEventListener('click', function () { showTab(t); });
@@ -550,8 +680,9 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     container.innerHTML = '';
     items.forEach(function (it) {
       var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'radio'); b.dataset.v = it.v;
-      b.setAttribute('aria-checked', String(it.v === current)); b.setAttribute('aria-label', it.label || it.v);
-      b.innerHTML = it.html || ''; if (!it.html) b.textContent = it.v;
+      b.setAttribute('aria-checked', String(it.v === current)); if (it.label) b.setAttribute('aria-label', it.label);
+      if (it.tc) b.style.setProperty('--tc', 'var(' + it.tc + ')');
+      if (it.html) b.innerHTML = it.html; else b.textContent = it.text || it.v;
       b.addEventListener('click', function () { qa('[role=radio]', container).forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); }); onPick(it.v); });
       container.appendChild(b);
     });
@@ -582,7 +713,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     var b = e.target.closest('[data-iso]'); if (!b) return;
     var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key]; if (!step) return;
     e.preventDefault(); var n = addDays(b.dataset.iso, step); dp.month = n.slice(0, 7);
-    var keep = dp.value; dp.value = keep; renderDP(); qa('[data-iso]', $('dp-grid')).forEach(function (x) { x.tabIndex = x.dataset.iso === n ? 0 : -1; });
+    renderDP(); qa('[data-iso]', $('dp-grid')).forEach(function (x) { x.tabIndex = x.dataset.iso === n ? 0 : -1; });
     $('dp-grid').querySelector('[data-iso="' + n + '"]').focus();
   });
   $('dp-prev').addEventListener('click', function () { dp.month = shiftMonth(dp.month, -1); renderDP(); });
@@ -591,12 +722,12 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
 
   /* ================= DAY ================= */
   var TYPES = [
-    { v: 'class', e: '🎓', n: 'Пара', c: '--t-class' }, { v: 'study', e: '📚', n: 'Учёба', c: '--t-study' }, { v: 'sport', e: '🏃', n: 'Спорт', c: '--t-sport' }, { v: 'food', e: '🍽️', n: 'Еда', c: '--t-food' },
-    { v: 'work', e: '💼', n: 'Работа', c: '--t-work' }, { v: 'sleep', e: '😴', n: 'Сон', c: '--t-sleep' }, { v: 'rest', e: '🎮', n: 'Отдых', c: '--t-rest' }, { v: 'other', e: '⭐', n: 'Другое', c: '--t-other' }
+    { v: 'class', i: 'cap', n: 'Пара', c: '--t-class' }, { v: 'study', i: 'book', n: 'Учёба', c: '--t-study' }, { v: 'sport', i: 'pulse', n: 'Спорт', c: '--t-sport' }, { v: 'food', i: 'food', n: 'Еда', c: '--t-food' },
+    { v: 'work', i: 'case', n: 'Работа', c: '--t-work' }, { v: 'sleep', i: 'moon', n: 'Сон', c: '--t-sleep' }, { v: 'rest', i: 'coffee', n: 'Отдых', c: '--t-rest' }, { v: 'other', i: 'star', n: 'Другое', c: '--t-other' }
   ];
   var typeBy = {}; TYPES.forEach(function (t) { typeBy[t.v] = t; });
+  var REPEATS = [{ v: 'none', text: 'Один раз' }, { v: 'daily', text: 'Каждый день' }, { v: 'weekdays', text: 'Будни' }, { v: 'weekly', text: 'Раз в неделю' }];
   var viewDay = todayISO();
-  var PX = 1.1; // px per minute
   function blocksFor(d) {
     return blocks.filter(function (b) {
       if (b.skip && b.skip.indexOf(d) >= 0) return false;
@@ -608,108 +739,125 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
       return false;
     }).sort(function (a, c) { return toMin(a.start) - toMin(c.start); });
   }
-  function renderDay() {
-    $('day-label').textContent = dayName(viewDay) + (viewDay === todayISO() ? ', ' + fDay.format(toDate(viewDay)) : ', ' + fWdShort.format(toDate(viewDay)));
-    var list = blocksFor(viewDay), tl = $('timeline');
-    $('day-empty').hidden = list.length > 0; tl.hidden = !list.length;
-    tl.innerHTML = '';
-    if (!list.length) return;
-    var first = Math.min(6 * 60, Math.min.apply(null, list.map(function (b) { return toMin(b.start); })));
-    var startH = Math.floor(first / 60), endH = 24;
-    tl.style.height = ((endH - startH) * 60 * PX) + 'px';
-    for (var hh = startH; hh <= endH; hh++) {
-      var line = document.createElement('div'); line.className = 'hour'; line.style.top = ((hh - startH) * 60 * PX) + 'px';
-      line.innerHTML = '<span>' + pad(hh % 24) + ':00</span>'; tl.appendChild(line);
+  function renderWeek() {
+    var box = $('days'); box.innerHTML = '';
+    var ws = addDays(viewDay, -dow(viewDay)), t = todayISO();
+    for (var i = 0; i < 7; i++) {
+      (function (d) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'dsq' + (d === t ? ' is-today' : '');
+        b.setAttribute('aria-pressed', String(d === viewDay));
+        var n = blocksFor(d).length;
+        b.setAttribute('aria-label', cap(fWd.format(toDate(d))) + ', ' + fDay.format(toDate(d)) + (d === t ? ', сегодня' : '') + (n ? ', ' + n + ' ' + plural(n, ['дело', 'дела', 'дел']) : ''));
+        b.innerHTML = '<small aria-hidden="true">' + DOW[dow(d)] + '</small><b aria-hidden="true">' + toDate(d).getDate() + '</b>' + (n ? '<i aria-hidden="true"></i>' : '');
+        b.addEventListener('click', function () { setDay(d); });
+        box.appendChild(b);
+      })(addDays(ws, i));
     }
-    // lanes for overlapping blocks
-    var lanesEnd = [], placed = [];
-    list.forEach(function (b) {
-      var s = toMin(b.start), e = toMin(b.end), lane = 0;
-      while (lanesEnd[lane] !== undefined && lanesEnd[lane] > s) lane++;
-      lanesEnd[lane] = e; placed.push({ b: b, s: s, e: e, lane: lane });
-    });
-    var lanes = Math.max(1, lanesEnd.length), nm = nowMin(), isToday = viewDay === todayISO();
-    placed.forEach(function (p) {
-      var t = typeBy[p.b.type] || typeBy.other, key = p.b.id + '|' + viewDay, done = !!doneMap[key];
-      var el = document.createElement('button'); el.type = 'button';
-      el.className = 'block' + ((p.e - p.s) * PX < 48 ? ' is-short' : '') + (done ? ' is-done' : '') + (isToday && nm >= p.s && nm < p.e ? ' is-now' : '');
-      el.style.setProperty('--tc', 'var(' + t.c + ')');
-      el.style.top = ((p.s - startH * 60) * PX) + 'px';
-      el.style.height = Math.max(30, (p.e - p.s) * PX - 3) + 'px';
-      el.style.left = 'calc(' + (p.lane * 100 / lanes) + '% + 8px)';
-      el.style.width = 'calc(' + (100 / lanes) + '% - 12px)';
-      el.innerHTML = '<span class="block__t"><span aria-hidden="true"></span><span></span></span><span class="block__time"></span>';
-      el.querySelector('.block__t span').textContent = done ? '✔️' : t.e;
-      el.querySelector('.block__t span:last-child').textContent = p.b.title;
-      el.querySelector('.block__time').textContent = p.b.start + '–' + p.b.end + (p.b.repeat !== 'none' ? ' · 🔁' : '');
-      el.setAttribute('aria-label', p.b.title + ', ' + p.b.start + '–' + p.b.end + ', ' + t.n + (done ? ', выполнено' : '') + '. Открыть');
-      el.addEventListener('click', function () { openBlock(p.b, el); });
-      tl.appendChild(el);
-    });
-    if (isToday && nm >= startH * 60) { var now = document.createElement('div'); now.className = 'nowline'; now.style.top = ((nm - startH * 60) * PX) + 'px'; now.setAttribute('aria-hidden', 'true'); tl.appendChild(now); }
   }
-  function scrollToNow() {
-    if (viewDay !== todayISO()) return;
-    var nl = document.querySelector('.nowline'); if (!nl || $('panel-day').hidden) return;
-    var r = nl.getBoundingClientRect(); if (r.top < 160 || r.bottom > window.innerHeight - 100) window.scrollTo({ top: window.scrollY + r.top - window.innerHeight / 2, behavior: reduce ? 'auto' : 'smooth' });
+  function li(cls, html) { var el = document.createElement('li'); el.className = cls; if (html) el.innerHTML = html; return el; }
+  function renderDay() {
+    var t = todayISO(), isToday = viewDay === t;
+    $('day-label').textContent = dayName(viewDay) + ', ' + (isToday ? fDay.format(toDate(viewDay)) : fWd.format(toDate(viewDay)));
+    $('day-today').hidden = isToday;
+    renderWeek();
+    var list = blocksFor(viewDay), ol = $('agenda');
+    $('day-empty').hidden = list.length > 0; ol.hidden = !list.length; ol.innerHTML = '';
+    var nm = nowMin(), nowPlaced = !isToday, prevEnd = null;
+    function nowMark() { ol.appendChild(li('nowmark', '<span>Сейчас · ' + hm(nm) + '</span>')).setAttribute('aria-hidden', 'true'); nowPlaced = true; }
+    list.forEach(function (b) {
+      var s = toMin(b.start), e = toMin(b.end), ty = typeBy[b.type] || typeBy.other, key = b.id + '|' + viewDay, done = !!doneMap[key];
+      if (prevEnd !== null && s - prevEnd >= 30) ol.appendChild(li('gap', '<span>Свободно ' + mins(s - prevEnd) + '</span>'));
+      var isNow = isToday && nm >= s && nm < e;
+      if (!nowPlaced && !isNow && nm < s) nowMark();
+      var row = li('ag' + (isNow ? ' is-now' : '') + (done ? ' is-done' : ''));
+      row.style.setProperty('--tc', 'var(' + ty.c + ')');
+      row.innerHTML = '<div class="ag__time"><b>' + b.start + '</b><span>' + b.end + '</span></div>' +
+        '<button type="button" class="ag__body"><span class="sq" aria-hidden="true">' + ic(ty.i) + '</span><span class="ag__txt"><span class="ag__title"></span><span class="ag__meta"></span></span></button>' +
+        '<button type="button" class="tick" role="checkbox">' + ic('check') + '</button>';
+      row.querySelector('.ag__title').textContent = b.title;
+      row.querySelector('.ag__meta').innerHTML = (isNow ? '<span class="ag__badge">Сейчас</span>' : '') + '<span>' + ty.n + ' · ' + mins(e - s) + '</span>' + (b.repeat !== 'none' ? ic('repeat', 'i--sm') : '');
+      var body = row.querySelector('.ag__body');
+      body.setAttribute('aria-label', b.title + ', ' + b.start + '–' + b.end + ', ' + ty.n + (b.repeat !== 'none' ? ', повторяется' : '') + '. Изменить');
+      body.addEventListener('click', function () { openBlock(b, body); });
+      var tick = row.querySelector('.tick'); tick.setAttribute('aria-checked', String(done)); tick.setAttribute('aria-label', (done ? 'Снять отметку: ' : 'Выполнено: ') + b.title);
+      tick.addEventListener('click', function () { toggleDone(b); });
+      ol.appendChild(row);
+      if (isNow) nowPlaced = true;
+      prevEnd = Math.max(prevEnd === null ? 0 : prevEnd, e);
+    });
+    if (!nowPlaced && list.length) nowMark();
+  }
+  function toggleDone(b) {
+    var k = b.id + '|' + viewDay; if (doneMap[k]) delete doneMap[k]; else doneMap[k] = true;
+    saveAll(); renderDay(); renderToday(); if (doneMap[k]) toast('Выполнено: ' + b.title);
   }
   function setDay(d) { viewDay = d; renderDay(); }
-  $('day-prev').addEventListener('click', function () { setDay(addDays(viewDay, -1)); });
-  $('day-next').addEventListener('click', function () { setDay(addDays(viewDay, 1)); });
-  $('day-today').addEventListener('click', function () { setDay(todayISO()); scrollToNow(); });
+  $('week-prev').addEventListener('click', function () { setDay(addDays(viewDay, -7)); });
+  $('week-next').addEventListener('click', function () { setDay(addDays(viewDay, 7)); });
+  $('day-today').addEventListener('click', function () { setDay(todayISO()); });
   $('day-btn').addEventListener('click', function () { openDP($('day-btn'), viewDay, setDay, false); });
 
-  var editingBlock = null, blockType = 'class';
+  var editingBlock = null, blockType = 'class', blockRepeat = 'none';
   function fillBlockSheet(b) {
     editingBlock = b || null;
-    $('block-sheet-title').textContent = b ? '✏️ Изменить дело' : '➕ Новое дело';
+    $('block-sheet-title').textContent = b ? 'Изменить дело' : 'Новое дело';
     $('b-title').value = b ? b.title : '';
-    blockType = b ? b.type : 'class';
-    radioPick($('b-types'), TYPES.map(function (t) { return { v: t.v, label: t.n, html: '<b aria-hidden="true">' + t.e + '</b><span>' + t.n + '</span>' }; }), blockType, function (v) { blockType = v; });
+    blockType = b ? b.type : 'class'; blockRepeat = b ? b.repeat : 'none';
+    radioPick($('b-types'), TYPES.map(function (t) { return { v: t.v, label: t.n, tc: t.c, html: '<span class="sq" aria-hidden="true">' + ic(t.i) + '</span><span aria-hidden="true">' + t.n + '</span>' }; }), blockType, function (v) { blockType = v; });
+    radioPick($('b-repeat'), REPEATS, blockRepeat, function (v) { blockRepeat = v; });
     var ns = Math.ceil(nowMin() / 30) * 30;
     $('b-start').value = b ? b.start : hm(Math.min(ns, 22 * 60));
     $('b-end').value = b ? b.end : hm(Math.min(ns + 60, 23 * 60 + 55));
-    $('b-repeat').value = b ? b.repeat : 'none';
     $('b-edit-actions').hidden = !b;
-    if (b) $('b-done').textContent = doneMap[b.id + '|' + viewDay] ? '↩️ Снять отметку' : '✔️ Отметить выполненным';
+    if (b) $('b-done').textContent = doneMap[b.id + '|' + viewDay] ? 'Снять отметку' : 'Отметить выполненным';
     setErr($('b-title'), 'b-title-err', ''); setErr($('b-end'), 'b-time-err', '');
   }
   function openBlock(b, opener) { fillBlockSheet(b); open($('block-sheet'), opener); }
   $('add-block').addEventListener('click', function (e) { openBlock(null, e.currentTarget); });
   $('day-add2').addEventListener('click', function (e) { openBlock(null, e.currentTarget); });
+  qa('#b-durs [data-dur]').forEach(function (c) {
+    c.addEventListener('click', function () { var s = $('b-start').value || '09:00'; $('b-end').value = hm(Math.min(toMin(s) + +c.dataset.dur, 23 * 60 + 55)); setErr($('b-end'), 'b-time-err', ''); });
+  });
   $('block-sheet').addEventListener('submit', function (e) {
     e.preventDefault();
     var title = $('b-title').value.trim(), s = $('b-start').value, en = $('b-end').value;
     var ok1 = setErr($('b-title'), 'b-title-err', title ? '' : 'Напиши, что за дело.');
     var ok2 = setErr($('b-end'), 'b-time-err', !s || !en ? 'Укажи время начала и конца.' : toMin(en) <= toMin(s) ? 'Конец должен быть позже начала.' : '');
     if (!ok1) { $('b-title').focus(); return; } if (!ok2) { $('b-end').focus(); return; }
-    var data = { title: title, type: blockType, start: s, end: en, repeat: $('b-repeat').value };
-    if (editingBlock) { Object.assign(editingBlock, data); toast('Сохранено ✅'); }
-    else { blocks.push(Object.assign({ id: uid(), date: viewDay, skip: [] }, data)); toast((typeBy[blockType] || typeBy.other).e + ' Добавлено: ' + title); }
+    var data = { title: title, type: blockType, start: s, end: en, repeat: blockRepeat };
+    if (editingBlock) { Object.assign(editingBlock, data); toast('Сохранено'); }
+    else { blocks.push(Object.assign({ id: uid(), date: viewDay, skip: [] }, data)); toast('Добавлено: ' + title); }
     saveAll(); closeAll(); renderDay(); renderToday();
   });
-  $('b-done').addEventListener('click', function () {
-    var k = editingBlock.id + '|' + viewDay; if (doneMap[k]) delete doneMap[k]; else doneMap[k] = true;
-    saveAll(); closeAll(); renderDay(); renderToday(); toast(doneMap[k] ? '✔️ Отмечено' : 'Отметка снята');
-  });
+  $('b-done').addEventListener('click', function () { var b = editingBlock; closeAll(); toggleDone(b); });
   $('b-del').addEventListener('click', function () {
     var b = editingBlock, i = blocks.indexOf(b);
     if (b.repeat !== 'none') { b.skip = (b.skip || []).concat(viewDay); saveAll(); closeAll(); renderDay(); renderToday();
       toast('Убрано только на ' + dayName(viewDay).toLowerCase(), function () { b.skip.splice(b.skip.indexOf(viewDay), 1); saveAll(); renderDay(); renderToday(); }); return; }
     blocks.splice(i, 1); saveAll(); closeAll(); renderDay(); renderToday();
-    toast('🗑️ Удалено', function () { blocks.splice(i, 0, b); saveAll(); renderDay(); renderToday(); });
+    toast('Удалено', function () { blocks.splice(i, 0, b); saveAll(); renderDay(); renderToday(); });
   });
   $('day-sample').addEventListener('click', function () {
     var d = viewDay, rows = [['07:30', '08:00', 'Подъём и зарядка', 'sport'], ['08:00', '08:30', 'Завтрак', 'food'], ['09:00', '10:30', 'Пара: математика', 'class'], ['10:45', '12:15', 'Пара: английский', 'class'],
       ['12:30', '13:15', 'Обед', 'food'], ['14:00', '16:00', 'Домашка и проекты', 'study'], ['17:00', '18:00', 'Спортзал', 'sport'], ['19:00', '20:00', 'Ужин и отдых', 'rest'], ['20:00', '21:00', 'Повторение', 'study'], ['23:00', '23:55', 'Подготовка ко сну', 'sleep']];
     rows.forEach(function (r) { blocks.push({ id: uid(), date: d, skip: [], start: r[0], end: r[1], title: r[2] + ' (пример)', type: r[3], repeat: 'none' }); });
-    saveAll(); renderDay(); renderToday(); toast('✨ Добавлен пример дня. Любое дело можно изменить или удалить.');
+    saveAll(); renderDay(); renderToday(); toast('Добавлен пример дня. Любое дело можно изменить или удалить.');
   });
 
   /* ================= TASKS ================= */
-  var newDue = null, newPrio = false;
-  function paintDue() { $('task-due-label').textContent = newDue ? dayName(newDue) : 'Без срока'; }
-  $('task-due-btn').addEventListener('click', function () { openDP($('task-due-btn'), newDue, function (v) { newDue = v; paintDue(); }, true); });
+  var newDue = todayISO(), newPrio = false;
+  function paintWhen() {
+    var t = todayISO(), w = newDue === null ? 'none' : newDue === t ? 'today' : newDue === addDays(t, 1) ? 'tomorrow' : 'date';
+    qa('#task-when [data-when]').forEach(function (b) { b.setAttribute('aria-checked', String(b.dataset.when === w)); });
+    $('task-due-label').textContent = w === 'date' ? dayName(newDue) : 'Дата';
+  }
+  qa('#task-when [data-when]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var w = b.dataset.when, t = todayISO();
+      if (w === 'date') { openDP(b, newDue, function (v) { newDue = v; paintWhen(); }, true); return; }
+      newDue = w === 'today' ? t : w === 'tomorrow' ? addDays(t, 1) : null; paintWhen();
+    });
+  });
   $('task-prio').addEventListener('click', function () { newPrio = !newPrio; $('task-prio').setAttribute('aria-pressed', String(newPrio)); });
   $('task-form').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -717,44 +865,45 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     if (!setErr($('task-title'), 'task-error', t ? '' : 'Напиши задачу.')) { $('task-title').focus(); return; }
     tasks.push({ id: uid(), title: t, subjectId: $('task-subject').value || null, due: newDue, prio: newPrio ? 'high' : 'normal', done: false, created: Date.now() });
     $('task-title').value = ''; newPrio = false; $('task-prio').setAttribute('aria-pressed', 'false');
-    saveAll(); renderTasks(); renderToday(); toast('✅ Задача добавлена'); $('task-title').focus();
+    saveAll(); renderTasks(); renderToday(); toast('Задача добавлена'); $('task-title').focus();
   });
   function subjName(id) { var s = subjects.find(function (x) { return x.id === id; }); return s ? s.emoji + ' ' + s.name : ''; }
   function renderTasks() {
     var t = todayISO(), tm = addDays(t, 1), wk = addDays(t, 7);
     var groups = [
-      { k: 'over', n: '⚠️ Просрочено', bad: true, f: function (x) { return !x.done && x.due && x.due < t; } },
-      { k: 'today', n: 'Сегодня', f: function (x) { return !x.done && x.due === t; } },
-      { k: 'tom', n: 'Завтра', f: function (x) { return !x.done && x.due === tm; } },
-      { k: 'week', n: 'На неделе', f: function (x) { return !x.done && x.due > tm && x.due <= wk; } },
-      { k: 'later', n: 'Позже', f: function (x) { return !x.done && x.due > wk; } },
-      { k: 'none', n: 'Без срока', f: function (x) { return !x.done && !x.due; } },
-      { k: 'done', n: 'Выполнено', f: function (x) { return x.done; } }
+      { k: 'over', n: 'Просрочено', c: '--danger', f: function (x) { return !x.done && x.due && x.due < t; } },
+      { k: 'today', n: 'Сегодня', c: '--gold', f: function (x) { return !x.done && x.due === t; } },
+      { k: 'tom', n: 'Завтра', c: '--c-tasks', f: function (x) { return !x.done && x.due === tm; } },
+      { k: 'week', n: 'На неделе', c: '--c-study', f: function (x) { return !x.done && x.due > tm && x.due <= wk; } },
+      { k: 'later', n: 'Позже', c: '--t-work', f: function (x) { return !x.done && x.due > wk; } },
+      { k: 'none', n: 'Без срока', c: '--t-other', f: function (x) { return !x.done && !x.due; } },
+      { k: 'done', n: 'Выполнено', c: '--line-2', f: function (x) { return x.done; } }
     ];
     var box = $('task-groups'); box.innerHTML = '';
-    var open = tasks.filter(function (x) { return !x.done; }).length;
-    $('tasks-count').textContent = tasks.length ? open + ' ' + plural(open, ['открытая', 'открытые', 'открытых']) : '';
+    var openN = tasks.filter(function (x) { return !x.done; }).length;
+    $('tasks-count').textContent = tasks.length ? openN + ' ' + plural(openN, ['открытая', 'открытые', 'открытых']) : '';
     $('tasks-empty').hidden = tasks.length > 0;
     groups.forEach(function (g) {
       var items = tasks.filter(g.f).sort(function (a, b) { return (a.prio === 'high' ? 0 : 1) - (b.prio === 'high' ? 0 : 1) || String(a.due || '9').localeCompare(String(b.due || '9')) || a.created - b.created; });
       if (!items.length) return;
       if (g.k === 'done') items = items.slice(-10).reverse();
-      var sec = document.createElement('div'); sec.className = 'group';
-      sec.innerHTML = '<h3' + (g.bad ? ' class="is-bad"' : '') + '></h3><ul class="tasks"></ul>';
+      var sec = document.createElement('div'); sec.className = 'group'; sec.style.setProperty('--gc', 'var(' + g.c + ')');
+      sec.innerHTML = '<h3></h3><ul class="tasks"></ul>';
       sec.querySelector('h3').textContent = g.n + ' · ' + items.length;
       var ul = sec.querySelector('ul');
       items.forEach(function (x) {
-        var li = document.createElement('li'); li.className = 'task' + (x.done ? ' is-done' : '');
-        li.innerHTML = '<button type="button" class="check" role="checkbox"><span aria-hidden="true">✓</span></button><div class="task__main"><div class="task__title"></div><div class="task__meta"></div></div><button class="icon-btn" type="button">🗑️</button>';
-        var c = li.querySelector('.check'); c.setAttribute('aria-checked', String(x.done)); c.setAttribute('aria-label', (x.done ? 'Вернуть: ' : 'Выполнить: ') + x.title);
-        li.querySelector('.task__title').textContent = (x.prio === 'high' ? '🔥 ' : '') + x.title;
-        var meta = li.querySelector('.task__meta');
-        if (x.due) { var sp = document.createElement('span'); sp.textContent = '📅 ' + dayName(x.due); if (!x.done && x.due < t) sp.className = 'is-bad'; meta.appendChild(sp); }
+        var row = li('task' + (x.done ? ' is-done' : ''));
+        row.innerHTML = '<button type="button" class="tick" role="checkbox">' + ic('check') + '</button><div class="task__main"><div class="task__title"></div><div class="task__meta"></div></div><button class="icon-btn" type="button">' + ic('trash') + '</button>';
+        var c = row.querySelector('.tick'); c.setAttribute('aria-checked', String(x.done)); c.setAttribute('aria-label', (x.done ? 'Вернуть: ' : 'Выполнить: ') + x.title);
+        row.querySelector('.task__title').textContent = x.title;
+        var meta = row.querySelector('.task__meta');
+        if (x.prio === 'high') { var p = document.createElement('span'); p.className = 'is-prio'; p.innerHTML = ic('flag', 'i--sm') + 'Важно'; meta.appendChild(p); }
+        if (x.due) { var sp = document.createElement('span'); sp.innerHTML = ic('cal', 'i--sm'); sp.appendChild(document.createTextNode(dayName(x.due))); if (!x.done && x.due < t) sp.className = 'is-bad'; meta.appendChild(sp); }
         if (x.subjectId && subjName(x.subjectId)) { var s2 = document.createElement('span'); s2.textContent = subjName(x.subjectId); meta.appendChild(s2); }
-        c.addEventListener('click', function () { x.done = !x.done; x.doneAt = x.done ? Date.now() : null; saveAll(); renderTasks(); renderToday(); if (x.done) toast('🎉 Готово: ' + x.title); });
-        var del = li.querySelector('.icon-btn'); del.setAttribute('aria-label', 'Удалить: ' + x.title);
-        del.addEventListener('click', function () { var i = tasks.indexOf(x); tasks.splice(i, 1); saveAll(); renderTasks(); renderToday(); toast('🗑️ Задача удалена', function () { tasks.splice(i, 0, x); saveAll(); renderTasks(); renderToday(); }); });
-        ul.appendChild(li);
+        c.addEventListener('click', function () { x.done = !x.done; x.doneAt = x.done ? Date.now() : null; saveAll(); renderTasks(); renderToday(); if (x.done) toast('Готово: ' + x.title); });
+        var del = row.querySelector('.icon-btn'); del.setAttribute('aria-label', 'Удалить: ' + x.title);
+        del.addEventListener('click', function () { var i = tasks.indexOf(x); tasks.splice(i, 1); saveAll(); renderTasks(); renderToday(); toast('Задача удалена', function () { tasks.splice(i, 0, x); saveAll(); renderTasks(); renderToday(); }); });
+        ul.appendChild(row);
       });
       box.appendChild(sec);
     });
@@ -763,7 +912,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   /* ================= STUDY ================= */
   var SUBJ_EMOJI = ['📐', '📖', '🧪', '💻', '🌍', '🗣️', '🎨', '📊', '⚖️', '🧬', '🎵', '🏛️'];
   function fillSubjectSelects() {
-    [['task-subject', '📚 Без предмета'], ['timer-subject', 'Без предмета'], ['m-subject', 'Без предмета']].forEach(function (p) {
+    [['task-subject', 'Без предмета'], ['timer-subject', 'Без предмета'], ['m-subject', 'Без предмета']].forEach(function (p) {
       var sel = $(p[0]), v = sel.value; sel.innerHTML = '<option value="">' + p[1] + '</option>';
       subjects.forEach(function (s) { var o = document.createElement('option'); o.value = s.id; o.textContent = s.emoji + ' ' + s.name; sel.appendChild(o); });
       if (subjects.some(function (s) { return s.id === v; })) sel.value = v;
@@ -787,34 +936,35 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     subjects.forEach(function (s) {
       var m = sessions.filter(function (x) { return x.subjectId === s.id && x.date >= ws && x.date <= we; }).reduce(function (a, x) { return a + x.minutes; }, 0);
       var goal = s.goalMin || 0, pct = goal ? Math.min(100, m / goal * 100) : 0;
-      var li = document.createElement('li'); li.className = 'subj';
-      li.innerHTML = '<div class="subj__icon" aria-hidden="true"></div><div><div class="subj__name"><b></b><span class="num"></span></div><div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"><span></span></div></div><button class="icon-btn" type="button">✏️</button>';
-      li.querySelector('.subj__icon').textContent = s.emoji; li.querySelector('b').textContent = s.name;
-      li.querySelector('.subj__name span').textContent = mins(m) + (goal ? ' из ' + mins(goal) : '');
-      var pb = li.querySelector('.progress'); pb.setAttribute('aria-valuenow', String(Math.round(pct))); pb.setAttribute('aria-label', s.name + ': ' + Math.round(pct) + '% цели');
-      li.querySelector('.progress span').style.width = pct + '%';
-      var eb = li.querySelector('.icon-btn'); eb.setAttribute('aria-label', 'Изменить предмет ' + s.name); eb.addEventListener('click', function () { openSubject(s, eb); });
-      ul.appendChild(li);
+      var row = li('subj');
+      row.innerHTML = '<div class="subj__icon" aria-hidden="true"></div><div><div class="subj__name"><b></b><span class="num"></span></div><div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100"><span></span></div></div><button class="icon-btn" type="button">' + ic('pen') + '</button>';
+      row.querySelector('.subj__icon').textContent = s.emoji; row.querySelector('b').textContent = s.name;
+      row.querySelector('.subj__name span').textContent = mins(m) + (goal ? ' из ' + mins(goal) : '');
+      var pb = row.querySelector('.progress'); pb.setAttribute('aria-valuenow', String(Math.round(pct))); pb.setAttribute('aria-label', s.name + ': ' + Math.round(pct) + '% цели');
+      row.querySelector('.progress span').style.width = pct + '%';
+      var eb = row.querySelector('.icon-btn'); eb.setAttribute('aria-label', 'Изменить предмет ' + s.name); eb.addEventListener('click', function () { openSubject(s, eb); });
+      ul.appendChild(row);
     });
     if (typeof Chart !== 'function' || $('panel-study').hidden) return;
     var days = [], labels = []; for (var i = 6; i >= 0; i--) { var d = addDays(t, -i); days.push(d); labels.push(cap(fWdShort.format(toDate(d)))); }
-    var palette = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#0ea5e9', '#8b5cf6', '#f97316', '#14b8a6'];
+    var light = curTheme() === 'light';
+    var palette = light ? ['#a16207', '#2563eb', '#047857', '#c2410c', '#7c3aed', '#be185d', '#4f46e5', '#0e7490'] : ['#e5b84b', '#5b9bff', '#34d6a8', '#ff7a45', '#b18cff', '#ff5d8f', '#7f8cff', '#22c3e6'];
     var groups = subjects.map(function (s, i) { return { label: s.emoji + ' ' + s.name, id: s.id, color: palette[i % palette.length] }; });
-    groups.push({ label: 'Без предмета', id: null, color: '#94a3b8' });
+    groups.push({ label: 'Без предмета', id: null, color: light ? '#a8a29e' : '#6b645a' });
     var ds = groups.map(function (g) { return { label: g.label, data: days.map(function (d) { return sessions.filter(function (s) { return s.date === d && (s.subjectId || null) === g.id; }).reduce(function (a, s) { return a + s.minutes; }, 0); }), backgroundColor: g.color, borderRadius: 6, maxBarThickness: 28 }; })
       .filter(function (d) { return d.data.some(Boolean); });
-    var muted = cssVar('--muted'), line = cssVar('--line'), fg = cssVar('--fg'), card = cssVar('--card-solid');
+    var muted = cssVar('--muted'), line = cssVar('--line'), fg = cssVar('--fg'), bg = cssVar('--bg');
     Chart.defaults.font.family = 'Inter, system-ui, sans-serif'; Chart.defaults.color = muted;
     var opts = { animation: reduce ? false : { duration: 500 }, maintainAspectRatio: false, scales: { x: { stacked: true, grid: { display: false }, border: { color: line } }, y: { stacked: true, beginAtZero: true, grid: { color: line }, border: { display: false }, ticks: { maxTicksLimit: 5, callback: function (v) { return v + ' м'; } } } },
-      plugins: { legend: { display: ds.length > 1, position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true } }, tooltip: { backgroundColor: fg, titleColor: card, bodyColor: card, cornerRadius: 12, padding: 10, callbacks: { label: function (c) { return ' ' + c.dataset.label + ': ' + mins(c.parsed.y); } } } } };
-    var data = { labels: labels, datasets: ds.length ? ds : [{ label: 'Учёба', data: days.map(function () { return 0; }), backgroundColor: '#94a3b8' }] };
+      plugins: { legend: { display: ds.length > 1, position: 'bottom', labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true } }, tooltip: { backgroundColor: fg, titleColor: bg, bodyColor: bg, cornerRadius: 12, padding: 10, callbacks: { label: function (c) { return ' ' + c.dataset.label + ': ' + mins(c.parsed.y); } } } } };
+    var data = { labels: labels, datasets: ds.length ? ds : [{ label: 'Учёба', data: days.map(function () { return 0; }), backgroundColor: '#6b645a' }] };
     if (chart) { chart.data = data; chart.options = opts; chart.update(); } else chart = new Chart($('study-chart'), { type: 'bar', data: data, options: opts });
   }
   var editingSubj = null, subjEmoji = SUBJ_EMOJI[0];
   function openSubject(s, opener) {
     editingSubj = s || null; subjEmoji = s ? s.emoji : SUBJ_EMOJI[subjects.length % SUBJ_EMOJI.length];
     $('s-name').value = s ? s.name : ''; $('s-goal').value = s && s.goalMin ? String(s.goalMin / 60).replace('.', ',') : '';
-    radioPick($('s-emoji'), SUBJ_EMOJI.map(function (e) { return { v: e }; }), subjEmoji, function (v) { subjEmoji = v; });
+    radioPick($('s-emoji'), SUBJ_EMOJI.map(function (e) { return { v: e, label: e }; }), subjEmoji, function (v) { subjEmoji = v; });
     $('s-edit-actions').hidden = !s; setErr($('s-name'), 's-name-err', ''); setErr($('s-goal'), 's-goal-err', '');
     open($('subj-sheet'), opener);
   }
@@ -826,19 +976,19 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     if (!setErr($('s-goal'), 's-goal-err', !g || (/^\d+(\.\d+)?$/.test(g) && gv <= 80) ? '' : 'Укажи число часов от 0 до 80, напр. 4 или 2,5.')) { $('s-goal').focus(); return; }
     var data = { name: n, emoji: subjEmoji, goalMin: Math.round(gv * 60) };
     if (editingSubj) Object.assign(editingSubj, data); else subjects.push(Object.assign({ id: uid() }, data));
-    saveAll(); closeAll(); fillSubjectSelects(); renderStudy(); renderTasks(); toast('📚 Предмет сохранён');
+    saveAll(); closeAll(); fillSubjectSelects(); renderStudy(); renderTasks(); toast('Предмет сохранён');
   });
   $('s-del').addEventListener('click', function () {
     var s = editingSubj, i = subjects.indexOf(s); subjects.splice(i, 1);
     saveAll(); closeAll(); fillSubjectSelects(); renderStudy(); renderTasks();
-    toast('🗑️ Предмет удалён (записанное время осталось)', function () { subjects.splice(i, 0, s); saveAll(); fillSubjectSelects(); renderStudy(); renderTasks(); });
+    toast('Предмет удалён (записанное время осталось)', function () { subjects.splice(i, 0, s); saveAll(); fillSubjectSelects(); renderStudy(); renderTasks(); });
   });
   $('manual-add').addEventListener('click', function (e) { $('m-min').value = ''; setErr($('m-min'), 'm-min-err', ''); $('m-subject').value = $('timer-subject').value; open($('manual-sheet'), e.currentTarget); });
   $('manual-sheet').addEventListener('submit', function (e) {
     e.preventDefault(); var v = $('m-min').value.trim();
     if (!setErr($('m-min'), 'm-min-err', /^\d+$/.test(v) && +v > 0 && +v <= 720 ? '' : 'Укажи минуты числом от 1 до 720.')) { $('m-min').focus(); return; }
     sessions.push({ id: uid(), subjectId: $('m-subject').value || null, date: todayISO(), minutes: +v, at: Date.now() });
-    saveAll(); closeAll(); renderStudy(); renderToday(); toast('⏱️ Записано: ' + mins(+v));
+    saveAll(); closeAll(); renderStudy(); renderToday(); toast('Записано: ' + mins(+v));
   });
 
   /* ---------- pomodoro timer (survives reloads) ---------- */
@@ -848,12 +998,14 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   function modeLen() { return (tm.mode === 'focus' ? tm.focusLen : MODES[tm.mode].min) * 60000; }
   function saveTimer() { store.set(KEY.timer, tm); }
   function leftMs() { return tm.endsAt ? Math.max(0, tm.endsAt - Date.now()) : tm.leftMs; }
+  var lastBtn = '';
   function paintTimer() {
     var ms = leftMs(), s = Math.ceil(ms / 1000);
     $('timer-time').textContent = pad(Math.floor(s / 60)) + ':' + pad(s % 60);
     $('timer-mode').textContent = MODES[tm.mode].n + (tm.endsAt ? '' : ms < modeLen() ? ' · пауза' : '');
     $('ring-fg').setAttribute('stroke-dashoffset', String(628.3 * (1 - ms / modeLen())));
-    $('timer-start').textContent = tm.endsAt ? '⏸️ Пауза' : ms < modeLen() ? '▶️ Продолжить' : '▶️ Старт';
+    var lbl = tm.endsAt ? 'Пауза' : ms < modeLen() ? 'Продолжить' : 'Старт';
+    if (lbl !== lastBtn) { $('timer-start').innerHTML = ic(tm.endsAt ? 'pause' : 'play') + '<span>' + lbl + '</span>'; lastBtn = lbl; }
     qa('[data-mode]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === tm.mode)); });
     document.title = tm.endsAt ? $('timer-time').textContent + ' · ' + MODES[tm.mode].n : 'Учёба и день';
   }
@@ -879,8 +1031,8 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     tm.endsAt = null;
     if (wasFocus) {
       sessions.push({ id: uid(), subjectId: tm.subjectId || null, date: todayISO(), minutes: len, at: Date.now() }); saveAll();
-      toast('🎉 ' + len + ' мин учёбы записано! Время перерыва.'); tm.mode = 'short';
-    } else { toast('☕ Перерыв окончен. Вперёд!'); tm.mode = 'focus'; }
+      toast(len + ' мин учёбы записано. Время перерыва.'); tm.mode = 'short';
+    } else { toast('Перерыв окончен. Вперёд!'); tm.mode = 'focus'; }
     tm.leftMs = modeLen(); saveTimer(); paintTimer(); chime(); renderStudy(); renderToday();
     $('timer-hint').textContent = wasFocus ? 'Отдохни 5 минут, а потом начни следующий круг.' : 'Готов к следующему кругу учёбы.';
   }
@@ -895,59 +1047,67 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     var ul = $('habit-list'); ul.innerHTML = ''; $('habits-empty').hidden = habits.length > 0;
     var t = todayISO();
     habits.forEach(function (hb) {
-      var li = document.createElement('li'); li.className = 'habit';
-      var sk = habitStreak(hb);
-      li.innerHTML = '<div><div class="habit__name"><span aria-hidden="true"></span><span></span><button class="icon-btn" type="button" style="width:32px;height:32px;font-size:13px">🗑️</button></div><div class="habit__streak"></div></div><div class="week" role="group"></div>';
-      li.querySelector('.habit__name span').textContent = hb.emoji; li.querySelector('.habit__name span:nth-child(2)').textContent = hb.name;
-      li.querySelector('.habit__streak').textContent = sk ? '🔥 ' + sk + ' ' + plural(sk, ['день', 'дня', 'дней']) + ' подряд' : 'Начни сегодня';
-      var wk = li.querySelector('.week'); wk.setAttribute('aria-label', hb.name + ': последние 7 дней');
+      var row = li('habit'), sk = habitStreak(hb);
+      row.innerHTML = '<div class="habit__head"><span class="subj__icon" aria-hidden="true"></span><div style="min-width:0;flex:1"><div class="habit__name"></div><div class="habit__streak"></div></div><button class="icon-btn" type="button">' + ic('trash') + '</button></div><div class="week" role="group"></div>';
+      row.querySelector('.subj__icon').textContent = hb.emoji; row.querySelector('.habit__name').textContent = hb.name;
+      var stEl = row.querySelector('.habit__streak');
+      if (sk) { stEl.classList.add('is-hot'); stEl.innerHTML = ic('flame', 'i--sm'); stEl.appendChild(document.createTextNode(sk + ' ' + plural(sk, ['день', 'дня', 'дней']) + ' подряд')); } else stEl.textContent = 'Начни сегодня';
+      var wk = row.querySelector('.week'); wk.setAttribute('aria-label', hb.name + ': последние 7 дней');
       for (var i = 6; i >= 0; i--) {
         (function (d) {
           var b = document.createElement('button'); b.type = 'button'; b.className = 'wday' + (d === t ? ' is-today' : '');
           var on = !!hlog[hb.id + '|' + d]; b.setAttribute('aria-pressed', String(on));
           b.setAttribute('aria-label', hb.name + ', ' + (d === t ? 'сегодня' : fDay.format(toDate(d))) + (on ? ', выполнено' : ''));
-          b.innerHTML = '<small></small><span aria-hidden="true"></span>'; b.firstChild.textContent = fWdShort.format(toDate(d)); b.lastChild.textContent = on ? '✓' : toDate(d).getDate();
+          b.innerHTML = '<small aria-hidden="true">' + DOW[dow(d)] + '</small><span aria-hidden="true">' + (on ? ic('check', 'i--sm') : toDate(d).getDate()) + '</span>';
           b.addEventListener('click', function () { var k = hb.id + '|' + d; if (hlog[k]) delete hlog[k]; else hlog[k] = true; saveAll(); renderHabits(); renderToday(); });
           wk.appendChild(b);
         })(addDays(t, -i));
       }
-      var del = li.querySelector('.habit__name .icon-btn'); del.setAttribute('aria-label', 'Удалить привычку ' + hb.name);
-      del.addEventListener('click', function () { var i2 = habits.indexOf(hb); habits.splice(i2, 1); saveAll(); renderHabits(); renderToday(); toast('🗑️ Привычка удалена', function () { habits.splice(i2, 0, hb); saveAll(); renderHabits(); renderToday(); }); });
-      ul.appendChild(li);
+      var del = row.querySelector('.habit__head .icon-btn'); del.setAttribute('aria-label', 'Удалить привычку ' + hb.name);
+      del.addEventListener('click', function () { var i2 = habits.indexOf(hb); habits.splice(i2, 1); saveAll(); renderHabits(); renderToday(); toast('Привычка удалена', function () { habits.splice(i2, 0, hb); saveAll(); renderHabits(); renderToday(); }); });
+      ul.appendChild(row);
     });
   }
-  $('add-habit').addEventListener('click', function (e) { $('h-name').value = ''; habitEmoji = HAB_EMOJI[habits.length % HAB_EMOJI.length]; radioPick($('h-emoji'), HAB_EMOJI.map(function (x) { return { v: x }; }), habitEmoji, function (v) { habitEmoji = v; }); setErr($('h-name'), 'h-name-err', ''); open($('habit-sheet'), e.currentTarget); });
+  $('add-habit').addEventListener('click', function (e) { $('h-name').value = ''; habitEmoji = HAB_EMOJI[habits.length % HAB_EMOJI.length]; radioPick($('h-emoji'), HAB_EMOJI.map(function (x) { return { v: x, label: x }; }), habitEmoji, function (v) { habitEmoji = v; }); setErr($('h-name'), 'h-name-err', ''); open($('habit-sheet'), e.currentTarget); });
   $('habit-sheet').addEventListener('submit', function (e) {
     e.preventDefault(); var n = $('h-name').value.trim();
     if (!setErr($('h-name'), 'h-name-err', n ? '' : 'Напиши привычку.')) { $('h-name').focus(); return; }
-    habits.push({ id: uid(), name: n, emoji: habitEmoji, created: Date.now() }); saveAll(); closeAll(); renderHabits(); renderToday(); toast(habitEmoji + ' Привычка добавлена');
+    habits.push({ id: uid(), name: n, emoji: habitEmoji, created: Date.now() }); saveAll(); closeAll(); renderHabits(); renderToday(); toast('Привычка добавлена');
   });
   $('habit-sample').addEventListener('click', function () {
     [['💧', 'Выпить 2 л воды'], ['🏃', 'Спорт или 8000 шагов'], ['😴', 'Лечь спать до 00:00'], ['📖', 'Читать 20 минут']].forEach(function (x) { habits.push({ id: uid(), name: x[1], emoji: x[0], created: Date.now() }); });
-    saveAll(); renderHabits(); renderToday(); toast('🌱 Добавлены 4 привычки');
+    saveAll(); renderHabits(); renderToday(); toast('Добавлены 4 привычки');
   });
 
-  /* ================= TODAY SUMMARY ================= */
+  /* ================= TODAY: hero + tiles ================= */
   function renderToday() {
+    paintHello();
     var t = todayISO(), nm = nowMin(), list = blocksFor(t);
     var cur = list.find(function (b) { return nm >= toMin(b.start) && nm < toMin(b.end); });
     var next = list.find(function (b) { return toMin(b.start) > nm; });
-    $('t-now').textContent = cur ? (typeBy[cur.type] || typeBy.other).e + ' ' + cur.title : list.length ? 'Свободное время' : 'План не составлен';
-    $('t-next').textContent = cur ? 'до ' + cur.end + (next ? ' · дальше: ' + next.title + ' в ' + next.start : '') : next ? 'Дальше: ' + next.title + ' в ' + next.start : list.length ? 'На сегодня всё 🎉' : 'Открой «Распорядок» и добавь дела';
+    var ty = cur ? typeBy[cur.type] || typeBy.other : null, nowIc = $('t-now-ic');
+    nowIc.style.setProperty('--tc', ty ? 'var(' + ty.c + ')' : 'var(--gold)'); nowIc.innerHTML = ic(ty ? ty.i : 'clock');
+    $('t-now').textContent = cur ? cur.title : list.length ? 'Свободное время' : 'План не составлен';
+    $('t-next').textContent = cur ? 'до ' + cur.end + (next ? ' · дальше: ' + next.title + ' в ' + next.start : '') : next ? 'Дальше: ' + next.title + ' в ' + next.start : list.length ? 'На сегодня всё. Хорошая работа!' : 'Нажми «Распорядок» и добавь дела';
+    var doneN = list.filter(function (b) { return doneMap[b.id + '|' + t]; }).length;
+    $('t-meter').style.width = (list.length ? doneN / list.length * 100 : 0) + '%';
+    $('t-meter-l').textContent = doneN + ' из ' + list.length + ' выполнено';
+    $('t-day').textContent = list.length;
+    $('t-day-sub').textContent = plural(list.length, ['дело', 'дела', 'дел']) + ' сегодня' + (doneN ? ' · ' + doneN + ' готово' : '');
     var due = tasks.filter(function (x) { return !x.done && x.due && x.due <= t; }), over = due.filter(function (x) { return x.due < t; }).length;
     $('t-tasks').textContent = due.length;
-    $('t-tasks-sub').textContent = over ? over + ' ' + plural(over, ['просрочена', 'просрочены', 'просрочено']) : due.length ? 'нужно сделать сегодня' : 'всё сделано 👍';
+    $('t-tasks-sub').textContent = over ? over + ' ' + plural(over, ['просрочена', 'просрочены', 'просрочено']) : due.length ? 'на сегодня' : 'всё сделано';
     $('t-study').textContent = mins(minutesOn(t)); var sk = streak();
-    $('t-streak').textContent = sk ? '🔥 ' + sk + ' ' + plural(sk, ['день', 'дня', 'дней']) + ' подряд' : 'включи таймер в «Учёбе»';
+    $('t-streak').textContent = sk ? sk + ' ' + plural(sk, ['день', 'дня', 'дней']) + ' подряд' : 'сегодня';
     $('t-habits').textContent = habits.filter(function (hb) { return hlog[hb.id + '|' + t]; }).length + '/' + habits.length;
   }
 
   /* ---------- boot ---------- */
   fillSubjectSelects();
   $('timer-subject').value = subjects.some(function (s) { return s.id === tm.subjectId; }) ? tm.subjectId : '';
-  paintDue(); renderDay(); renderTasks(); renderHabits(); paintTimer(); renderToday();
+  paintWhen(); renderDay(); renderTasks(); renderHabits(); paintTimer(); renderToday();
   showTab(location.hash.slice(1) || 'day');
-  setInterval(function () { renderToday(); if (viewDay === todayISO() && !$('panel-day').hidden && !openSheet) renderDay(); }, 60000);
+  setInterval(function () { renderToday(); if (viewDay === todayISO() && !$('panel-day').hidden && !openSheet) renderDay(); }, 30000);
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
     try { navigator.serviceWorker.register('sw.js').catch(function () { /* unavailable here */ }); } catch (e) { /* ignore */ }
   }

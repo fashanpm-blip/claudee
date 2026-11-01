@@ -6,7 +6,7 @@
 <title>Budżet Studenta</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Трекер расходов студента: бюджет на месяц, категории, календарь трат и диаграммы. Работает на телефоне и без интернета.">
-<meta name="theme-color" content="#10b981">
+<meta name="theme-color" content="#0b0a08">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -18,45 +18,31 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout: soft gradient backdrop, frosted cards; controls left, numbers + calendar + charts + list right; one column on phones. */
+/* Black & gold (default), ivory & dark gold as the light variant; same tokens as the study page. */
 :root {
-  --bg-a: #e9fbf3; --bg-b: #eef1ff; --bg-c: #fdf1f7;
-  --card: rgba(255, 255, 255, .78);
-  --card-solid: #ffffff;
-  --soft: #f1f5f9;
-  --line: rgba(15, 23, 42, .08);
-  --fg: #1e293b;
-  --muted: #5f6f84;
-  --accent: #10b981;
-  --accent-2: #14b8a6;
-  --accent-ink: #047857;
-  --on-accent: #ffffff;
-  --btn-a: #047857; --btn-b: #0f766e;
-  --danger: #e11d48;
+  --bg-a: #0b0a08; --bg-b: #17120a; --bg-c: #0b0a08;
+  --card: rgba(21, 19, 15, .92); --card-solid: #15130f; --soft: #262119; --line: rgba(236, 204, 130, .13);
+  --fg: #f6f0e3; --muted: #b5aa92;
+  --accent: #e5b84b; --accent-2: #c8952f; --accent-ink: #f0c95e; --on-accent: #1a1406;
+  --btn-a: #f3d27a; --btn-b: #c8952f; --toast-acc: #85600f;
+  --danger: #ff6b6b;
   --gold-a: #fde68a; --gold-b: #f59e0b; --gold-c: #b45309;
-  --c-food: #f59e0b; --c-transport: #60a5fa; --c-fun: #a78bfa; --c-study: #34d399; --c-other: #94a3b8;
-  --shadow: 0 1px 2px rgba(30, 41, 59, .04), 0 12px 32px -16px rgba(30, 41, 59, .18);
+  --c-food: #ff9f43; --c-transport: #5b9bff; --c-fun: #b18cff; --c-study: #34d6a8; --c-other: #a8a29e;
+  --shadow: 0 1px 0 rgba(255, 236, 190, .04) inset, 0 18px 40px -24px rgba(0, 0, 0, .9);
   --radius: 22px;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg-a: #0b1324; --bg-b: #0d2626; --bg-c: #1b1735;
-    --card: rgba(22, 31, 46, .72); --card-solid: #172131; --soft: #1f2b3d; --line: rgba(226, 232, 240, .08);
-    --fg: #e5edf6; --muted: #9fb0c3; --accent: #34d399; --accent-2: #2dd4bf; --accent-ink: #6ee7b7; --on-accent: #052e22; --btn-a: #34d399; --btn-b: #2dd4bf; --danger: #fb7185;
-    --c-food: #fbbf24; --c-transport: #7cb3fb; --c-fun: #b9a3fb; --c-study: #4ade80; --c-other: #a5b4c8;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -18px rgba(0, 0, 0, .7);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg-a: #0b1324; --bg-b: #0d2626; --bg-c: #1b1735;
-  --card: rgba(22, 31, 46, .72); --card-solid: #172131; --soft: #1f2b3d; --line: rgba(226, 232, 240, .08);
-  --fg: #e5edf6; --muted: #9fb0c3; --accent: #34d399; --accent-2: #2dd4bf; --accent-ink: #6ee7b7; --on-accent: #052e22; --btn-a: #34d399; --btn-b: #2dd4bf; --danger: #fb7185;
-  --c-food: #fbbf24; --c-transport: #7cb3fb; --c-fun: #b9a3fb; --c-study: #4ade80; --c-other: #a5b4c8;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -18px rgba(0, 0, 0, .7);
   color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg-a: #f5f0e6; --bg-b: #efe3c8; --bg-c: #f5f0e6;
+  --card: rgba(255, 253, 248, .92); --card-solid: #fffdf8; --soft: #efe6d3; --line: rgba(70, 52, 12, .12);
+  --fg: #1b1710; --muted: #675b43;
+  --accent: #a87a1c; --accent-2: #85600f; --accent-ink: #85600f; --on-accent: #f3d27a;
+  --btn-a: #2a241a; --btn-b: #0f0d09; --toast-acc: #f3d27a;
+  --danger: #c81e1e;
+  --c-food: #c2410c; --c-transport: #2563eb; --c-fun: #7c3aed; --c-study: #047857; --c-other: #78716c;
+  --shadow: 0 1px 2px rgba(60, 44, 10, .05), 0 16px 34px -22px rgba(60, 44, 10, .35);
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; }
@@ -97,7 +83,7 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); background: color-mix(in srgb, var(--bg-a) 70%, transparent); }
 .top__in { max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; padding-block: 14px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand__logo { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--accent-2) 60%, #6366f1); box-shadow: var(--shadow); }
+.brand__logo { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); box-shadow: var(--shadow); }
 .brand h1 { font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
 .brand p { font-size: 13px; color: var(--muted); }
 .controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -255,19 +241,20 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
 }
 
 /* ---------- install ---------- */
-.install { display: grid; gap: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--card)), color-mix(in srgb, #6366f1 14%, var(--card))); }
+.install { display: grid; gap: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--card)), var(--card)); }
 .install ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
 
 /* ---------- toast ---------- */
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-radius: 16px; background: var(--fg); color: var(--card-solid); box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .45); transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); }
 .toast.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
 .pop:not([hidden]) ~ .toast { bottom: auto; top: calc(16px + env(safe-area-inset-top, 0px)); }
-.toast button { border: 0; background: transparent; color: var(--accent); font-weight: 800; padding: 8px; border-radius: 8px; }
+.toast button { border: 0; background: transparent; color: var(--toast-acc); font-weight: 800; padding: 8px; border-radius: 8px; }
 .foot { margin-top: 26px; text-align: center; font-size: 13px; color: var(--muted); }
 
 
 /* ---------- app switch ---------- */
 .appnav { display: flex; gap: 4px; }
+.nav-i { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .appnav a { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; color: var(--muted); }
 .appnav a[aria-current="page"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
 .appnav a:not([aria-current]):hover { background: var(--soft); color: var(--fg); }
@@ -299,7 +286,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
       <div class="pill">
         <select class="cur-select" id="currency" aria-label="Валюта"><option value="PLN">zł PLN</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="UAH">₴ UAH</option></select>
       </div>
-      <nav class="pill appnav appnav--top" aria-label="Разделы приложения"><a href="index.html" aria-current="page">💸 Бюджет</a><a href="planner.html">📚 Учёба и день</a></nav>
+      <nav class="pill appnav appnav--top" aria-label="Разделы приложения"><a href="index.html" aria-current="page"><svg class="nav-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>Бюджет</a><a href="planner.html"><svg class="nav-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Учёба и день</a></nav>
       <button class="theme-btn" type="button" id="theme" aria-label="Включить тёмную тему">🌙</button>
     </div>
   </div>
@@ -406,7 +393,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   </div>
 </div>
 
-<nav class="appnav appnav--bottom" aria-label="Разделы приложения"><a href="index.html" aria-current="page">💸 Бюджет</a><a href="planner.html">📚 Учёба и день</a></nav>
+<nav class="appnav appnav--bottom" aria-label="Разделы приложения"><a href="index.html" aria-current="page"><svg class="nav-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>Бюджет</a><a href="planner.html"><svg class="nav-i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Учёба и день</a></nav>
 
 <div class="scrim" id="scrim" hidden></div>
 <div class="pop" id="date-pop" role="dialog" aria-modal="true" aria-label="Выбор даты" hidden>
@@ -491,12 +478,12 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   var themeBtn = $('theme');
   var savedTheme = store.get(KEY.theme, null);
   if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.setAttribute('data-theme', savedTheme);
-  function curTheme() { return document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+  function curTheme() { return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
   function paintTheme() {
     var dark = curTheme() === 'dark';
     themeBtn.textContent = dark ? '☀️' : '🌙';
     themeBtn.setAttribute('aria-label', dark ? 'Включить светлую тему' : 'Включить тёмную тему');
-    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0b1324' : '#10b981');
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0b0a08' : '#f5f0e6');
   }
   themeBtn.addEventListener('click', function () { var n = curTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); store.set(KEY.theme, n); });
   new MutationObserver(function () { paintTheme(); renderCharts(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
