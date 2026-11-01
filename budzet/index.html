@@ -261,8 +261,22 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
 /* ---------- toast ---------- */
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-radius: 16px; background: var(--fg); color: var(--card-solid); box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .45); transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); }
 .toast.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+.pop:not([hidden]) ~ .toast { bottom: auto; top: calc(16px + env(safe-area-inset-top, 0px)); }
 .toast button { border: 0; background: transparent; color: var(--accent); font-weight: 800; padding: 8px; border-radius: 8px; }
 .foot { margin-top: 26px; text-align: center; font-size: 13px; color: var(--muted); }
+
+
+/* ---------- app switch ---------- */
+.appnav { display: flex; gap: 4px; }
+.appnav a { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; color: var(--muted); }
+.appnav a[aria-current="page"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
+.appnav a:not([aria-current]):hover { background: var(--soft); color: var(--fg); }
+.appnav--top { display: none; }
+@media (min-width: 1100px) { .appnav--top { display: flex; } }
+.appnav--bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; justify-content: center; padding: 8px max(12px, env(safe-area-inset-left, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--card-solid) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
+.appnav--bottom a { flex: 1; max-width: 220px; justify-content: center; min-height: 46px; }
+@media (min-width: 1100px) { .appnav--bottom { display: none; } }
+@media (max-width: 1099px) { body { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); } .toast { bottom: calc(86px + env(safe-area-inset-bottom, 0px)); } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -285,6 +299,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
       <div class="pill">
         <select class="cur-select" id="currency" aria-label="Валюта"><option value="PLN">zł PLN</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="UAH">₴ UAH</option></select>
       </div>
+      <nav class="pill appnav appnav--top" aria-label="Разделы приложения"><a href="index.html" aria-current="page">💸 Бюджет</a><a href="planner.html">📚 Учёба и день</a></nav>
       <button class="theme-btn" type="button" id="theme" aria-label="Включить тёмную тему">🌙</button>
     </div>
   </div>
@@ -390,6 +405,8 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     </main>
   </div>
 </div>
+
+<nav class="appnav appnav--bottom" aria-label="Разделы приложения"><a href="index.html" aria-current="page">💸 Бюджет</a><a href="planner.html">📚 Учёба и день</a></nav>
 
 <div class="scrim" id="scrim" hidden></div>
 <div class="pop" id="date-pop" role="dialog" aria-modal="true" aria-label="Выбор даты" hidden>
