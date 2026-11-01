@@ -1,201 +1,291 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Budżet Studenta</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Простий трекер витрат для студента: бюджет на місяць, категорії, діаграми. Дані зберігаються у твоєму браузері.">
+<meta name="description" content="Трекер расходов студента: бюджет на месяц, категории, календарь трат и диаграммы. Работает на телефоне и без интернета.">
+<meta name="theme-color" content="#10b981">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Бюджет">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout: airy two-column dashboard (controls left, numbers + charts + list right), single column on phones.
-   Light by default, green accent, rounded cards. */
+/* Layout: soft gradient backdrop, frosted cards; controls left, numbers + calendar + charts + list right; one column on phones. */
 :root {
-  --bg: #f6f8f7;
-  --surface: #ffffff;
-  --surface-2: #eef4f1;
-  --line: #e2e8e5;
-  --fg: #142019;
-  --muted: #5b6b63;
-  --accent: #10b981;          /* fills, bars, buttons */
-  --accent-strong: #047857;   /* accent used as text */
-  --on-accent: #04261a;
-  --danger: #dc2626;
-  --danger-soft: #fdecec;
-  --warn: #b45309;
-  --c-food: #f59e0b; --c-transport: #3b82f6; --c-fun: #a855f7; --c-study: #10b981; --c-other: #64748b;
-  --shadow: 0 1px 2px rgba(16, 40, 30, .04), 0 8px 24px -12px rgba(16, 40, 30, .12);
-  --radius: 18px;
+  --bg-a: #e9fbf3; --bg-b: #eef1ff; --bg-c: #fdf1f7;
+  --card: rgba(255, 255, 255, .78);
+  --card-solid: #ffffff;
+  --soft: #f1f5f9;
+  --line: rgba(15, 23, 42, .08);
+  --fg: #1e293b;
+  --muted: #5f6f84;
+  --accent: #10b981;
+  --accent-2: #14b8a6;
+  --accent-ink: #047857;
+  --on-accent: #ffffff;
+  --btn-a: #047857; --btn-b: #0f766e;
+  --danger: #e11d48;
+  --gold-a: #fde68a; --gold-b: #f59e0b; --gold-c: #b45309;
+  --c-food: #f59e0b; --c-transport: #60a5fa; --c-fun: #a78bfa; --c-study: #34d399; --c-other: #94a3b8;
+  --shadow: 0 1px 2px rgba(30, 41, 59, .04), 0 12px 32px -16px rgba(30, 41, 59, .18);
+  --radius: 22px;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0d1412; --surface: #141d1a; --surface-2: #1a2622; --line: #26332f; --fg: #e7efeb; --muted: #9fb0a8;
-    --accent: #10b981; --accent-strong: #34d399; --on-accent: #04261a; --danger: #f87171; --danger-soft: #3a1a1a; --warn: #fbbf24;
-    --c-food: #fbbf24; --c-transport: #60a5fa; --c-fun: #c084fc; --c-study: #34d399; --c-other: #94a3b8;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
+    --bg-a: #0b1324; --bg-b: #0d2626; --bg-c: #1b1735;
+    --card: rgba(22, 31, 46, .72); --card-solid: #172131; --soft: #1f2b3d; --line: rgba(226, 232, 240, .08);
+    --fg: #e5edf6; --muted: #9fb0c3; --accent: #34d399; --accent-2: #2dd4bf; --accent-ink: #6ee7b7; --on-accent: #052e22; --btn-a: #34d399; --btn-b: #2dd4bf; --danger: #fb7185;
+    --c-food: #fbbf24; --c-transport: #7cb3fb; --c-fun: #b9a3fb; --c-study: #4ade80; --c-other: #a5b4c8;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -18px rgba(0, 0, 0, .7);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0d1412; --surface: #141d1a; --surface-2: #1a2622; --line: #26332f; --fg: #e7efeb; --muted: #9fb0a8;
-  --accent: #10b981; --accent-strong: #34d399; --on-accent: #04261a; --danger: #f87171; --danger-soft: #3a1a1a; --warn: #fbbf24;
-  --c-food: #fbbf24; --c-transport: #60a5fa; --c-fun: #c084fc; --c-study: #34d399; --c-other: #94a3b8;
-  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
+  --bg-a: #0b1324; --bg-b: #0d2626; --bg-c: #1b1735;
+  --card: rgba(22, 31, 46, .72); --card-solid: #172131; --soft: #1f2b3d; --line: rgba(226, 232, 240, .08);
+  --fg: #e5edf6; --muted: #9fb0c3; --accent: #34d399; --accent-2: #2dd4bf; --accent-ink: #6ee7b7; --on-accent: #052e22; --btn-a: #34d399; --btn-b: #2dd4bf; --danger: #fb7185;
+  --c-food: #fbbf24; --c-transport: #7cb3fb; --c-fun: #b9a3fb; --c-study: #4ade80; --c-other: #a5b4c8;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 14px 36px -18px rgba(0, 0, 0, .7);
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
+html { min-height: 100%; background: var(--bg-a); }
 body {
-  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.55;
-  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px;
+  margin: 0; min-height: 100vh; color: var(--fg); font-family: var(--font); font-size: 15px; line-height: 1.55;
+  background: radial-gradient(900px 600px at 0% 0%, var(--bg-a), transparent 70%), radial-gradient(800px 700px at 100% 20%, var(--bg-b), transparent 70%), radial-gradient(900px 700px at 40% 100%, var(--bg-c), transparent 70%), var(--bg-a);
+  background-attachment: fixed;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 56px;
   -webkit-font-smoothing: antialiased;
 }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg-a); }
 h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; }
 p { margin: 0; }
-button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 10px; }
 [hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .num { font-variant-numeric: tabular-nums; }
-
 .wrap { max-width: 1180px; margin: 0 auto; }
 
-/* header */
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
-.top__in { max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding-block: 18px; }
+/* ---------- spinning coin ---------- */
+.coin { --s: 34px; width: var(--s); height: var(--s); flex: none; position: relative; display: inline-block; perspective: 300px; }
+.coin__in { position: absolute; inset: 0; transform-style: preserve-3d; animation: coin-spin 3.4s linear infinite; }
+.coin__face { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  background: radial-gradient(circle at 32% 28%, #fff7d1 0 8%, var(--gold-a) 22%, var(--gold-b) 70%, var(--gold-c) 100%);
+  box-shadow: inset 0 0 0 calc(var(--s) * .07) rgba(180, 83, 9, .55), inset 0 0 0 calc(var(--s) * .12) rgba(253, 230, 138, .9);
+  color: #92400e; font-weight: 800; font-size: calc(var(--s) * .42); line-height: 1; letter-spacing: -.03em; }
+.coin__face--back { transform: rotateY(180deg); }
+.coin--sm { --s: 22px; }
+.coin--lg { --s: 46px; }
+.coin.is-burst .coin__in { animation: coin-burst .9s cubic-bezier(.22, 1, .36, 1); }
+@keyframes coin-spin { to { transform: rotateY(360deg); } }
+@keyframes coin-burst { from { transform: rotateY(0) scale(1); } 50% { transform: rotateY(540deg) scale(1.25); } to { transform: rotateY(1080deg) scale(1); } }
+
+/* ---------- header ---------- */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); background: color-mix(in srgb, var(--bg-a) 70%, transparent); }
+.top__in { max-width: 1180px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; padding-block: 14px; }
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand__logo { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: var(--surface); box-shadow: var(--shadow); }
-.brand h1 { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+.brand__logo { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent), var(--accent-2) 60%, #6366f1); box-shadow: var(--shadow); }
+.brand h1 { font-size: 19px; font-weight: 800; letter-spacing: -.02em; }
 .brand p { font-size: 13px; color: var(--muted); }
-.controls { display: flex; align-items: center; gap: 8px; }
-.month { display: flex; align-items: center; gap: 4px; background: var(--surface); border-radius: 14px; padding: 4px; box-shadow: var(--shadow); }
-.month input { border: 0; background: transparent; padding: 8px 6px; min-height: 40px; font-weight: 600; width: 10.5em; }
-.icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 0; background: transparent; display: grid; place-items: center; font-size: 17px; transition: background .2s; }
-.icon-btn:hover { background: var(--surface-2); }
-.theme-btn { width: 48px; height: 48px; border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); font-size: 20px; }
+.controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pill { display: flex; align-items: center; gap: 2px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 4px; box-shadow: var(--shadow); }
+.icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 0; background: transparent; display: grid; place-items: center; font-size: 16px; color: var(--fg); transition: background .2s; }
+.icon-btn:hover { background: var(--soft); }
+.month-btn { min-width: 150px; height: 40px; border: 0; border-radius: 12px; background: transparent; font-weight: 700; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.month-btn:hover { background: var(--soft); }
+.cur-select { height: 40px; border: 0; background: transparent; font-weight: 700; padding: 0 6px; border-radius: 12px; }
+.theme-btn { width: 50px; height: 50px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); box-shadow: var(--shadow); font-size: 20px; }
 
-/* grid */
-.grid { display: grid; gap: 24px; margin-top: 12px; }
-@media (min-width: 980px) { .grid { grid-template-columns: 360px 1fr; align-items: start; } .side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 92px); } }
-.side, .main { display: grid; gap: 24px; min-width: 0; }
+/* ---------- layout ---------- */
+.grid { display: grid; gap: 22px; margin-top: 10px; }
+@media (min-width: 1000px) { .grid { grid-template-columns: 370px 1fr; align-items: start; } .side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 92px); } }
+.side, .main { display: grid; gap: 22px; min-width: 0; }
+.card { background: var(--card); border: 1px solid var(--line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); min-width: 0; }
+.card__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+.card h2 { font-size: 16.5px; font-weight: 700; letter-spacing: -.01em; }
+.hint { font-size: 13px; color: var(--muted); }
 
-.card { background: var(--surface); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); min-width: 0; }
-.card__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 18px; }
-.card h2 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
-.card__hint { font-size: 13px; color: var(--muted); }
-
-/* budget */
-.budget__amounts { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+/* ---------- budget ---------- */
+.budget__big { display: flex; align-items: center; gap: 12px; }
 .budget__spent { font-size: 30px; font-weight: 800; letter-spacing: -.02em; }
-.budget__of { color: var(--muted); font-weight: 500; }
-.bar { height: 14px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin: 14px 0 10px; }
-.bar__fill { height: 100%; width: 0; border-radius: inherit; background: var(--accent); transition: width .6s cubic-bezier(.22, 1, .36, 1), background .3s; }
-.bar.is-danger .bar__fill { background: var(--danger); }
-.budget__status { font-size: 14px; color: var(--muted); }
-.budget__status.is-danger { color: var(--danger); font-weight: 600; }
-.budget__form { display: flex; gap: 8px; margin-top: 18px; }
-.budget__form .input { flex: 1; min-width: 0; }
+.budget__of { color: var(--muted); font-weight: 500; font-size: 14px; }
+.bar { height: 14px; border-radius: 999px; background: var(--soft); overflow: hidden; margin: 16px 0 10px; }
+.bar__fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .7s cubic-bezier(.22, 1, .36, 1); }
+.bar.is-danger .bar__fill { background: linear-gradient(90deg, #fb7185, var(--danger)); }
+.status { font-size: 14px; color: var(--muted); }
+.status.is-danger { color: var(--danger); font-weight: 600; }
+.inline-form { display: flex; gap: 8px; margin-top: 16px; }
+.inline-form .input { flex: 1; min-width: 0; }
 
-/* form */
+/* ---------- form ---------- */
 .form { display: grid; gap: 14px; }
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .field { display: grid; gap: 6px; min-width: 0; }
-fieldset.field { border: 0; padding: 0; margin: 0; min-width: 0; }
-.field label, .field legend { font-size: 13px; font-weight: 600; color: var(--muted); }
-.field legend { padding: 0; margin-bottom: 6px; }
-.input { width: 100%; min-height: 46px; padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg); transition: border-color .2s, box-shadow .2s; }
-.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+fieldset.field { border: 0; padding: 0; margin: 0; }
+.field label, .field legend { font-size: 13px; font-weight: 600; color: var(--muted); padding: 0; }
+.input { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-solid); transition: border-color .2s, box-shadow .2s; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent); }
 .input[aria-invalid="true"] { border-color: var(--danger); }
-.amount-wrap { position: relative; }
-.amount-wrap .input { padding-right: 42px; font-weight: 700; font-size: 17px; }
-.amount-wrap span { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-weight: 600; pointer-events: none; }
-.cats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; border: 0; padding: 0; margin: 0; }
+.amount { position: relative; }
+.amount .input { padding-right: 56px; font-weight: 800; font-size: 20px; min-height: 56px; }
+.amount .coin { position: absolute; right: 12px; top: 50%; margin-top: -15px; --s: 30px; }
+.amount .coin .coin__in { animation-play-state: paused; }
+.amount.is-typing .coin .coin__in { animation-play-state: running; animation-duration: 1.6s; }
+.cats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
 .cats input { position: absolute; opacity: 0; pointer-events: none; }
-.cats label { display: grid; justify-items: center; gap: 2px; padding: 10px 2px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg); font-size: 11.5px; font-weight: 600; color: var(--muted); cursor: pointer; text-align: center; transition: border-color .2s, background .2s, color .2s; min-height: 64px; }
-.cats label b { font-size: 22px; line-height: 1.1; }
-.cats input:checked + label { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--fg); }
+.cats label { display: grid; justify-items: center; gap: 3px; padding: 10px 2px 8px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-solid); font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; text-align: center; min-height: 66px; transition: border-color .2s, background .2s, color .2s, transform .15s; }
+.cats label b { font-size: 23px; line-height: 1.1; transition: transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+.cats input:checked + label { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--card-solid)); color: var(--fg); }
+.cats input:checked + label b { transform: scale(1.18) rotate(-6deg); }
 .cats input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 2px; }
+.date-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.date-btn { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--card-solid); display: flex; align-items: center; gap: 10px; text-align: left; font-weight: 600; }
+.date-btn:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+.date-btn span:last-child { margin-left: auto; color: var(--muted); font-weight: 500; font-size: 13px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--card-solid); font-size: 13px; font-weight: 600; }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--card-solid)); }
 .error { font-size: 13px; color: var(--danger); font-weight: 600; }
 .error:empty { display: none; }
-.btn { min-height: 46px; padding: 0 18px; border-radius: 12px; border: 0; background: var(--accent); color: var(--on-accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: filter .2s, transform .1s; }
-.btn:hover { filter: brightness(1.06); }
-.btn:active { transform: translateY(1px); }
-.btn--ghost { background: var(--surface-2); color: var(--fg); }
-.btn--wide { width: 100%; }
-.form__actions { display: flex; gap: 8px; }
-.form__actions .btn { flex: 1; }
-.form-title-edit { color: var(--accent-strong); }
+.btn { min-height: 50px; padding: 0 18px; border-radius: 14px; border: 0; background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--btn-a) 80%, transparent); transition: filter .2s, transform .1s; }
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn--ghost { background: var(--soft); color: var(--fg); box-shadow: none; }
+.actions { display: flex; gap: 8px; }
+.actions .btn { flex: 1; }
+.edit-title { color: var(--accent-ink); }
 
-/* stats */
-.stats { display: grid; gap: 16px; grid-template-columns: repeat(2, 1fr); }
-@media (min-width: 720px) { .stats { grid-template-columns: repeat(4, 1fr); } }
-.stat { background: var(--surface); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); min-width: 0; }
+/* ---------- popovers (calendar) ---------- */
+.pop { position: fixed; z-index: 50; width: 320px; max-width: calc(100vw - 24px); background: var(--card-solid); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 30px 60px -20px rgba(15, 23, 42, .45); padding: 14px; animation: pop-in .22s cubic-bezier(.22, 1, .36, 1); }
+@keyframes pop-in { from { opacity: 0; transform: translateY(6px) scale(.98); } }
+.pop__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.pop__title { font-weight: 800; text-transform: capitalize; }
+.scrim { position: fixed; inset: 0; z-index: 45; background: rgba(15, 23, 42, .25); }
+@media (max-width: 600px) {
+  .pop { left: 0 !important; right: 0; top: auto !important; bottom: 0; width: 100%; max-width: none; border-radius: 26px 26px 0 0; padding: 18px max(16px, env(safe-area-inset-left, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)); animation-name: sheet-in; }
+  @keyframes sheet-in { from { transform: translateY(100%); } }
+}
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal__dow { font-size: 11.5px; font-weight: 700; color: var(--muted); text-align: center; padding: 4px 0; text-transform: uppercase; letter-spacing: .04em; }
+.cal__day { position: relative; aspect-ratio: 1; min-height: 38px; border: 0; border-radius: 12px; background: transparent; font-weight: 600; display: grid; place-items: center; font-size: 14px; }
+.cal__day:hover { background: var(--soft); }
+.cal__day.is-out { visibility: hidden; }
+.cal__day.is-today { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.cal__day[aria-selected="true"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
+.cal__day.has-spend::after { content: ""; position: absolute; bottom: 5px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold-b); }
+.cal__day[aria-selected="true"]::after { background: var(--on-accent); }
+.months { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.months button { min-height: 46px; border: 0; border-radius: 12px; background: transparent; font-weight: 600; text-transform: capitalize; }
+.months button:hover { background: var(--soft); }
+.months button[aria-current="true"] { background: linear-gradient(135deg, var(--btn-a), var(--btn-b)); color: var(--on-accent); }
+
+/* ---------- stats ---------- */
+.stats { display: grid; gap: 14px; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 760px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+.stat { display: grid; gap: 6px; padding: 16px 18px; }
 .stat__label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
-.stat__value { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin-top: 4px; overflow-wrap: anywhere; }
-.stat__value.is-good { color: var(--accent-strong); }
+.stat__row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.stat__value { font-size: 21px; font-weight: 800; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.stat__value.is-good { color: var(--accent-ink); }
 .stat__value.is-bad { color: var(--danger); }
 
-/* charts */
-.charts { display: grid; gap: 24px; }
-@media (min-width: 760px) { .charts { grid-template-columns: 1fr 1.4fr; } }
-.chart-box { position: relative; height: 240px; }
-.legend { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 8px; }
-.legend li { display: grid; grid-template-columns: 22px 1fr auto auto; gap: 8px; align-items: center; font-size: 14px; }
-.legend .pct { color: var(--muted); font-size: 13px; min-width: 3.2em; text-align: right; }
-.legend .amt { font-weight: 700; min-width: 5.5em; text-align: right; }
-.empty-chart { height: 100%; display: grid; place-items: center; text-align: center; color: var(--muted); font-size: 14px; border: 1.5px dashed var(--line); border-radius: 14px; padding: 16px; }
+/* ---------- spending calendar ---------- */
+.heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.heat__dow { font-size: 11.5px; font-weight: 700; color: var(--muted); text-align: center; text-transform: uppercase; letter-spacing: .04em; }
+.heat__day { position: relative; min-height: 58px; border-radius: 14px; border: 1px solid var(--line); padding: 6px 7px; display: grid; align-content: space-between; text-align: left;
+  background: color-mix(in srgb, var(--accent) calc(var(--lvl, 0) * 55%), var(--card-solid)); transition: transform .15s, box-shadow .2s; }
+.heat__day:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.heat__day.is-out { visibility: hidden; }
+.heat__day.is-today { border: 1.5px solid var(--accent); }
+.heat__day[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--accent); }
+.heat__n { font-size: 12.5px; font-weight: 700; }
+.heat__sum { font-size: 11px; font-weight: 700; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.heat__day.is-hot .heat__n, .heat__day.is-hot .heat__sum { color: #052e22; }
+@media (max-width: 520px) { .heat { gap: 4px; } .heat__day { min-height: 46px; padding: 4px 5px; border-radius: 11px; } .heat__sum { font-size: 9.5px; } }
+.day-filter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; font-size: 14px; }
 
-/* list */
+/* ---------- charts ---------- */
+.charts { display: grid; gap: 22px; }
+@media (min-width: 780px) { .charts { grid-template-columns: 1fr 1.35fr; } }
+.chart-box { position: relative; height: 230px; }
+.legend { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+.legend li { display: grid; grid-template-columns: 12px 22px 1fr auto auto; gap: 8px; align-items: center; font-size: 14px; }
+.legend i { width: 10px; height: 10px; border-radius: 50%; }
+.legend .pct { color: var(--muted); font-size: 13px; min-width: 3em; text-align: right; }
+.legend .amt { font-weight: 700; min-width: 6em; text-align: right; }
+.empty-chart { height: 100%; display: grid; place-items: center; text-align: center; color: var(--muted); font-size: 14px; border: 1.5px dashed var(--line); border-radius: 16px; padding: 16px; }
+
+/* ---------- list ---------- */
 .list { list-style: none; margin: 0; padding: 0; display: grid; }
-.item { display: grid; grid-template-columns: 44px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
+.item { display: grid; grid-template-columns: 46px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); }
 .item:first-child { border-top: 0; }
-.item__icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; background: color-mix(in srgb, var(--cat) 16%, var(--surface)); }
+.item__icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 21px; background: color-mix(in srgb, var(--cat) 20%, var(--card-solid)); }
 .item__main { min-width: 0; }
 .item__title { font-weight: 600; overflow-wrap: anywhere; }
 .item__meta { font-size: 13px; color: var(--muted); }
 .item__amount { font-weight: 800; white-space: nowrap; }
 .item__actions { display: flex; gap: 2px; }
-.item.is-editing { background: color-mix(in srgb, var(--accent) 8%, transparent); border-radius: 12px; padding-inline: 8px; }
-.empty { text-align: center; padding: 28px 12px; color: var(--muted); display: grid; gap: 14px; justify-items: center; }
-.empty b { font-size: 34px; }
+.item.is-editing { background: color-mix(in srgb, var(--accent) 9%, transparent); border-radius: 14px; padding-inline: 8px; }
+.item.is-new { animation: item-in .5s cubic-bezier(.22, 1, .36, 1); }
+@keyframes item-in { from { opacity: 0; transform: translateY(-8px); background: color-mix(in srgb, var(--accent) 18%, transparent); } }
+.empty { text-align: center; padding: 26px 12px; color: var(--muted); display: grid; gap: 14px; justify-items: center; }
+.empty b { font-size: 36px; }
 @media (max-width: 520px) {
-  .item { grid-template-columns: 40px 1fr auto; }
-  .item__icon { width: 40px; height: 40px; }
+  .item { grid-template-columns: 42px 1fr auto; }
+  .item__icon { width: 42px; height: 42px; }
   .item__actions { grid-column: 2 / -1; justify-content: flex-end; margin-top: -6px; }
-  .cats label span { font-size: 10.5px; }
-  .card { padding: 20px; }
+  .card { padding: 18px; }
+  .month-btn { min-width: 0; padding: 0 6px; }
+  .month-btn span:first-child { display: none; }
+  .controls { width: 100%; justify-content: space-between; flex-wrap: nowrap; gap: 6px; }
+  .theme-btn { width: 46px; height: 46px; flex: none; }
+  .cur-select { padding: 0 2px; }
 }
 
-/* toast */
-.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; z-index: 20; display: flex; align-items: center; gap: 14px; padding: 12px 14px 12px 18px; border-radius: 14px; background: var(--fg); color: var(--bg); box-shadow: 0 12px 30px -10px rgba(0, 0, 0, .4); transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); }
-.toast.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
-.toast button { border: 0; background: transparent; color: var(--accent); font-weight: 800; padding: 6px 8px; border-radius: 8px; }
-.foot { margin-top: 28px; text-align: center; font-size: 13px; color: var(--muted); }
+/* ---------- install ---------- */
+.install { display: grid; gap: 12px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--card)), color-mix(in srgb, #6366f1 14%, var(--card))); }
+.install ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
 
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+/* ---------- toast ---------- */
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); opacity: 0; pointer-events: none; z-index: 60; display: flex; align-items: center; gap: 12px; padding: 12px 14px 12px 16px; border-radius: 16px; background: var(--fg); color: var(--card-solid); box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .45); transition: opacity .25s, transform .25s; max-width: calc(100vw - 32px); }
+.toast.is-on { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+.toast button { border: 0; background: transparent; color: var(--accent); font-weight: 800; padding: 8px; border-radius: 8px; }
+.foot { margin-top: 26px; text-align: center; font-size: 13px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="top__in">
     <div class="brand">
-      <div class="brand__logo" aria-hidden="true">💸</div>
-      <div><h1>Budżet Studenta</h1><p>Трекер витрат на місяць</p></div>
+      <div class="brand__logo" aria-hidden="true"><span class="coin coin--sm"><span class="coin__in"><span class="coin__face" data-sym>zł</span><span class="coin__face coin__face--back" data-sym>zł</span></span></span></div>
+      <div><h1>Budżet Studenta</h1><p>Твои расходы за месяц</p></div>
     </div>
     <div class="controls">
-      <div class="month" role="group" aria-label="Вибір місяця">
-        <button class="icon-btn" type="button" id="prev-month" aria-label="Попередній місяць">◀️</button>
-        <label class="sr-only" for="month">Місяць</label>
-        <input type="month" id="month">
-        <button class="icon-btn" type="button" id="next-month" aria-label="Наступний місяць">▶️</button>
+      <div class="pill" role="group" aria-label="Месяц">
+        <button class="icon-btn" type="button" id="prev-month" aria-label="Предыдущий месяц">◀️</button>
+        <button class="month-btn" type="button" id="month-btn" aria-haspopup="dialog" aria-expanded="false"><span aria-hidden="true">🗓️</span><span id="month-label">Ноябрь 2026</span></button>
+        <button class="icon-btn" type="button" id="next-month" aria-label="Следующий месяц">▶️</button>
       </div>
-      <button class="icon-btn theme-btn" type="button" id="theme" aria-label="Увімкнути темну тему">🌙</button>
+      <div class="pill">
+        <select class="cur-select" id="currency" aria-label="Валюта"><option value="PLN">zł PLN</option><option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="UAH">₴ UAH</option></select>
+      </div>
+      <button class="theme-btn" type="button" id="theme" aria-label="Включить тёмную тему">🌙</button>
     </div>
   </div>
 </header>
@@ -204,103 +294,133 @@ fieldset.field { border: 0; padding: 0; margin: 0; min-width: 0; }
   <div class="grid">
     <aside class="side">
       <section class="card" aria-labelledby="budget-title">
-        <div class="card__head"><h2 id="budget-title">🎯 Бюджет на місяць</h2><span class="card__hint" id="month-label"></span></div>
-        <div class="budget__amounts">
-          <span class="budget__spent num" id="b-spent">0,00 zł</span>
-          <span class="budget__of num" id="b-of">ліміт не задано</span>
+        <div class="card__head"><h2 id="budget-title">🎯 Бюджет на месяц</h2><span class="hint" id="budget-month"></span></div>
+        <div class="budget__big">
+          <span class="coin coin--lg" aria-hidden="true"><span class="coin__in"><span class="coin__face" data-sym>zł</span><span class="coin__face coin__face--back" data-sym>zł</span></span></span>
+          <div><div class="budget__spent num" id="b-spent">0,00 zł</div><div class="budget__of num" id="b-of">лимит не задан</div></div>
         </div>
-        <div class="bar" id="bar" role="progressbar" aria-label="Витрачено від бюджету" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar__fill" id="bar-fill"></div></div>
-        <p class="budget__status" id="b-status" aria-live="polite">Задай ліміт, щоб бачити, скільки ще можна витратити.</p>
-        <form class="budget__form" id="budget-form" novalidate>
-          <label class="sr-only" for="limit">Ліміт на місяць, zł</label>
-          <input class="input num" id="limit" inputmode="decimal" placeholder="Ліміт, напр. 1500" autocomplete="off">
-          <button class="btn" type="submit">Зберегти</button>
+        <div class="bar" id="bar" role="progressbar" aria-label="Потрачено от бюджета" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="bar__fill" id="bar-fill"></div></div>
+        <p class="status" id="b-status" aria-live="polite">Задай лимит, чтобы видеть, сколько ещё можно потратить.</p>
+        <form class="inline-form" id="budget-form" novalidate>
+          <label class="sr-only" for="limit">Лимит на месяц</label>
+          <input class="input num" id="limit" inputmode="decimal" placeholder="Лимит, напр. 1500" autocomplete="off">
+          <button class="btn" type="submit">Сохранить</button>
         </form>
         <p class="error" id="limit-error" role="alert"></p>
       </section>
 
       <section class="card" aria-labelledby="form-title">
-        <div class="card__head"><h2 id="form-title">➕ Нова витрата</h2></div>
+        <div class="card__head"><h2 id="form-title">➕ Новый расход</h2></div>
         <form class="form" id="expense-form" novalidate>
           <div class="field">
-            <label for="amount">Сума</label>
-            <div class="amount-wrap"><input class="input num" id="amount" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-describedby="amount-error"><span aria-hidden="true">zł</span></div>
+            <label for="amount">Сумма</label>
+            <div class="amount" id="amount-wrap">
+              <input class="input num" id="amount" inputmode="decimal" placeholder="0,00" autocomplete="off" aria-describedby="amount-error">
+              <span class="coin" aria-hidden="true"><span class="coin__in"><span class="coin__face" data-sym>zł</span><span class="coin__face coin__face--back" data-sym>zł</span></span></span>
+            </div>
             <p class="error" id="amount-error"></p>
           </div>
-          <fieldset class="field">
-            <legend>Категорія</legend>
-            <div class="cats" id="cats"></div>
-          </fieldset>
-          <div class="row-2">
-            <div class="field">
-              <label for="date">Дата</label>
-              <input class="input" type="date" id="date" aria-describedby="date-error">
-              <p class="error" id="date-error"></p>
-            </div>
-            <div class="field">
-              <label for="comment">Коментар</label>
-              <input class="input" id="comment" maxlength="80" placeholder="напр. обід у їдальні" autocomplete="off">
+          <fieldset class="field"><legend>Категория</legend><div class="cats" id="cats"></div></fieldset>
+          <div class="field">
+            <span class="sr-only" id="date-label">Дата:</span>
+            <div class="date-row">
+              <button class="date-btn" type="button" id="date-btn" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="date-label date-text date-sub"><span aria-hidden="true">📅</span><span id="date-text">Сегодня</span><span id="date-sub"></span></button>
+              <div class="chips" role="group" aria-label="Быстрый выбор даты">
+                <button class="chip" type="button" data-quick="0">Сегодня</button>
+                <button class="chip" type="button" data-quick="1">Вчера</button>
+                <button class="chip" type="button" data-quick="2">Позавчера</button>
+              </div>
             </div>
           </div>
-          <div class="form__actions">
-            <button class="btn" type="submit" id="submit-btn">Додати витрату</button>
-            <button class="btn btn--ghost" type="button" id="cancel-edit" hidden>Скасувати</button>
+          <div class="field">
+            <label for="comment">Комментарий</label>
+            <input class="input" id="comment" maxlength="80" placeholder="напр. обед в столовой" autocomplete="off">
+          </div>
+          <div class="actions">
+            <button class="btn" type="submit" id="submit-btn">Добавить расход</button>
+            <button class="btn btn--ghost" type="button" id="cancel-edit" hidden>Отмена</button>
           </div>
         </form>
+      </section>
+
+      <section class="card install" id="install-card" aria-labelledby="install-title" hidden>
+        <h2 id="install-title">📲 Установи на телефон</h2>
+        <p class="hint" id="install-text">Приложение откроется с экрана «Домой» и будет работать без интернета.</p>
+        <button class="btn" type="button" id="install-btn" hidden>Установить приложение</button>
+        <ol id="install-ios" hidden><li>Нажми «Поделиться» ⬆️ внизу Safari.</li><li>Выбери «На экран „Домой“».</li><li>Нажми «Добавить».</li></ol>
       </section>
     </aside>
 
     <main class="main" id="main">
-      <section class="stats" aria-label="Підсумки місяця">
-        <div class="stat"><div class="stat__label">💰 Витрачено</div><div class="stat__value num" id="s-total">0,00 zł</div></div>
-        <div class="stat"><div class="stat__label">🟢 Залишок</div><div class="stat__value num" id="s-left">—</div></div>
-        <div class="stat"><div class="stat__label">📅 Середньо за день</div><div class="stat__value num" id="s-avg">0,00 zł</div></div>
-        <div class="stat"><div class="stat__label">🏆 Найбільше на</div><div class="stat__value" id="s-top">—</div></div>
+      <section class="stats" aria-label="Итоги месяца">
+        <div class="card stat"><span class="stat__label">💸 Потрачено</span><div class="stat__row"><span class="coin coin--sm" aria-hidden="true"><span class="coin__in"><span class="coin__face" data-sym>zł</span><span class="coin__face coin__face--back" data-sym>zł</span></span></span><span class="stat__value num" id="s-total">0,00 zł</span></div></div>
+        <div class="card stat"><span class="stat__label">💰 Остаток</span><div class="stat__row"><span class="coin coin--sm" aria-hidden="true"><span class="coin__in" style="animation-delay:-1.7s"><span class="coin__face" data-sym>zł</span><span class="coin__face coin__face--back" data-sym>zł</span></span></span><span class="stat__value num" id="s-left">—</span></div></div>
+        <div class="card stat"><span class="stat__label">📅 В среднем за день</span><span class="stat__value num" id="s-avg">0,00 zł</span></div>
+        <div class="card stat"><span class="stat__label">🏆 Больше всего на</span><span class="stat__value" id="s-top">—</span></div>
+      </section>
+
+      <section class="card" aria-labelledby="heat-title">
+        <div class="card__head"><h2 id="heat-title">🗓️ Календарь трат</h2><span class="hint">Нажми на день, чтобы увидеть его траты</span></div>
+        <div class="heat" id="heat"></div>
       </section>
 
       <div class="charts">
         <section class="card" aria-labelledby="pie-title">
-          <div class="card__head"><h2 id="pie-title">🥧 За категоріями</h2></div>
-          <div class="chart-box"><canvas id="pie" role="img" aria-label="Кругова діаграма витрат за категоріями"></canvas><div class="empty-chart" id="pie-empty" hidden>Немає витрат за цей місяць</div></div>
+          <div class="card__head"><h2 id="pie-title">🥧 По категориям</h2></div>
+          <div class="chart-box"><canvas id="pie" role="img" aria-label="Круговая диаграмма расходов по категориям"></canvas><div class="empty-chart" id="pie-empty" hidden>В этом месяце расходов нет</div></div>
           <ul class="legend" id="legend"></ul>
         </section>
         <section class="card" aria-labelledby="bars-title">
-          <div class="card__head"><h2 id="bars-title">📊 По днях</h2><span class="card__hint num" id="bars-hint"></span></div>
-          <div class="chart-box"><canvas id="bars" role="img" aria-label="Стовпчикова діаграма витрат по днях місяця"></canvas><div class="empty-chart" id="bars-empty" hidden>Немає витрат за цей місяць</div></div>
+          <div class="card__head"><h2 id="bars-title">📊 По дням</h2><span class="hint num" id="bars-hint"></span></div>
+          <div class="chart-box"><canvas id="bars" role="img" aria-label="Столбчатая диаграмма расходов по дням"></canvas><div class="empty-chart" id="bars-empty" hidden>В этом месяце расходов нет</div></div>
         </section>
       </div>
 
       <section class="card" aria-labelledby="list-title">
-        <div class="card__head"><h2 id="list-title">🧾 Витрати</h2><span class="card__hint num" id="list-count"></span></div>
+        <div class="card__head"><h2 id="list-title">🧾 Расходы</h2><span class="hint num" id="list-count"></span></div>
+        <div class="day-filter" id="day-filter" hidden><span id="day-filter-text"></span><button class="chip" type="button" id="day-clear">Показать весь месяц</button></div>
         <ul class="list" id="list"></ul>
         <div class="empty" id="empty" hidden>
-          <b aria-hidden="true">🗒️</b>
-          <p>За цей місяць витрат ще немає. Додай першу у формі або заповни приклад, щоб побачити, як усе працює.</p>
-          <button class="btn btn--ghost" type="button" id="sample">✨ Заповнити прикладом</button>
+          <b aria-hidden="true">🪙</b>
+          <p id="empty-text">В этом месяце расходов пока нет. Добавь первый в форме или заполни пример, чтобы посмотреть, как всё работает.</p>
+          <button class="btn btn--ghost" type="button" id="sample">✨ Заполнить примером</button>
         </div>
       </section>
-      <p class="foot">Дані зберігаються лише у твоєму браузері (localStorage).</p>
+      <p class="foot">Данные хранятся только на этом устройстве (localStorage).</p>
     </main>
   </div>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button type="button" id="toast-undo">Скасувати</button></div>
+<div class="scrim" id="scrim" hidden></div>
+<div class="pop" id="date-pop" role="dialog" aria-modal="true" aria-label="Выбор даты" hidden>
+  <div class="pop__head"><button class="icon-btn" type="button" id="dp-prev" aria-label="Предыдущий месяц">◀️</button><span class="pop__title" id="dp-title"></span><button class="icon-btn" type="button" id="dp-next" aria-label="Следующий месяц">▶️</button></div>
+  <div class="cal" id="dp-grid"></div>
+</div>
+<div class="pop" id="month-pop" role="dialog" aria-modal="true" aria-label="Выбор месяца" hidden>
+  <div class="pop__head"><button class="icon-btn" type="button" id="mp-prev" aria-label="Предыдущий год">◀️</button><span class="pop__title num" id="mp-title"></span><button class="icon-btn" type="button" id="mp-next" aria-label="Следующий год">▶️</button></div>
+  <div class="months" id="mp-grid"></div>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button type="button" id="toast-undo">Отменить</button></div>
+
+<script src="chart.umd.js"></script>
 <script>
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
+  var qa = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   var CATS = [
-    { key: 'food', emoji: '🍔', name: 'Їжа', color: '--c-food' },
+    { key: 'food', emoji: '🍔', name: 'Еда', color: '--c-food' },
     { key: 'transport', emoji: '🚌', name: 'Транспорт', color: '--c-transport' },
-    { key: 'fun', emoji: '🎮', name: 'Розваги', color: '--c-fun' },
-    { key: 'study', emoji: '📚', name: 'Навчання', color: '--c-study' },
-    { key: 'other', emoji: '🛒', name: 'Інше', color: '--c-other' }
+    { key: 'fun', emoji: '🎮', name: 'Развлечения', color: '--c-fun' },
+    { key: 'study', emoji: '📚', name: 'Учёба', color: '--c-study' },
+    { key: 'other', emoji: '🛒', name: 'Другое', color: '--c-other' }
   ];
   var catBy = {}; CATS.forEach(function (c) { catBy[c.key] = c; });
-  var KEY = { exp: 'budzet.expenses.v1', limit: 'budzet.limit.v1', theme: 'budzet.theme.v1' };
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var CUR = { PLN: 'zł', USD: '$', EUR: '€', UAH: '₴' };
+  var KEY = { exp: 'budzet.expenses.v1', limit: 'budzet.limit.v1', theme: 'budzet.theme.v1', cur: 'budzet.currency.v1' };
 
   /* ---------- storage (always guarded) ---------- */
   var store = {
@@ -312,115 +432,197 @@ fieldset.field { border: 0; padding: 0; margin: 0; min-width: 0; }
   expenses = expenses.filter(function (x) { return x && catBy[x.cat] && /^\d{4}-\d{2}-\d{2}$/.test(x.date) && Number.isInteger(x.cents) && x.cents > 0; });
   var limitCents = store.get(KEY.limit, null);
   if (!Number.isInteger(limitCents) || limitCents <= 0) limitCents = null;
+  var currency = store.get(KEY.cur, 'PLN'); if (!CUR[currency]) currency = 'PLN';
   function save() { store.set(KEY.exp, expenses); }
 
-  /* ---------- formatting / parsing ---------- */
-  var money = new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' });
-  var fmt = function (cents) { return money.format(cents / 100); };
-  var dayFmt = new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', weekday: 'short' });
-  var monthFmt = new Intl.DateTimeFormat('uk-UA', { month: 'long', year: 'numeric' });
+  /* ---------- formatting ---------- */
+  var numFmt = new Intl.NumberFormat('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function fmt(c) { return numFmt.format(c / 100) + ' ' + CUR[currency]; }
+  var monthName = new Intl.DateTimeFormat('ru-RU', { month: 'long' });
+  var dayLong = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' });
+  var dayMeta = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', weekday: 'short' });
+  var weekdayLong = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' });
+  var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function todayISO() { return iso(new Date()); }
+  function daysAgoISO(n) { var d = new Date(); d.setDate(d.getDate() - n); return iso(d); }
+  function toDate(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +(p[2] || 1)); }
+  function daysIn(ym) { var p = ym.split('-'); return new Date(+p[0], +p[1], 0).getDate(); }
+  function shiftMonth(ym, by) { var p = ym.split('-'); return iso(new Date(+p[0], +p[1] - 1 + by, 1)).slice(0, 7); }
+  function monthTitle(ym) { return cap(monthName.format(toDate(ym + '-01'))) + ' ' + ym.slice(0, 4); }
+  function firstDow(ym) { return (toDate(ym + '-01').getDay() + 6) % 7; } // Monday first
+  var DOW = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   function parseAmount(raw) {
     var s = String(raw || '').trim().replace(/\s/g, '').replace(',', '.');
     if (!/^\d+(\.\d{1,2})?$/.test(s)) return null;
-    var c = Math.round(parseFloat(s) * 100);
-    return c > 0 ? c : null;
+    var c = Math.round(parseFloat(s) * 100); return c > 0 ? c : null;
   }
-  function pad(n) { return String(n).padStart(2, '0'); }
-  function todayISO() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-  function toDate(iso) { var p = iso.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
-  function daysIn(ym) { var p = ym.split('-'); return new Date(+p[0], +p[1], 0).getDate(); }
-  function shiftMonth(ym, by) { var p = ym.split('-'); var d = new Date(+p[0], +p[1] - 1 + by, 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1); }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
   function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function plural(n, f) { var a = n % 10, b = n % 100; return a === 1 && b !== 11 ? f[0] : a >= 2 && a <= 4 && (b < 10 || b >= 20) ? f[1] : f[2]; }
+
+  /* ---------- currency + coins ---------- */
+  var curSel = $('currency');
+  curSel.value = currency;
+  function paintCoins() { qa('[data-sym]').forEach(function (f) { f.textContent = CUR[currency]; f.style.fontSize = CUR[currency].length > 1 ? 'calc(var(--s) * .34)' : ''; }); }
+  function burst() { if (reduce) return; qa('.coin').forEach(function (c) { c.classList.remove('is-burst'); void c.offsetWidth; c.classList.add('is-burst'); }); }
+  curSel.addEventListener('change', function () { currency = curSel.value; store.set(KEY.cur, currency); paintCoins(); burst(); render(); toast('Валюта: ' + CUR[currency]); });
+  paintCoins();
 
   /* ---------- theme ---------- */
   var themeBtn = $('theme');
-  function currentTheme() {
-    var t = document.documentElement.getAttribute('data-theme');
-    if (t) return t;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  function paintThemeBtn() {
-    var dark = currentTheme() === 'dark';
-    themeBtn.textContent = dark ? '☀️' : '🌙';
-    themeBtn.setAttribute('aria-label', dark ? 'Увімкнути світлу тему' : 'Увімкнути темну тему');
-  }
   var savedTheme = store.get(KEY.theme, null);
   if (savedTheme === 'dark' || savedTheme === 'light') document.documentElement.setAttribute('data-theme', savedTheme);
-  themeBtn.addEventListener('click', function () {
-    var next = currentTheme() === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    store.set(KEY.theme, next);
-    paintThemeBtn(); renderCharts();
-  });
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { paintThemeBtn(); renderCharts(); });
-  new MutationObserver(function () { paintThemeBtn(); renderCharts(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  paintThemeBtn();
+  function curTheme() { return document.documentElement.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
+  function paintTheme() {
+    var dark = curTheme() === 'dark';
+    themeBtn.textContent = dark ? '☀️' : '🌙';
+    themeBtn.setAttribute('aria-label', dark ? 'Включить светлую тему' : 'Включить тёмную тему');
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0b1324' : '#10b981');
+  }
+  themeBtn.addEventListener('click', function () { var n = curTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', n); store.set(KEY.theme, n); });
+  new MutationObserver(function () { paintTheme(); renderCharts(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { paintTheme(); renderCharts(); });
+  paintTheme();
 
-  /* ---------- month filter ---------- */
-  var monthInput = $('month');
-  var month = todayISO().slice(0, 7);
-  monthInput.value = month;
-  function setMonth(ym) { if (!/^\d{4}-\d{2}$/.test(ym)) return; month = ym; monthInput.value = ym; cancelEdit(); render(); }
-  monthInput.addEventListener('change', function () { setMonth(monthInput.value || todayISO().slice(0, 7)); });
+  /* ---------- state ---------- */
+  var month = todayISO().slice(0, 7), dayFilter = null, editingId = null, formDate = todayISO(), lastAdded = null;
+  function setMonth(ym) { month = ym; dayFilter = null; cancelEdit(); render(); }
   $('prev-month').addEventListener('click', function () { setMonth(shiftMonth(month, -1)); });
   $('next-month').addEventListener('click', function () { setMonth(shiftMonth(month, 1)); });
 
-  /* ---------- categories in the form ---------- */
+  /* ---------- popovers ---------- */
+  var openPop = null, popOpener = null;
+  function showPop(pop, opener) {
+    closePop(false);
+    openPop = pop; popOpener = opener;
+    pop.hidden = false; $('scrim').hidden = false;
+    opener.setAttribute('aria-expanded', 'true');
+    if (window.innerWidth > 600) {
+      var r = opener.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+      pop.style.left = Math.min(Math.max(12, r.left), window.innerWidth - w - 12) + 'px';
+      pop.style.top = (r.bottom + 8 + h > window.innerHeight - 12 ? Math.max(12, r.top - h - 8) : r.bottom + 8) + 'px';
+    }
+  }
+  function closePop(restore) {
+    if (!openPop) return;
+    openPop.hidden = true; $('scrim').hidden = true;
+    popOpener.setAttribute('aria-expanded', 'false');
+    if (restore !== false) popOpener.focus();
+    openPop = null;
+  }
+  $('scrim').addEventListener('click', function () { closePop(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openPop) { e.preventDefault(); closePop(); } });
+  window.addEventListener('resize', function () { if (openPop && window.innerWidth > 600) closePop(false); });
+
+  /* ---------- date picker ---------- */
+  var dpMonth = formDate.slice(0, 7);
+  function renderDatePicker(focusISO) {
+    $('dp-title').textContent = monthTitle(dpMonth);
+    var grid = $('dp-grid'); grid.innerHTML = '';
+    DOW.forEach(function (d) { var s = document.createElement('span'); s.className = 'cal__dow'; s.textContent = d; s.setAttribute('aria-hidden', 'true'); grid.appendChild(s); });
+    var spent = {}; expenses.forEach(function (x) { if (x.date.slice(0, 7) === dpMonth) spent[x.date] = true; });
+    for (var i = 0; i < firstDow(dpMonth); i++) { var o = document.createElement('span'); o.className = 'cal__day is-out'; grid.appendChild(o); }
+    var t = todayISO(), want = focusISO || formDate;
+    for (var d = 1; d <= daysIn(dpMonth); d++) {
+      var dISO = dpMonth + '-' + pad(d), b = document.createElement('button');
+      b.type = 'button'; b.className = 'cal__day' + (dISO === t ? ' is-today' : '') + (spent[dISO] ? ' has-spend' : '');
+      b.textContent = d; b.dataset.iso = dISO;
+      b.setAttribute('aria-selected', String(dISO === formDate));
+      b.setAttribute('aria-label', cap(weekdayLong.format(toDate(dISO))) + ', ' + dayLong.format(toDate(dISO)) + (dISO === t ? ', сегодня' : '') + (spent[dISO] ? ', есть расходы' : ''));
+      b.tabIndex = dISO === want ? 0 : -1;
+      grid.appendChild(b);
+    }
+    if (!grid.querySelector('button[tabindex="0"]')) grid.querySelector('button').tabIndex = 0;
+  }
+  $('dp-grid').addEventListener('click', function (e) { var b = e.target.closest('button[data-iso]'); if (!b) return; setFormDate(b.dataset.iso); closePop(); });
+  $('dp-grid').addEventListener('keydown', function (e) {
+    var b = e.target.closest('button[data-iso]'); if (!b) return;
+    var step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key]; if (!step) return;
+    e.preventDefault();
+    var d = toDate(b.dataset.iso); d.setDate(d.getDate() + step);
+    var n = iso(d); dpMonth = n.slice(0, 7);
+    renderDatePicker(n); $('dp-grid').querySelector('[data-iso="' + n + '"]').focus();
+  });
+  $('dp-prev').addEventListener('click', function () { dpMonth = shiftMonth(dpMonth, -1); renderDatePicker(); });
+  $('dp-next').addEventListener('click', function () { dpMonth = shiftMonth(dpMonth, 1); renderDatePicker(); });
+  $('date-btn').addEventListener('click', function () {
+    dpMonth = formDate.slice(0, 7); renderDatePicker();
+    showPop($('date-pop'), $('date-btn'));
+    $('dp-grid').querySelector('button[tabindex="0"]').focus();
+  });
+  function setFormDate(d) {
+    formDate = d;
+    var t = todayISO(), y = daysAgoISO(1);
+    $('date-text').textContent = d === t ? 'Сегодня' : d === y ? 'Вчера' : cap(dayLong.format(toDate(d)));
+    $('date-sub').textContent = d === t || d === y ? dayLong.format(toDate(d)) : cap(weekdayLong.format(toDate(d)));
+    qa('[data-quick]').forEach(function (c) { c.setAttribute('aria-pressed', String(daysAgoISO(+c.dataset.quick) === d)); });
+  }
+  qa('[data-quick]').forEach(function (c) { c.addEventListener('click', function () { setFormDate(daysAgoISO(+c.dataset.quick)); }); });
+  setFormDate(formDate);
+
+  /* ---------- month picker ---------- */
+  var mpYear = +month.slice(0, 4);
+  function renderMonthPicker() {
+    $('mp-title').textContent = mpYear;
+    var g = $('mp-grid'); g.innerHTML = '';
+    for (var m = 1; m <= 12; m++) {
+      var ym = mpYear + '-' + pad(m), b = document.createElement('button');
+      b.type = 'button'; b.dataset.ym = ym; b.textContent = monthName.format(toDate(ym + '-01'));
+      if (ym === month) b.setAttribute('aria-current', 'true');
+      g.appendChild(b);
+    }
+  }
+  $('month-btn').addEventListener('click', function () { mpYear = +month.slice(0, 4); renderMonthPicker(); showPop($('month-pop'), $('month-btn')); ($('mp-grid').querySelector('[aria-current]') || $('mp-grid').firstChild).focus(); });
+  $('mp-grid').addEventListener('click', function (e) { var b = e.target.closest('button[data-ym]'); if (!b) return; closePop(); setMonth(b.dataset.ym); });
+  $('mp-prev').addEventListener('click', function () { mpYear--; renderMonthPicker(); });
+  $('mp-next').addEventListener('click', function () { mpYear++; renderMonthPicker(); });
+
+  /* ---------- categories ---------- */
   $('cats').innerHTML = CATS.map(function (c, i) {
     return '<input type="radio" name="cat" id="cat-' + c.key + '" value="' + c.key + '"' + (i === 0 ? ' checked' : '') + '>' +
       '<label for="cat-' + c.key + '"><b aria-hidden="true">' + c.emoji + '</b><span>' + c.name + '</span></label>';
   }).join('');
 
-  /* ---------- add / edit form ---------- */
-  var form = $('expense-form'), amountEl = $('amount'), dateEl = $('date'), commentEl = $('comment');
-  var editingId = null;
-  dateEl.value = todayISO();
-  function setErr(input, errEl, msg) {
-    $(errEl).textContent = msg;
-    if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
-    return !msg;
-  }
-  amountEl.addEventListener('input', function () { if (amountEl.getAttribute('aria-invalid')) setErr(amountEl, 'amount-error', parseAmount(amountEl.value) ? '' : $('amount-error').textContent); });
+  /* ---------- add / edit ---------- */
+  var form = $('expense-form'), amountEl = $('amount'), commentEl = $('comment'), typingT;
+  function setErr(input, id, msg) { $(id).textContent = msg; if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid'); return !msg; }
+  amountEl.addEventListener('input', function () {
+    $('amount-wrap').classList.add('is-typing'); clearTimeout(typingT);
+    typingT = setTimeout(function () { $('amount-wrap').classList.remove('is-typing'); }, 900);
+    if (amountEl.getAttribute('aria-invalid') && parseAmount(amountEl.value)) setErr(amountEl, 'amount-error', '');
+  });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var cents = parseAmount(amountEl.value);
-    var okA = setErr(amountEl, 'amount-error', !amountEl.value.trim() ? 'Введи суму.' : !cents ? 'Сума має бути числом більше 0, напр. 12,50.' : cents > 10000000 ? 'Занадто велика сума.' : '');
-    var okD = setErr(dateEl, 'date-error', /^\d{4}-\d{2}-\d{2}$/.test(dateEl.value) ? '' : 'Вибери дату.');
-    if (!okA) { amountEl.focus(); return; }
-    if (!okD) { dateEl.focus(); return; }
-    var cat = form.querySelector('input[name="cat"]:checked').value;
-    var data = { cents: cents, cat: cat, date: dateEl.value, comment: commentEl.value.trim() };
+    var c = parseAmount(amountEl.value);
+    if (!setErr(amountEl, 'amount-error', !amountEl.value.trim() ? 'Введи сумму.' : !c ? 'Сумма должна быть числом больше 0, напр. 12,50.' : c > 10000000 ? 'Слишком большая сумма.' : '')) { amountEl.focus(); return; }
+    var data = { cents: c, cat: form.querySelector('input[name="cat"]:checked').value, date: formDate, comment: commentEl.value.trim() };
     if (editingId) {
-      var x = expenses.find(function (it) { return it.id === editingId; });
-      if (x) Object.assign(x, data);
-      toast('Зміни збережено ✅');
-      editingId = null;
+      var x = expenses.find(function (it) { return it.id === editingId; }); if (x) Object.assign(x, data);
+      lastAdded = editingId; editingId = null; toast('Изменения сохранены ✅');
     } else {
-      expenses.push(Object.assign({ id: uid(), created: Date.now() }, data));
-      toast(catBy[cat].emoji + ' Додано ' + fmt(cents));
+      var item = Object.assign({ id: uid(), created: Date.now() }, data);
+      expenses.push(item); lastAdded = item.id;
+      toast(catBy[data.cat].emoji + ' Добавлено ' + fmt(c));
     }
-    save();
-    var ym = data.date.slice(0, 7);
-    resetForm(data.date);
-    if (ym !== month) setMonth(ym); else render();
-    amountEl.focus();
+    save(); burst();
+    if (data.date.slice(0, 7) !== month) { month = data.date.slice(0, 7); dayFilter = null; }
+    resetForm(data.date); render(); amountEl.focus();
   });
   function resetForm(keepDate) {
-    amountEl.value = ''; commentEl.value = '';
-    dateEl.value = keepDate || todayISO();
-    setErr(amountEl, 'amount-error', ''); setErr(dateEl, 'date-error', '');
-    $('form-title').textContent = '➕ Нова витрата'; $('form-title').classList.remove('form-title-edit');
-    $('submit-btn').textContent = 'Додати витрату'; $('cancel-edit').hidden = true;
+    amountEl.value = ''; commentEl.value = ''; setErr(amountEl, 'amount-error', '');
+    setFormDate(keepDate || todayISO());
+    $('form-title').textContent = '➕ Новый расход'; $('form-title').classList.remove('edit-title');
+    $('submit-btn').textContent = 'Добавить расход'; $('cancel-edit').hidden = true;
   }
   function startEdit(id) {
     var x = expenses.find(function (it) { return it.id === id; }); if (!x) return;
     editingId = id;
     amountEl.value = (x.cents / 100).toFixed(2).replace('.', ',');
-    $('cat-' + x.cat).checked = true;
-    dateEl.value = x.date; commentEl.value = x.comment || '';
-    $('form-title').textContent = '✏️ Редагувати витрату'; $('form-title').classList.add('form-title-edit');
-    $('submit-btn').textContent = 'Зберегти зміни'; $('cancel-edit').hidden = false;
+    $('cat-' + x.cat).checked = true; setFormDate(x.date); commentEl.value = x.comment || '';
+    $('form-title').textContent = '✏️ Изменить расход'; $('form-title').classList.add('edit-title');
+    $('submit-btn').textContent = 'Сохранить изменения'; $('cancel-edit').hidden = false;
     renderList();
     form.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
     amountEl.focus({ preventScroll: true });
@@ -433,162 +635,198 @@ fieldset.field { border: 0; padding: 0; margin: 0; min-width: 0; }
   if (limitCents) limitEl.value = (limitCents / 100).toFixed(2).replace('.', ',');
   $('budget-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    if (!limitEl.value.trim()) { limitCents = null; store.set(KEY.limit, null); setErr(limitEl, 'limit-error', ''); render(); toast('Ліміт прибрано'); return; }
+    if (!limitEl.value.trim()) { limitCents = null; store.set(KEY.limit, null); setErr(limitEl, 'limit-error', ''); render(); toast('Лимит убран'); return; }
     var c = parseAmount(limitEl.value);
-    if (!setErr(limitEl, 'limit-error', c ? '' : 'Ліміт має бути числом більше 0, напр. 1500.')) { limitEl.focus(); return; }
-    limitCents = c; store.set(KEY.limit, c);
-    limitEl.value = (c / 100).toFixed(2).replace('.', ',');
-    render(); toast('🎯 Ліміт: ' + fmt(c));
+    if (!setErr(limitEl, 'limit-error', c ? '' : 'Лимит должен быть числом больше 0, напр. 1500.')) { limitEl.focus(); return; }
+    limitCents = c; store.set(KEY.limit, c); limitEl.value = (c / 100).toFixed(2).replace('.', ',');
+    render(); toast('🎯 Лимит: ' + fmt(c));
   });
 
-  /* ---------- delete with undo ---------- */
-  var toastTimer, undoFn = null;
+  /* ---------- toast + delete ---------- */
+  var toastT, undoFn = null;
   function toast(text, undo) {
-    $('toast-text').textContent = text;
-    undoFn = undo || null;
-    $('toast-undo').hidden = !undo;
-    $('toast').classList.add('is-on');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { $('toast').classList.remove('is-on'); undoFn = null; }, undo ? 6000 : 2600);
+    $('toast-text').textContent = text; undoFn = undo || null; $('toast-undo').hidden = !undo;
+    $('toast').classList.add('is-on'); clearTimeout(toastT);
+    toastT = setTimeout(function () { $('toast').classList.remove('is-on'); undoFn = null; }, undo ? 6000 : 2600);
   }
   $('toast-undo').addEventListener('click', function () { if (undoFn) undoFn(); $('toast').classList.remove('is-on'); undoFn = null; });
   function remove(id) {
     var i = expenses.findIndex(function (it) { return it.id === id; }); if (i < 0) return;
-    var removed = expenses.splice(i, 1)[0];
+    var r = expenses.splice(i, 1)[0];
     if (editingId === id) { editingId = null; resetForm(); }
     save(); render();
-    toast('🗑️ Видалено ' + fmt(removed.cents), function () { expenses.splice(i, 0, removed); save(); render(); });
+    toast('🗑️ Удалено ' + fmt(r.cents), function () { expenses.splice(i, 0, r); save(); render(); });
   }
 
-  /* ---------- sample data ---------- */
+  /* ---------- sample ---------- */
   $('sample').addEventListener('click', function () {
     var max = daysIn(month);
-    var rows = [['food', 2350, 'обід у їдальні'], ['transport', 11000, 'проїзний на місяць'], ['study', 4599, 'підручник'], ['food', 6720, 'продукти Biedronka'],
-                ['fun', 3200, 'кіно з друзями'], ['food', 1890, 'кава й круасан'], ['other', 2499, 'побутова хімія'], ['fun', 5900, 'гра у Steam'], ['food', 4380, 'піца']];
+    var rows = [['food', 2350, 'обед в столовой'], ['transport', 11000, 'проездной на месяц'], ['study', 4599, 'учебник'], ['food', 6720, 'продукты в Biedronka'],
+      ['fun', 3200, 'кино с друзьями'], ['food', 1890, 'кофе и круассан'], ['other', 2499, 'бытовая химия'], ['fun', 5900, 'игра в Steam'], ['food', 4380, 'пицца']];
     rows.forEach(function (r, i) {
       var d = Math.max(1, Math.min(max, Math.round((i + 1) * max / (rows.length + 1))));
-      expenses.push({ id: uid(), created: Date.now() + i, cents: r[1], cat: r[0], date: month + '-' + pad(d), comment: r[2] + ' (приклад)' });
+      expenses.push({ id: uid(), created: Date.now() + i, cents: r[1], cat: r[0], date: month + '-' + pad(d), comment: r[2] + ' (пример)' });
     });
     if (!limitCents) { limitCents = 120000; store.set(KEY.limit, limitCents); limitEl.value = '1200,00'; }
-    save(); render(); toast('✨ Додано 9 прикладів. Їх можна редагувати або видалити.');
+    save(); dayFilter = null; burst(); render(); toast('✨ Добавлено 9 примеров. Их можно изменить или удалить.');
   });
 
-  /* ---------- rendering ---------- */
+  /* ---------- render ---------- */
   function monthItems() { return expenses.filter(function (x) { return x.date.slice(0, 7) === month; }); }
+  function sumByCat(items) { var o = {}; items.forEach(function (x) { o[x.cat] = (o[x.cat] || 0) + x.cents; }); return o; }
 
-  function renderBudget(items, total) {
-    $('month-label').textContent = monthFmt.format(toDate(month + '-01'));
+  function renderBudget(total) {
+    $('month-label').textContent = monthTitle(month);
+    $('budget-month').textContent = monthTitle(month);
     $('b-spent').textContent = fmt(total);
-    var bar = $('bar'), fill = $('bar-fill'), st = $('b-status');
+    var bar = $('bar'), st = $('b-status');
     if (!limitCents) {
-      $('b-of').textContent = 'ліміт не задано';
-      fill.style.width = '0%'; bar.classList.remove('is-danger'); bar.setAttribute('aria-valuenow', '0');
-      st.textContent = 'Задай ліміт, щоб бачити, скільки ще можна витратити.'; st.classList.remove('is-danger');
-      return;
+      $('b-of').textContent = 'лимит не задан'; $('bar-fill').style.width = '0%'; bar.classList.remove('is-danger'); bar.setAttribute('aria-valuenow', '0');
+      st.textContent = 'Задай лимит, чтобы видеть, сколько ещё можно потратить.'; st.classList.remove('is-danger'); return;
     }
     var pct = total / limitCents * 100, danger = pct > 80;
-    $('b-of').textContent = 'з ' + fmt(limitCents);
-    fill.style.width = Math.min(100, pct).toFixed(1) + '%';
+    $('b-of').textContent = 'из ' + fmt(limitCents);
+    $('bar-fill').style.width = Math.min(100, pct).toFixed(1) + '%';
     bar.classList.toggle('is-danger', danger);
     bar.setAttribute('aria-valuenow', String(Math.round(Math.min(100, pct))));
-    bar.setAttribute('aria-valuetext', Math.round(pct) + '% бюджету');
+    bar.setAttribute('aria-valuetext', Math.round(pct) + '% бюджета');
     st.classList.toggle('is-danger', danger);
-    st.textContent = pct > 100 ? '⚠️ Бюджет перевищено на ' + fmt(total - limitCents) + ' (' + Math.round(pct) + '%)'
-      : danger ? '⚠️ Витрачено ' + Math.round(pct) + '%. Залишилось ' + fmt(limitCents - total) + '.'
-      : 'Витрачено ' + Math.round(pct) + '%. Залишилось ' + fmt(limitCents - total) + '.';
+    st.textContent = pct > 100 ? '⚠️ Бюджет превышен на ' + fmt(total - limitCents) + ' (' + Math.round(pct) + '%)'
+      : danger ? '⚠️ Потрачено ' + Math.round(pct) + '%. Осталось ' + fmt(limitCents - total) + '.'
+      : 'Потрачено ' + Math.round(pct) + '%. Осталось ' + fmt(limitCents - total) + '.';
   }
 
   function renderStats(items, total) {
     $('s-total').textContent = fmt(total);
-    var left = $('s-left');
-    left.classList.remove('is-good', 'is-bad');
-    if (limitCents) { left.textContent = fmt(limitCents - total); left.classList.add(limitCents - total < 0 ? 'is-bad' : 'is-good'); }
-    else left.textContent = '—';
-    var isCur = month === todayISO().slice(0, 7);
-    var days = isCur ? new Date().getDate() : daysIn(month);
-    var future = month > todayISO().slice(0, 7);
-    $('s-avg').textContent = future || !items.length ? fmt(0) : fmt(Math.round(total / days));
-    var byCat = sumByCat(items), top = null;
-    CATS.forEach(function (c) { if (byCat[c.key] && (!top || byCat[c.key] > byCat[top])) top = c.key; });
+    var left = $('s-left'); left.classList.remove('is-good', 'is-bad');
+    if (limitCents) { left.textContent = fmt(limitCents - total); left.classList.add(limitCents - total < 0 ? 'is-bad' : 'is-good'); } else left.textContent = '—';
+    var t = todayISO().slice(0, 7), days = month === t ? new Date().getDate() : daysIn(month);
+    $('s-avg').textContent = month > t || !items.length ? fmt(0) : fmt(Math.round(total / days));
+    var by = sumByCat(items), top = null;
+    CATS.forEach(function (c) { if (by[c.key] && (!top || by[c.key] > by[top])) top = c.key; });
     $('s-top').textContent = top ? catBy[top].emoji + ' ' + catBy[top].name : '—';
   }
 
-  function sumByCat(items) { var o = {}; items.forEach(function (x) { o[x.cat] = (o[x.cat] || 0) + x.cents; }); return o; }
+  function renderHeat(items) {
+    var g = $('heat'); g.innerHTML = '';
+    DOW.forEach(function (d) { var s = document.createElement('span'); s.className = 'heat__dow'; s.textContent = d; s.setAttribute('aria-hidden', 'true'); g.appendChild(s); });
+    var per = {}; items.forEach(function (x) { per[x.date] = (per[x.date] || 0) + x.cents; });
+    var max = 0; Object.keys(per).forEach(function (k) { max = Math.max(max, per[k]); });
+    for (var i = 0; i < firstDow(month); i++) { var o = document.createElement('span'); o.className = 'heat__day is-out'; g.appendChild(o); }
+    var t = todayISO();
+    for (var d = 1; d <= daysIn(month); d++) {
+      var dISO = month + '-' + pad(d), v = per[dISO] || 0, lvl = v ? 0.2 + 0.8 * v / max : 0;
+      var b = document.createElement('button'); b.type = 'button';
+      b.className = 'heat__day' + (dISO === t ? ' is-today' : '') + (lvl > 0.62 ? ' is-hot' : '');
+      b.style.setProperty('--lvl', lvl.toFixed(2)); b.dataset.iso = dISO;
+      b.setAttribute('aria-pressed', String(dayFilter === dISO));
+      b.setAttribute('aria-label', dayLong.format(toDate(dISO)) + ': ' + (v ? fmt(v) : 'без расходов'));
+      b.innerHTML = '<span class="heat__n"></span><span class="heat__sum num"></span>';
+      b.children[0].textContent = d; b.children[1].textContent = v ? numFmt.format(v / 100).replace(/,00$/, '') : '';
+      g.appendChild(b);
+    }
+  }
+  $('heat').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-iso]'); if (!b) return;
+    dayFilter = dayFilter === b.dataset.iso ? null : b.dataset.iso;
+    if (dayFilter && !editingId) setFormDate(dayFilter);
+    renderHeat(monthItems()); renderList();
+  });
+  $('day-clear').addEventListener('click', function () { dayFilter = null; renderHeat(monthItems()); renderList(); });
 
   function renderList() {
-    var items = monthItems().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.created || 0) - (a.created || 0); });
+    var items = monthItems();
+    if (dayFilter) items = items.filter(function (x) { return x.date === dayFilter; });
+    items.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : (b.created || 0) - (a.created || 0); });
+    $('day-filter').hidden = !dayFilter;
+    if (dayFilter) $('day-filter-text').textContent = '📍 ' + cap(dayLong.format(toDate(dayFilter))) + ': ' + fmt(items.reduce(function (s, x) { return s + x.cents; }, 0));
     var list = $('list');
-    $('empty').hidden = items.length > 0;
-    list.hidden = !items.length;
-    $('list-count').textContent = items.length ? items.length + ' ' + plural(items.length, ['запис', 'записи', 'записів']) : '';
+    $('empty').hidden = items.length > 0; list.hidden = !items.length;
+    $('sample').hidden = !!dayFilter;
+    $('empty-text').textContent = dayFilter ? 'В этот день расходов нет.' : 'В этом месяце расходов пока нет. Добавь первый в форме или заполни пример, чтобы посмотреть, как всё работает.';
+    $('list-count').textContent = items.length ? items.length + ' ' + plural(items.length, ['запись', 'записи', 'записей']) : '';
     list.innerHTML = '';
     items.forEach(function (x) {
-      var c = catBy[x.cat];
-      var li = document.createElement('li');
-      li.className = 'item' + (x.id === editingId ? ' is-editing' : '');
+      var c = catBy[x.cat], li = document.createElement('li');
+      li.className = 'item' + (x.id === editingId ? ' is-editing' : '') + (x.id === lastAdded ? ' is-new' : '');
       li.style.setProperty('--cat', 'var(' + c.color + ')');
-      li.innerHTML = '<div class="item__icon" aria-hidden="true"></div><div class="item__main"><div class="item__title"></div><div class="item__meta"></div></div>' +
-        '<div class="item__amount num"></div><div class="item__actions"><button class="icon-btn" type="button" data-act="edit">✏️</button><button class="icon-btn" type="button" data-act="del">🗑️</button></div>';
+      li.innerHTML = '<div class="item__icon" aria-hidden="true"></div><div class="item__main"><div class="item__title"></div><div class="item__meta"></div></div><div class="item__amount num"></div>' +
+        '<div class="item__actions"><button class="icon-btn" type="button" data-act="edit">✏️</button><button class="icon-btn" type="button" data-act="del">🗑️</button></div>';
       li.querySelector('.item__icon').textContent = c.emoji;
       li.querySelector('.item__title').textContent = x.comment || c.name;
-      li.querySelector('.item__meta').textContent = c.name + ' · ' + dayFmt.format(toDate(x.date));
+      li.querySelector('.item__meta').textContent = c.name + ' · ' + dayMeta.format(toDate(x.date));
       li.querySelector('.item__amount').textContent = '−' + fmt(x.cents);
       var label = (x.comment || c.name) + ', ' + fmt(x.cents);
       var eb = li.querySelector('[data-act="edit"]'), db = li.querySelector('[data-act="del"]');
-      eb.setAttribute('aria-label', 'Редагувати: ' + label); db.setAttribute('aria-label', 'Видалити: ' + label);
+      eb.setAttribute('aria-label', 'Изменить: ' + label); db.setAttribute('aria-label', 'Удалить: ' + label);
       eb.addEventListener('click', function () { startEdit(x.id); });
       db.addEventListener('click', function () { remove(x.id); });
       list.appendChild(li);
     });
+    lastAdded = null;
   }
-  function plural(n, f) { var a = n % 10, b = n % 100; return a === 1 && b !== 11 ? f[0] : a >= 2 && a <= 4 && (b < 10 || b >= 20) ? f[1] : f[2]; }
 
-  /* ---------- charts ---------- */
   var pie = null, bars = null, chartsOK = typeof window.Chart === 'function';
   function renderCharts() {
-    var items = monthItems(), byCat = sumByCat(items), total = items.reduce(function (s, x) { return s + x.cents; }, 0);
-    var fg = cssVar('--fg'), muted = cssVar('--muted'), line = cssVar('--line'), surface = cssVar('--surface'), accent = cssVar('--accent');
-    var used = CATS.filter(function (c) { return byCat[c.key]; });
-    // legend (works even if Chart.js failed to load)
-    $('legend').innerHTML = '';
-    used.sort(function (a, b) { return byCat[b.key] - byCat[a.key]; }).forEach(function (c) {
+    var items = monthItems(), by = sumByCat(items), total = items.reduce(function (s, x) { return s + x.cents; }, 0);
+    var used = CATS.filter(function (c) { return by[c.key]; }).sort(function (a, b) { return by[b.key] - by[a.key]; });
+    var lg = $('legend'); lg.innerHTML = '';
+    used.forEach(function (c) {
       var li = document.createElement('li');
-      li.innerHTML = '<span aria-hidden="true"></span><span></span><span class="pct num"></span><span class="amt num"></span>';
-      li.children[0].textContent = c.emoji; li.children[1].textContent = c.name;
-      li.children[2].textContent = Math.round(byCat[c.key] / total * 100) + '%'; li.children[3].textContent = fmt(byCat[c.key]);
-      $('legend').appendChild(li);
+      li.innerHTML = '<i></i><span aria-hidden="true"></span><span></span><span class="pct num"></span><span class="amt num"></span>';
+      li.children[0].style.background = 'var(' + c.color + ')'; li.children[1].textContent = c.emoji; li.children[2].textContent = c.name;
+      li.children[3].textContent = Math.round(by[c.key] / total * 100) + '%'; li.children[4].textContent = fmt(by[c.key]);
+      lg.appendChild(li);
     });
     var empty = !items.length;
-    $('pie-empty').hidden = !empty && chartsOK; $('bars-empty').hidden = !empty && chartsOK;
-    if (!chartsOK) { $('pie-empty').textContent = $('bars-empty').textContent = 'Діаграми не завантажилися. Перевір підключення до інтернету.'; }
-    $('pie').hidden = empty || !chartsOK; $('bars').hidden = empty || !chartsOK;
+    $('pie-empty').hidden = $('bars-empty').hidden = !empty && chartsOK;
+    if (!chartsOK) $('pie-empty').textContent = $('bars-empty').textContent = 'Диаграммы не загрузились.';
+    $('pie').hidden = $('bars').hidden = empty || !chartsOK;
     var n = daysIn(month), daily = new Array(n).fill(0);
     items.forEach(function (x) { daily[+x.date.slice(8) - 1] += x.cents; });
-    var maxDay = Math.max.apply(null, daily), maxIdx = daily.indexOf(maxDay);
-    $('bars-hint').textContent = items.length ? 'Найбільше: ' + (maxIdx + 1) + ' число, ' + fmt(maxDay) : '';
+    var mx = Math.max.apply(null, daily), mi = daily.indexOf(mx);
+    $('bars-hint').textContent = items.length ? 'Максимум: ' + (mi + 1) + ' число, ' + fmt(mx) : '';
     if (!chartsOK || empty) return;
-    Chart.defaults.font.family = cssVar('--font') || 'Inter, system-ui, sans-serif';
-    Chart.defaults.color = muted;
-    var anim = reduce ? false : { duration: 500 };
-    var pieData = { labels: used.map(function (c) { return c.emoji + ' ' + c.name; }), datasets: [{ data: used.map(function (c) { return byCat[c.key] / 100; }), backgroundColor: used.map(function (c) { return cssVar(c.color); }), borderColor: surface, borderWidth: 3, hoverOffset: 6 }] };
-    var tip = { callbacks: { label: function (ctx) { return ' ' + money.format(ctx.parsed.y !== undefined && ctx.chart.config.type === 'bar' ? ctx.parsed.y : ctx.parsed); } }, backgroundColor: fg, titleColor: surface, bodyColor: surface, padding: 10, cornerRadius: 10 };
-    if (pie) { pie.data = pieData; pie.options.animation = anim; pie.options.plugins.tooltip = tip; pie.update(); }
-    else pie = new Chart($('pie'), { type: 'doughnut', data: pieData, options: { animation: anim, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { display: false }, tooltip: tip } } });
-    var barData = { labels: daily.map(function (_, i) { return String(i + 1); }), datasets: [{ data: daily.map(function (c) { return c / 100; }), backgroundColor: accent, borderRadius: 6, maxBarThickness: 18 }] };
-    var scales = {
-      x: { grid: { display: false }, ticks: { color: muted, autoSkip: true, maxRotation: 0, autoSkipPadding: 6 }, border: { color: line } },
-      y: { beginAtZero: true, grid: { color: line }, border: { display: false }, ticks: { color: muted, maxTicksLimit: 5, callback: function (v) { return v + ' zł'; } } }
-    };
-    var barTip = Object.assign({}, tip, { callbacks: { title: function (it) { return it[0].label + ' ' + monthFmt.format(toDate(month + '-01')).split(' ')[0]; }, label: function (ctx) { return ' ' + money.format(ctx.parsed.y); } } });
-    if (bars) { bars.data = barData; bars.options.scales = scales; bars.options.animation = anim; bars.options.plugins.tooltip = barTip; bars.update(); }
-    else bars = new Chart($('bars'), { type: 'bar', data: barData, options: { animation: anim, maintainAspectRatio: false, scales: scales, plugins: { legend: { display: false }, tooltip: barTip } } });
+    var fg = cssVar('--fg'), muted = cssVar('--muted'), line = cssVar('--line'), card = cssVar('--card-solid'), acc = cssVar('--accent'), acc2 = cssVar('--accent-2');
+    Chart.defaults.font.family = 'Inter, system-ui, sans-serif'; Chart.defaults.color = muted;
+    var anim = reduce ? false : { duration: 600, easing: 'easeOutQuart' };
+    var tip = { backgroundColor: fg, titleColor: card, bodyColor: card, padding: 10, cornerRadius: 12, displayColors: false,
+      callbacks: { label: function (ctx) { return ' ' + fmt(Math.round((ctx.chart.config.type === 'bar' ? ctx.parsed.y : ctx.parsed) * 100)); } } };
+    var pd = { labels: used.map(function (c) { return c.emoji + ' ' + c.name; }), datasets: [{ data: used.map(function (c) { return by[c.key] / 100; }), backgroundColor: used.map(function (c) { return cssVar(c.color); }), borderColor: card, borderWidth: 4, borderRadius: 8, hoverOffset: 8 }] };
+    if (pie) { pie.data = pd; pie.options.plugins.tooltip = tip; pie.update(); }
+    else pie = new Chart($('pie'), { type: 'doughnut', data: pd, options: { animation: anim, maintainAspectRatio: false, cutout: '66%', plugins: { legend: { display: false }, tooltip: tip } } });
+    var grad = $('bars').getContext('2d').createLinearGradient(0, 0, 0, 230); grad.addColorStop(0, acc); grad.addColorStop(1, acc2);
+    var bd = { labels: daily.map(function (_, i) { return String(i + 1); }), datasets: [{ data: daily.map(function (c) { return c / 100; }), backgroundColor: grad, borderRadius: 8, maxBarThickness: 16 }] };
+    var scales = { x: { grid: { display: false }, border: { color: line }, ticks: { color: muted, maxRotation: 0, autoSkipPadding: 6 } },
+      y: { beginAtZero: true, grid: { color: line }, border: { display: false }, ticks: { color: muted, maxTicksLimit: 5, callback: function (v) { return v + ' ' + CUR[currency]; } } } };
+    var btip = Object.assign({}, tip, { callbacks: { title: function (it) { return dayLong.format(toDate(month + '-' + pad(+it[0].label))); }, label: tip.callbacks.label } });
+    if (bars) { bars.data = bd; bars.options.scales = scales; bars.options.plugins.tooltip = btip; bars.update(); }
+    else bars = new Chart($('bars'), { type: 'bar', data: bd, options: { animation: anim, maintainAspectRatio: false, scales: scales, plugins: { legend: { display: false }, tooltip: btip } } });
   }
 
   function render() {
     var items = monthItems(), total = items.reduce(function (s, x) { return s + x.cents; }, 0);
-    renderBudget(items, total); renderStats(items, total); renderList(); renderCharts();
+    renderBudget(total); renderStats(items, total); renderHeat(items); renderList(); renderCharts();
   }
   render();
+
+  /* ---------- install as an app ---------- */
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var deferred = null;
+  if (!standalone) {
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; $('install-card').hidden = false; $('install-btn').hidden = false; });
+    if (isIOS) { $('install-card').hidden = false; $('install-ios').hidden = false; $('install-text').textContent = 'В Safari это делается в три шага:'; }
+  }
+  $('install-btn').addEventListener('click', function () {
+    if (!deferred) return;
+    deferred.prompt();
+    deferred.userChoice.then(function (r) { if (r.outcome === 'accepted') { $('install-card').hidden = true; toast('📲 Приложение установлено'); } deferred = null; });
+  });
+  window.addEventListener('appinstalled', function () { $('install-card').hidden = true; });
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    try { navigator.serviceWorker.register('sw.js').catch(function () { /* not available in this frame */ }); } catch (e) { /* ignore */ }
+  }
 })();
 </script>
 </body>
