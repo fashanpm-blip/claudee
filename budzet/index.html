@@ -813,6 +813,11 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     renderBudget(total); renderStats(items, total); renderHeat(items); renderList(); renderCharts();
   }
   render();
+  window.addEventListener('app:data', function () {
+    var v = store.get(KEY.exp, []);
+    expenses = (Array.isArray(v) ? v : []).filter(function (x) { return x && catBy[x.cat] && /^\d{4}-\d{2}-\d{2}$/.test(x.date) && Number.isInteger(x.cents) && x.cents > 0; });
+    render();
+  });
 
   /* ---------- install as an app ---------- */
   var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -833,5 +838,6 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   }
 })();
 </script>
+<script src="assistant.js"></script>
 </body>
 </html>

@@ -1102,6 +1102,12 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
     $('t-habits').textContent = habits.filter(function (hb) { return hlog[hb.id + '|' + t]; }).length + '/' + habits.length;
   }
 
+  /* data changed by the assistant */
+  window.addEventListener('app:data', function () {
+    blocks = arr(KEY.blocks); doneMap = obj(KEY.done); tasks = arr(KEY.tasks); subjects = arr(KEY.subjects); sessions = arr(KEY.sessions); habits = arr(KEY.habits); hlog = obj(KEY.hlog);
+    fillSubjectSelects(); renderDay(); renderTasks(); renderHabits(); renderToday(); if (!$('panel-study').hidden) renderStudy();
+  });
+
   /* ---------- boot ---------- */
   fillSubjectSelects();
   $('timer-subject').value = subjects.some(function (s) { return s.id === tm.subjectId; }) ? tm.subjectId : '';
@@ -1113,5 +1119,6 @@ fieldset.field { border: 0; padding: 0; margin: 0; }
   }
 })();
 </script>
+<script src="assistant.js"></script>
 </body>
 </html>
