@@ -80,9 +80,10 @@
     var n = P.review.length; $('rev-badge').hidden = !n; $('rev-badge').textContent = n > 99 ? '99+' : n;
   }
   function bumpStreak() { var t = today(), s = P.streak; if (s.last === t) return; s.count = s.last === yesterday() ? s.count + 1 : 1; s.last = t; }
-  var themeSaved = store.get(THEME, null); if (themeSaved === 'light') document.documentElement.setAttribute('data-theme', 'light');
-  function paintTheme() { var l = document.documentElement.getAttribute('data-theme') === 'light'; $('theme').innerHTML = ic(l ? 'moon' : 'sun'); $('theme').setAttribute('aria-label', l ? 'Тёмная тема' : 'Светлая тема'); document.querySelector('meta[name="theme-color"]').content = l ? '#f5f6fa' : '#0e0f14'; }
-  $('theme').addEventListener('click', function () { var l = document.documentElement.getAttribute('data-theme') !== 'light'; if (l) document.documentElement.setAttribute('data-theme', 'light'); else document.documentElement.removeAttribute('data-theme'); store.set(THEME, l ? 'light' : 'dark'); paintTheme(); });
+  var themeSaved = store.get(THEME, null); if (themeSaved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+  function paintTheme() { var d = isDark(); $('theme').innerHTML = ic(d ? 'sun' : 'moon'); $('theme').setAttribute('aria-label', d ? 'Светлая тема' : 'Тёмная тема'); document.querySelector('meta[name="theme-color"]').content = d ? '#0f0e1a' : '#f5f3ff'; }
+  $('theme').addEventListener('click', function () { var d = !isDark(); if (d) document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme'); store.set(THEME, d ? 'dark' : 'light'); paintTheme(); });
   paintTheme();
 
   /* ---------- router ---------- */
@@ -97,11 +98,13 @@
     if (h[0] === 'review' && h[1] === 'go') return startReview();
     if (h[0] === 'review') return viewReview();
     if (h[0] === 'ref') return viewRef();
+    if (h[0] === 'words' && h[1] === 'go') return startWords();
     if (h[0] === 'words') return viewWords();
     viewCourse();
   }
   function go(h) { if (location.hash === h) route(); else location.hash = h; }
-  function show(html, nav) { setNav(nav); app.innerHTML = html; window.scrollTo(0, 0); app.focus({ preventScroll: true }); }
+  function lc(li) { return 'var(--l' + (li + 1) + ')'; }
+  function show(html, nav, li) { setNav(nav); app.style.setProperty('--lc', li === undefined ? 'var(--accent)' : lc(li)); app.style.setProperty('--lcd', li === undefined ? '#6d28d9' : 'var(--ld' + (li + 1) + ')'); app.innerHTML = html; window.scrollTo(0, 0); app.focus({ preventScroll: true }); }
   window.addEventListener('hashchange', route);
   // a link to the page we are already on (e.g. «Ещё раз» after a lesson) should still start it again
   document.addEventListener('click', function (e) {
@@ -121,7 +124,7 @@
       '<div class="overall"><span class="meter" aria-hidden="true"><span style="width:' + (done / total * 100) + '%"></span></span><span>' + done + ' из ' + total + ' уроков</span></div></div>' + heroBtn + '</section><div class="levels">';
     C.forEach(function (lv, li) {
       var open = levelOpen(li), passed = P.levels[lv.id] && P.levels[lv.id].passed, dc = levelDoneCount(lv);
-      html += '<section class="card level' + (open ? '' : ' is-locked') + (passed ? ' is-done' : '') + '" aria-labelledby="lv-' + lv.id + '"><div class="level__head"><span class="level__code">' + lv.code + '</span><div><h2 id="lv-' + lv.id + '">' + esc(lv.name) + '</h2><p>' + esc(lv.about) + '</p></div><span class="level__pct">' + (passed ? 'сдан' : open ? dc + '/' + lv.lessons.length : ic('lock', 'i--sm')) + '</span></div><div class="lessons">';
+      html += '<section class="card level' + (open ? '' : ' is-locked') + (passed ? ' is-done' : '') + '" style="--lc:' + lc(li) + '" aria-labelledby="lv-' + lv.id + '"><div class="level__head"><span class="level__code">' + lv.code + '</span><div><h2 id="lv-' + lv.id + '">' + esc(lv.name) + '</h2><p>' + esc(lv.about) + '</p></div><span class="level__pct">' + (passed ? 'сдан' : open ? dc + '/' + lv.lessons.length : ic('lock', 'i--sm')) + '</span></div><div class="level__bar" aria-hidden="true"><span style="width:' + (dc / lv.lessons.length * 100) + '%"></span></div><div class="lessons">';
       lv.lessons.forEach(function (ls, i) {
         var o = lessonOpen(ls.id), d = P.lessons[ls.id], isNext = nx && nx.type === 'lesson' && nx.id === ls.id;
         var label = 'Урок ' + (i + 1) + ': ' + ls.title + (o ? (d && d.done ? ', пройден, звёзд: ' + d.stars : '') : ', закрыт');
@@ -149,9 +152,17 @@
     var x = L[id], ls = x.lesson, open = lessonOpen(id), d = P.lessons[id];
     var html = '<a class="back" href="#/">' + ic('left', 'i--sm') + 'Курс</a><header class="lesson-head"><span class="eyebrow">Уровень ' + x.level.code + ' · урок ' + (x.i + 1) + '</span><h1>' + esc(ls.title) + '</h1><p>' + esc(ls.short) + '</p></header>' +
       '<section class="card theory" aria-label="Теория">' + theoryHTML(ls) + '</section>' +
+      videosHTML(ls) +
       '<p class="section-h" style="margin:22px 0 10px">Слова урока</p><div class="vocab">' + ls.vocab.map(function (v) { return '<div class="word">' + speakBtn(v[0]) + '<div><b>' + esc(v[0]) + '</b><span>' + esc(v[1]) + '</span></div></div>'; }).join('') + '</div>' +
-      '<div class="start-bar">' + (open ? '<a class="btn" href="#/learn/' + id + '">' + ic('play') + (d && d.done ? 'Пройти ещё раз' : 'Начать практику') + '</a>' : '<span class="btn" aria-disabled="true" style="opacity:.5">' + ic('lock') + 'Сначала пройди предыдущий урок</span>') + '</div>';
-    show(html, 'course');
+      '<div class="start-bar"' + (open ? '' : ' style="position:static"') + '>' + (open ? '<a class="btn" href="#/learn/' + id + '">' + ic('play') + (d && d.done ? 'Пройти ещё раз' : 'Начать практику') + '</a>' : '<span class="btn" aria-disabled="true" style="opacity:.5">' + ic('lock') + 'Сначала пройди предыдущий урок</span>') + '</div>';
+    show(html, 'course', x.li);
+  }
+  function videosHTML(ls) {
+    var yt = 'https://www.youtube.com/', h = '<p class="section-h" style="margin:22px 0 10px">Видео по теме</p><div class="videos">';
+    ls.videos.forEach(function (v) { h += '<a class="video" href="' + yt + 'watch?v=' + encodeURIComponent(v[1]) + '" target="_blank" rel="noopener"><span class="video__play">' + ic('play') + '</span><span><b>' + esc(v[0]) + '</b><small>YouTube · на английском, можно включить субтитры</small></span></a>'; });
+    h += '<a class="video video--search" href="' + yt + 'results?search_query=' + encodeURIComponent(ls.yt + ' English grammar') + '" target="_blank" rel="noopener"><span class="video__play">' + ic('search') + '</span><span><b>Ещё видео на английском</b><small>Поиск на YouTube: ' + esc(ls.yt) + '</small></span></a>';
+    h += '<a class="video video--search" href="' + yt + 'results?search_query=' + encodeURIComponent(ls.yt + ' английский объяснение на русском') + '" target="_blank" rel="noopener"><span class="video__play">' + ic('search') + '</span><span><b>Объяснение на русском</b><small>Поиск на YouTube</small></span></a>';
+    return h + '</div>';
   }
 
   /* ---------- practice sessions ---------- */
@@ -166,18 +177,38 @@
     }
     return items;
   }
-  function begin(s) { S = s; S.pos = 0; S.firstTry = {}; S.mistakes = []; S.total = S.queue.length; S.right = 0; document.body.classList.add('is-practice'); setNav(s.mode === 'review' ? 'review' : 'course'); renderTask(); }
+  function begin(s) { S = s; S.pos = 0; S.firstTry = {}; S.mistakes = []; S.total = S.queue.length; S.right = 0; document.body.classList.add('is-practice'); setNav(s.mode === 'review' ? 'review' : s.mode === 'words' ? 'words' : 'course');
+    var li = s.mode === 'lesson' ? L[s.id].li : s.mode === 'test' ? C.findIndex(function (l) { return l.id === s.id; }) : -1;
+    app.style.setProperty('--lc', li >= 0 ? lc(li) : 'var(--accent)'); renderTask(); }
   function startLesson(id) { begin({ mode: 'lesson', id: id, queue: itemsForLesson(id, true), requeue: true }); }
   function startTest(lvId) {
     var lv = C.find(function (l) { return l.id === lvId; }), li = C.indexOf(lv);
     if (!levelOpen(li)) return go('#/');
     var all = []; lv.lessons.forEach(function (ls) { all = all.concat(itemsForLesson(ls.id, false)); });
-    begin({ mode: 'test', id: lvId, queue: shuffle(all).slice(0, 12), requeue: false });
+    begin({ mode: 'test', id: lvId, queue: shuffle(all).slice(0, 15), requeue: false });
   }
   function startReview() {
     var items = P.review.filter(function (r) { return L[r.l] && L[r.l].lesson.tasks[r.i]; }).slice(0, 10).map(function (r) { return { key: r.l + ':' + r.i, lesson: r.l, idx: r.i, task: L[r.l].lesson.tasks[r.i] }; });
     if (!items.length) return go('#/review');
     begin({ mode: 'review', queue: shuffle(items), requeue: true });
+  }
+  /* word trainer: 10 words, trouble words first, three question types */
+  P.words = P.words || {};
+  function allWords() { var a = []; C.forEach(function (lv) { lv.lessons.forEach(function (ls) { ls.vocab.forEach(function (v) { a.push({ en: v[0], ru: v[1], lesson: ls.id }); }); }); }); return a; }
+  function wordPool() { var all = allWords(), learned = all.filter(function (w) { return lessonDone(w.lesson); }); return learned.length >= 8 ? learned : all.slice(0, Math.max(16, learned.length)); }
+  function troubleCount() { return Object.keys(P.words).filter(function (k) { return P.words[k] > 0; }).length; }
+  function startWords() {
+    var pool = wordPool(), all = allWords();
+    var pick = shuffle(pool).sort(function (a, b) { return (P.words[b.en] || 0) - (P.words[a.en] || 0); }).slice(0, 10);
+    var items = pick.map(function (w, i) {
+      var kind = i % 3, others = shuffle(all.filter(function (x) { return x.en !== w.en && x.ru !== w.ru; })).slice(0, 3), t;
+      var typeable = !/[…?!]/.test(w.en);
+      if (kind === 2 && typeable) t = { t: 'input', q: '«' + w.ru + '» по-английски: ___', a: w.en.split(/\s*\/\s*/).concat([w.en]), why: w.en + ' — ' + w.ru };
+      else if (kind === 1) { var o = shuffle([w].concat(others)); t = { t: 'choice', q: 'Как по-английски «' + w.ru + '»?', o: o.map(function (x) { return x.en; }), a: o.indexOf(w), why: w.en + ' — ' + w.ru }; }
+      else { var o2 = shuffle([w].concat(others)); t = { t: 'choice', q: 'Как переводится «' + w.en + '»?', o: o2.map(function (x) { return x.ru; }), a: o2.indexOf(w), why: w.en + ' — ' + w.ru }; }
+      return { key: 'w:' + w.en + ':' + kind, lesson: w.lesson, idx: 'word', word: w.en, task: t };
+    });
+    begin({ mode: 'words', queue: items, requeue: true });
   }
   var KIND = { choice: 'Выбери правильный вариант', input: 'Впиши пропущенное', tr: 'Переведи на английский', order: 'Собери предложение', match: 'Соедини слово и перевод', listen: 'Послушай и выбери, что прозвучало' };
   var cur = null; // {item, sel, tokens, checked}
@@ -185,7 +216,7 @@
     var it = S.queue[S.pos], t = it.task; cur = { item: it, sel: -1, tokens: [], checked: false };
     var pct = S.right / S.total * 100;
     var head = '<div class="p-top"><button class="icon-btn" type="button" id="p-exit" aria-label="Выйти из урока">' + ic('x') + '</button><div class="p-bar" role="progressbar" aria-label="Прогресс" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(pct) + '"><span style="width:' + pct + '%"></span></div><span class="p-count">' + S.right + '/' + S.total + '</span></div>';
-    var body = '<section class="task" aria-labelledby="task-kind"><p class="task__kind" id="task-kind">' + (S.mode === 'test' ? 'Тест · ' : S.mode === 'review' ? 'Повторение · ' : '') + KIND[t.t] + '</p>';
+    var body = '<section class="task" aria-labelledby="task-kind"><p class="task__kind" id="task-kind">' + (S.mode === 'test' ? 'Тест · ' : S.mode === 'review' ? 'Повторение · ' : S.mode === 'words' ? 'Слова · ' : '') + KIND[t.t] + '</p>';
     if (t.t === 'choice' || t.t === 'listen') {
       if (t.t === 'choice') body += '<h2 class="task__q">' + gapQ(t.q) + '</h2>';
       else body += '<div class="listen"><button class="big" type="button" data-say="' + esc(t.say) + '" aria-label="Прослушать ещё раз">' + ic('vol') + '</button><button class="btn btn--ghost btn--sm slow" type="button" data-say="' + esc(t.say) + '" data-slow="1">Медленнее</button></div>';
@@ -264,6 +295,7 @@
     var key = cur.item.key, first = !(key in S.firstTry);
     if (first) S.firstTry[key] = ok;
     if (t.t === 'choice' || t.t === 'listen') app.querySelectorAll('.opt').forEach(function (b) { var i = +b.dataset.i; if (i === t.a) b.classList.add('is-right'); else if (i === cur.sel) b.classList.add('is-wrong'); });
+    if (cur.item.word) { var wk = cur.item.word; if (!ok) P.words[wk] = (P.words[wk] || 0) + 1; else if (first && P.words[wk]) P.words[wk]--; if (!P.words[wk]) delete P.words[wk]; save(); speak(wk); }
     if (ok || t.t === 'match' || !S.requeue) S.right++;
     if (!ok) {
       if (typeof cur.item.idx === 'number' && S.mode !== 'review') addReview(cur.item.lesson, cur.item.idx);
@@ -286,7 +318,7 @@
   function addReview(l, i) { if (!P.review.some(function (r) { return r.l === l && r.i === i; })) { P.review.push({ l: l, i: i, at: Date.now() }); save(); } }
   function exitPractice() {
     if (S && S.pos > 0 && !confirm('Выйти? Прогресс этого занятия не сохранится.')) return;
-    var dest = S && S.mode === 'lesson' ? '#/lesson/' + S.id : S && S.mode === 'review' ? '#/review' : '#/';
+    var dest = S && S.mode === 'lesson' ? '#/lesson/' + S.id : S && S.mode === 'review' ? '#/review' : S && S.mode === 'words' ? '#/words' : '#/';
     S = null; go(dest);
   }
   document.addEventListener('keydown', function (e) {
@@ -322,6 +354,10 @@
       sub = passed ? (C[li + 1] ? 'Открыт уровень ' + C[li + 1].code + ' — ' + C[li + 1].name : 'Это был последний уровень. Ты молодец!') : 'Нужно 80% правильных ответов. Ошибки добавлены в «Повторение».';
       actions = passed && C[li + 1] ? '<a class="btn" href="#/lesson/' + C[li + 1].lessons[0].id + '">Дальше: ' + C[li + 1].code + ic('arrow') + '</a>' : '<a class="btn" href="#/test/' + lv.id + '">' + ic('reset') + 'Пересдать</a>';
       actions += '<a class="btn btn--ghost" href="#/">К курсу</a>';
+    } else if (s.mode === 'words') {
+      xp = firstOk; starsN = acc >= 95 ? 3 : acc >= 80 ? 2 : 1; title = acc >= 80 ? 'Слова повторены!' : 'Хорошая тренировка';
+      var tc = troubleCount(); sub = tc ? 'Трудных слов: ' + tc + '. Они попадутся снова в следующей тренировке.' : 'Трудных слов нет — отлично!';
+      actions = '<a class="btn" href="#/words/go">' + ic('reset') + 'Ещё 10 слов</a><a class="btn btn--ghost" href="#/words">Словарь</a>';
     } else {
       xp = firstOk * 2; title = 'Повторение готово'; sub = P.review.length ? 'Осталось ошибок: ' + P.review.length : 'Все ошибки исправлены!'; starsN = acc >= 95 ? 3 : acc >= 80 ? 2 : 1;
       actions = (P.review.length ? '<a class="btn" href="#/review/go">' + ic('reset') + 'Ещё повторение</a>' : '') + '<a class="btn btn--ghost" href="#/">К курсу</a>';
@@ -332,14 +368,14 @@
       '<div class="r-stats"><div class="r-stat"><b>' + acc + '%</b><span>точность</span></div><div class="r-stat"><b>' + firstOk + '/' + keys.length + '</b><span>с первого раза</span></div><div class="r-stat gold"><b>+' + xp + '</b><span>XP</span></div></div>';
     if (s.mistakes.length) html += '<p class="section-h" style="margin-top:8px">Работа над ошибками</p><ul class="mistakes">' + s.mistakes.map(function (m) { return '<li><div class="q">' + esc(m.q) + '</div><div class="a">' + esc(m.a) + '</div></li>'; }).join('') + '</ul>';
     html += '<div class="r-actions">' + actions + '</div></section>';
-    show(html, s.mode === 'review' ? 'review' : 'course');
+    show(html, s.mode === 'review' ? 'review' : s.mode === 'words' ? 'words' : 'course', s.mode === 'lesson' ? L[s.id].li : s.mode === 'test' ? C.findIndex(function (l) { return l.id === s.id; }) : undefined);
     var b = app.querySelector('.r-actions .btn'); if (b) b.focus({ preventScroll: true });
   }
 
   /* ---------- review ---------- */
   function viewReview() {
     var n = P.review.length;
-    var html = '<header class="page-h"><h1>Повторение</h1><p>Сюда попадают задания, в которых ты ошибся. Ответь правильно — и задание уйдёт из списка.</p></header>';
+    var html = '<header class="page-h"><h1>Повторение</h1><p>Сюда попадают задания, в которых ты ошибся. Ответь правильно — и задание уйдёт из списка.</p></header>' + trainerCard();
     if (!n) html += '<section class="card empty" style="margin-top:18px">' + ic('check') + '<p>Ошибок для повторения нет. Отлично!</p><a class="btn btn--ghost" href="#/">К курсу</a></section>';
     else {
       html += '<section class="card" style="margin-top:18px;display:grid;gap:14px"><p><b style="font-size:28px">' + n + '</b> ' + plural(n, ['задание ждёт', 'задания ждут', 'заданий ждут']) + ' повторения.</p><a class="btn" href="#/review/go">' + ic('play') + 'Начать (до 10 заданий)</a></section>';
@@ -347,6 +383,11 @@
       html += '<p class="section-h" style="margin:22px 0 10px">Где ошибки</p><div class="words">' + Object.keys(by).map(function (id) { return '<a class="word" href="#/lesson/' + id + '" style="text-decoration:none;color:inherit"><div><b>' + esc(L[id].lesson.title) + '</b><span>' + L[id].level.code + ' · ' + by[id] + ' ' + plural(by[id], ['ошибка', 'ошибки', 'ошибок']) + '</span></div></a>'; }).join('') + '</div>';
     }
     show(html, 'review');
+  }
+
+  function trainerCard() {
+    var tc = troubleCount();
+    return '<section class="card trainer" style="margin-top:18px"><div><h2>Тренировка слов</h2><p>10 слов за пару минут: перевод туда и обратно и написание. ' + (tc ? 'Трудных слов: ' + tc + ' — они будут первыми.' : 'Слова из пройденных уроков.') + '</p></div><a class="btn" href="#/words/go">' + ic('play') + 'Тренировать</a></section>';
   }
 
   /* ---------- reference ---------- */
@@ -368,7 +409,7 @@
   function viewWords() {
     var all = []; C.forEach(function (lv) { lv.lessons.forEach(function (ls) { ls.vocab.forEach(function (v) { all.push({ en: v[0], ru: v[1], lv: lv.code, learned: lessonDone(ls.id) }); }); }); });
     var learned = all.filter(function (w) { return w.learned; }).length;
-    var html = '<header class="page-h"><h1>Словарь</h1><p>' + all.length + ' слов и фраз курса · выучено в уроках: ' + learned + '. Нажми на динамик, чтобы услышать произношение.</p></header><label class="search">' + ic('search') + '<span class="sr-only">Поиск слова</span><input id="w-q" type="search" placeholder="Слово по-английски или по-русски" autocomplete="off"></label><div class="words" id="w-list">' +
+    var html = trainerCard() + '<header class="page-h" style="margin-top:22px"><h1>Словарь</h1><p>' + all.length + ' слов и фраз курса · выучено в уроках: ' + learned + '. Нажми на динамик, чтобы услышать произношение.</p></header><label class="search">' + ic('search') + '<span class="sr-only">Поиск слова</span><input id="w-q" type="search" placeholder="Слово по-английски или по-русски" autocomplete="off"></label><div class="words" id="w-list">' +
       all.map(function (w) { return '<div class="word' + (w.learned ? '' : ' is-new') + '" data-text="' + esc((w.en + ' ' + w.ru).toLowerCase()) + '">' + speakBtn(w.en) + '<div><b>' + esc(w.en) + '</b><span>' + esc(w.ru) + ' · ' + w.lv + '</span></div></div>'; }).join('') + '</div><p class="empty" id="w-empty" hidden>Ничего не найдено.</p>';
     show(html, 'words');
     $('w-q').addEventListener('input', function () {
