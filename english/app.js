@@ -107,6 +107,7 @@
     var d = {
       hero: [['orb', 'right:-46px;top:-56px;width:200px;height:200px;--o1:#fbcfe8;--o2:#db2777;--o3:#831843', 0], ['orb', 'left:46%;bottom:-76px;width:124px;height:124px;--o1:#cffafe;--o2:#0891b2;--o3:#164e63', 1.2], ['ring3d', 'left:59%;top:20px;width:72px;height:72px', 0], ['spark', 'left:50%;top:22px', .4], ['spark', 'right:36%;top:64%;scale:.7', 1.4], ['spark', 'left:24px;bottom:18px;scale:.55', 2]],
       world: [['orb', 'right:-40px;top:-58px;width:150px;height:150px', 0], ['ring3d', 'right:172px;top:12px;width:70px;height:70px', 0], ['orb', 'right:84px;bottom:-62px;width:96px;height:96px;--o1:#fff;--o2:rgba(255, 255, 255, .5);--o3:rgba(255, 255, 255, .1)', 1.5], ['spark', 'right:272px;top:26px', .6], ['spark', 'right:44px;top:112px;scale:.6', 1.8]],
+      why: [['orb', 'right:-56px;top:-64px;width:170px;height:170px;--o1:#fef9c3;--o2:#facc15;--o3:#a16207', 0], ['orb', 'right:36%;bottom:-74px;width:120px;height:120px;--o1:#cffafe;--o2:#06b6d4;--o3:#155e75', 1.2], ['ring3d', 'right:7%;bottom:9%;width:62px;height:62px', 0], ['spark', 'right:42%;top:9%', .3], ['spark', 'right:5%;top:44%;scale:.7', 1.2], ['spark', 'right:47%;bottom:14%;scale:.6', 2]],
       banner: [['orb', 'right:-34px;top:-50px;width:156px;height:156px', 0], ['ring3d', 'right:96px;bottom:-22px;width:92px;height:92px', 0], ['spark', 'right:210px;top:24px', .5], ['spark', 'right:44px;bottom:22px;scale:.6', 1.6]]
     }[kind] || [];
     return '<div class="deco" aria-hidden="true">' + d.map(function (x, i) { return '<span class="' + x[0] + ' d' + (i + 1) + '" style="' + x[1] + ';animation-delay:' + x[2] + 's"></span>'; }).join('') + '</div>';
@@ -172,8 +173,21 @@
     app.innerHTML = html; window.scrollTo(0, 0); app.focus({ preventScroll: true }); animateIn();
   }
   /* entrance stagger + numbers that count up */
+  var revealObs = null;
   function animateIn() {
-    app.querySelectorAll('.rise').forEach(function (el, i) { el.style.setProperty('--d', Math.min(i, 16) * 55 + 'ms'); });
+    if (revealObs) { revealObs.disconnect(); revealObs = null; }
+    var vh = window.innerHeight, late = [];
+    app.querySelectorAll('.rise').forEach(function (el, i) {
+      el.style.setProperty('--d', Math.min(i, 16) * 55 + 'ms');
+      if (!reduce && window.IntersectionObserver && el.getBoundingClientRect().top > vh * .94) { el.classList.add('rv'); late.push(el); }
+    });
+    if (late.length) {
+      revealObs = new IntersectionObserver(function (entries) {
+        var n = 0;
+        entries.forEach(function (en) { if (!en.isIntersecting) return; en.target.style.setProperty('--d', Math.min(n++, 8) * 70 + 'ms'); en.target.classList.remove('rv'); revealObs.unobserve(en.target); });
+      }, { rootMargin: '0px 0px -6% 0px' });
+      late.forEach(function (el) { revealObs.observe(el); });
+    }
     app.querySelectorAll('[data-count]').forEach(function (el) {
       var to = +el.dataset.count, pre = el.dataset.pre || '', suf = el.dataset.suf || '';
       if (reduce || !to) { el.textContent = pre + to + suf; return; }
@@ -182,9 +196,13 @@
     });
   }
   /* cards lean towards the mouse in 3D */
-  var tiltEl = null;
+  var tiltEl = null, heroEl = null;
   document.addEventListener('pointermove', function (e) {
     if (reduce || e.pointerType !== 'mouse') return;
+    var hz = e.target.closest ? e.target.closest('.hero4') : null;
+    if (heroEl && heroEl !== hz) { heroEl.style.removeProperty('--px'); heroEl.style.removeProperty('--py'); }
+    heroEl = hz;
+    if (hz) { var hr = hz.getBoundingClientRect(); hz.style.setProperty('--px', ((e.clientX - hr.left) / hr.width - .5).toFixed(3)); hz.style.setProperty('--py', ((e.clientY - hr.top) / hr.height - .5).toFixed(3)); }
     var el = e.target.closest ? e.target.closest('[data-tilt]') : null;
     if (tiltEl && tiltEl !== el) { tiltEl.style.transform = ''; tiltEl = null; }
     if (!el || el.classList.contains('is-locked')) return;
@@ -194,6 +212,7 @@
   });
   document.addEventListener('mouseleave', function () { if (tiltEl) { tiltEl.style.transform = ''; tiltEl = null; } });
   function route() {
+    if (bookCtl) { bookCtl.destroy(); bookCtl = null; }
     var h = location.hash.replace(/^#\/?/, '').split('/');
     document.body.classList.remove('is-practice'); S = null; cardState = null; if (canSpeak) speechSynthesis.cancel();
     if (h[0] === 'u' && U[h[1]]) {
@@ -220,6 +239,7 @@
   function go(h) { if (location.hash === h) route(); else location.hash = h; }
   window.addEventListener('hashchange', route);
   document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-why-open]')) { if (bookCtl) bookCtl.goTo(0); return; }
     var a = e.target.closest('a[href^="#/"]'); if (!a || e.defaultPrevented) return;
     if (a.dataset.locked === '1') { e.preventDefault(); toast(a.dataset.msg || 'Сначала пройди предыдущий раздел'); return; }
     if (a.getAttribute('href') === location.hash) { e.preventDefault(); route(); }
@@ -238,9 +258,11 @@
     else if (nx.type === 'test') { var lv = BOOK.find(function (l) { return l.id === nx.id; }); hero = { e: 'Финал уровня ' + lv.code, t: 'Тест уровня ' + lv.code, p: 'Все разделы пройдены. Сдай тест на 80%, чтобы открыть следующий уровень.', b: '<a class="btn" href="#/test/' + lv.id + '">' + ic('trophy') + 'Начать тест</a>' }; hIc = 'trophy'; hPal = GOLD; }
     else { var x = U[nx.id]; hero = { e: (done || unitDoneCount(nx.id) ? 'Продолжаем' : 'Твой первый шаг') + ' · ' + x.level.code + ', раздел ' + (x.i + 1), t: x.unit.title + ' — ' + x.unit.en, p: 'Следующий шаг: ' + nx.step.n + ' (' + nx.step.d(x.unit) + ')', b: '<a class="btn" href="#/u/' + nx.id + '/' + nx.step.k + '">' + (done ? 'Продолжить' : 'Начать') + ic('arrow') + '</a>' }; hIc = x.unit.icon; hPal = unitPal(nx.id); }
     var html = '<section class="hero hero4 rise" data-bg="#5b21b6">' + deco('hero') +
-      '<div class="hero4__main"><span class="eyebrow">' + esc(greet() + '! ' + hero.e) + '</span><h1>' + esc(hero.t) + '</h1><p>' + esc(hero.p) + '</p><div class="hero__cta">' + hero.b + '</div></div>' +
+      '<div class="hero4__main"><span class="eyebrow">' + esc(greet() + '! ' + hero.e) + '</span><h1>' + esc(hero.t) + '</h1><p>' + esc(hero.p) + '</p><div class="hero__cta">' + hero.b + '<button type="button" class="btn btn--glass" data-why-open>' + ic('book') + 'Зачем английский?</button></div></div>' +
       '<div class="hero4__side">' + i3d(hIc, hPal, 'i3d--xl float') +
       '<div class="goalchip" aria-label="Цель дня: ' + Math.min(tx, GOAL) + ' из ' + GOAL + ' XP">' + ring(tx, GOAL, 54) + '<div><b>' + Math.min(tx, GOAL) + '/' + GOAL + ' XP</b><span>' + (tx >= GOAL ? 'цель дня выполнена!' : 'цель дня') + '</span></div><span class="goalchip__fire" data-bg="#c2410c" title="Дней подряд">' + ic('flame') + streakNow() + '</span></div></div></section>';
+    var fresh = !P.xp, cta = !nx ? '<a class="btn why__cta" href="#/tenses">Тренировать' + ic('arrow') + '</a>' : nx.type === 'test' ? '<a class="btn why__cta" href="#/test/' + nx.id + '">К тесту' + ic('arrow') + '</a>' : '<a class="btn why__cta" href="#/u/' + nx.id + '/' + nx.step.k + '">' + (fresh ? 'Начать курс' : 'Продолжить') + ic('arrow') + '</a>';
+    var top = html; html = '';
     var rv = P.review.length, dc = dueCards().length;
     html += '<div class="quick">' +
       qcard('#/review', 'reset', PAL[9], 'Работа над ошибками', rv ? rv + ' ' + plural(rv, ['задание', 'задания', 'заданий']) + ' ждут' : 'Ошибок нет — красавчик') +
@@ -255,15 +277,172 @@
         (open ? '' : '<p class="world__lock">' + ic('lock', 'i--sm') + 'Откроется, когда сдашь тест уровня ' + BOOK[li - 1].code + '</p>') + '<div class="units">';
       lv.units.forEach(function (u, i) {
         var o = unitOpen(u.id), n = unitDoneCount(u.id), isNext = nx && nx.type === 'unit' && nx.id === u.id;
-        html += '<a class="utile' + (o ? '' : ' is-locked') + (isNext ? ' is-next' : '') + (n === 4 ? ' is-done' : '') + '" data-tilt style="' + palStyle(unitPal(u.id)) + '" href="#/u/' + u.id + '" data-locked="' + (o ? '' : '1') + '"' + (o ? '' : ' aria-disabled="true"') + ' aria-label="Раздел ' + (i + 1) + ': ' + esc(u.title) + (o ? ', шагов пройдено ' + n + ' из 4' : ', закрыт') + '">' +
+        html += '<a class="utile rise' + (o ? '' : ' is-locked') + (isNext ? ' is-next' : '') + (n === 4 ? ' is-done' : '') + '" data-tilt style="' + palStyle(unitPal(u.id)) + '" href="#/u/' + u.id + '" data-locked="' + (o ? '' : '1') + '"' + (o ? '' : ' aria-disabled="true"') + ' aria-label="Раздел ' + (i + 1) + ': ' + esc(u.title) + (o ? ', шагов пройдено ' + n + ' из 4' : ', закрыт') + '">' +
           '<span class="i3d' + (o ? '' : ' is-lock') + '" aria-hidden="true">' + ic(o ? u.icon : 'lock') + '</span>' + (n === 4 ? '<span class="utile__ok" aria-hidden="true">' + ic('check') + '</span>' : '') +
           '<span class="utile__n">Раздел ' + (i + 1) + '</span><span class="utile__t">' + esc(u.title) + '</span><span class="utile__en">' + esc(u.en) + '</span>' +
           '<span class="dots" aria-hidden="true">' + STEPS.map(function (s) { return '<i class="' + (stepDone(u.id, s.k) ? 'on' : '') + '"></i>'; }).join('') + '</span></a>';
       });
       var best = P.levels[lv.id] && P.levels[lv.id].best;
-      html += '<a class="utile utile--test' + (passed ? ' is-passed' : '') + (open ? '' : ' is-locked') + '" data-tilt style="' + palStyle(passed ? PAL[4] : GOLD) + '" href="#/test/' + lv.id + '" data-locked="' + (open ? '' : '1') + '" data-msg="Сначала сдай тест предыдущего уровня"' + (open ? '' : ' aria-disabled="true"') + '><span class="i3d' + (open ? '' : ' is-lock') + '" aria-hidden="true">' + ic(passed ? 'check' : open ? 'trophy' : 'lock') + '</span><span class="utile__n">Тест уровня</span><span class="utile__t">' + (passed ? 'Сдан: ' + best + '%' : open ? (dcnt === lv.units.length ? 'Готов к сдаче' : 'Уже знаешь? Сдай и иди дальше') : 'Откроется позже') + '</span></a></div></section>';
+      html += '<a class="utile utile--test rise' + (passed ? ' is-passed' : '') + (open ? '' : ' is-locked') + '" data-tilt style="' + palStyle(passed ? PAL[4] : GOLD) + '" href="#/test/' + lv.id + '" data-locked="' + (open ? '' : '1') + '" data-msg="Сначала сдай тест предыдущего уровня"' + (open ? '' : ' aria-disabled="true"') + '><span class="i3d' + (open ? '' : ' is-lock') + '" aria-hidden="true">' + ic(passed ? 'check' : open ? 'trophy' : 'lock') + '</span><span class="utile__n">Тест уровня</span><span class="utile__t">' + (passed ? 'Сдан: ' + best + '%' : open ? (dcnt === lv.units.length ? 'Готов к сдаче' : 'Уже знаешь? Сдай и иди дальше') : 'Откроется позже') + '</span></a></div></section>';
     });
-    show(html + '</div>', 'course');
+    html += '</div>';
+    var why = whyHTML(fresh, cta);
+    show(top + (fresh ? why + html : html + why), 'course');
+    initWhy();
+  }
+
+  /* ---------- «Зачем английский»: a 3D book that opens and turns its pages as you scroll ---------- */
+  var bookCtl = null;
+  var WHY = [
+    { k: 'Зачем всё это', t: 'Английский — твой билет в <em>большой мир</em>', p: 'Листай вниз: книга откроется и покажет, что тебе даст этот курс и почему он сработает.' },
+    { k: 'Глава 1', icon: 'target', pal: PAL[1], t: 'Зачем этот <em>курс</em>', p: 'Чтобы ты не просто «знал правила», а заговорил: понимал тексты и речь, писал сообщения и письма, спокойно общался. Только то, что реально нужно, — без воды.' },
+    { k: 'Глава 2', icon: 'layers', pal: PAL[0], t: 'Почему он <em>сработает</em>', p: 'Каждый раздел — 4 шага: слова, текст, грамматика, письмо. Ты сразу применяешь новое, а умное повторение через 1, 3, 7, 14 и 30 дней не даёт забыть.' },
+    { k: 'Глава 3', icon: 'case', pal: GOLD, t: 'Язык <em>бизнеса</em>', p: 'Международные компании ведут переговоры, переписку и созвоны на английском. Хочешь своё дело, клиентов из других стран или работу мечты — начни с английского.' },
+    { k: 'Глава 4', icon: 'plane', pal: PAL[7], t: 'Тебя поймут <em>везде</em>', p: 'Около 1,5 миллиарда человек говорят по-английски. Даже пилоты международных рейсов общаются с диспетчерами на английском. Аэропорт, отель, новые друзья — ты везде свой.', src: 'Число говорящих — по данным Ethnologue' },
+    { k: 'Глава 5', icon: 'globe', pal: PAL[5], t: 'Весь интернет — <em>твой</em>', p: 'Около половины всех сайтов — на английском. Лучшие курсы, видео, статьи и новые технологии часто выходят сначала на нём. Учись у лучших — бесплатно.', src: 'Языки сайтов — по данным W3Techs' },
+    { k: 'Глава 6', icon: 'rocket', pal: PAL[2], t: 'Начни <em>сегодня</em>', p: '«Путь в тысячу ли начинается с первого шага», — говорил Лао-цзы. Один раздел в день — и через месяц ты удивишься, как много понимаешь.' }
+  ];
+  function whyBook(fresh) {
+    var words = ORDER.reduce(function (a, id) { return a + U[id].unit.vocab.length; }, 0);
+    function hand(s) { return '<span class="hand">' + s + '</span>'; }
+    function head(k, t) { return '<span class="pg__k">' + k + '</span><b class="pg__t">' + t + '</b>'; }
+    function face(side, n, inner, cls, inCls) {
+      return '<div class="lf lf--' + side + ' pg pg--' + (side === 'f' ? 'r' : 'l') + (cls ? ' ' + cls : '') + '" data-bg="#fffaf0"><div class="pg__in' + (inCls ? ' ' + inCls : '') + '">' + inner + '</div>' + (n ? '<span class="pg__n">' + n + '</span>' : '') + '</div>';
+    }
+    var memo = [[14, 100, 1], [54, 88, 3], [100, 62, 7], [146, 38, 14], [188, 18, 30]];
+    // left pages (back of leaf k) and right pages (front of leaf k + 1; the last one lies on the page block)
+    var L = [
+      ['<div class="exlib"><small>Ex libris</small><span>Эта книга принадлежит</span><b class="hand">тебе ♥</b><em>Каждый раздел — новая страница твоей истории</em></div>', 'pg--inside', 'pg__in--c'],
+      ['<span class="pg__k">Каждый раздел — 4 шага</span><div class="pg__path">' + STEPS.map(function (s) { return '<div>' + i3d(s.icon, STEPPAL[s.k]) + '<span>' + s.n + '</span></div>'; }).join('') + '</div>' + hand('учишь — и сразу применяешь')],
+      ['<div class="pg__bc">' + i3d('case', GOLD, 'big') + '<div class="bcard"><b>Твоё имя</b><span>Founder &amp; CEO</span><i>English · fluent ✓</i></div></div>' + hand('представь — это ты'), '', 'pg__in--c'],
+      [i3d('globe', PAL[7], 'big') + '<b class="pg__big">1,5 млрд</b><span class="pg__cap">человек в мире говорят по-английски</span>', '', 'pg__in--c'],
+      ['<svg class="pg__donut" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="why-dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#db2777"/></linearGradient></defs><circle cx="50" cy="50" r="38" fill="none" stroke="#ede9fe" stroke-width="13"/><circle cx="50" cy="50" r="38" fill="none" stroke="url(#why-dg)" stroke-width="13" stroke-linecap="round" stroke-dasharray="113 238.8" transform="rotate(-90 50 50)"/></svg><b class="pg__big">≈ 50%</b><span class="pg__cap">всех сайтов в интернете — на английском</span>', '', 'pg__in--c'],
+      ['<div class="pg__quote"><span aria-hidden="true">“</span><b>Границы моего языка — это границы моего мира.</b><em>Людвиг Витгенштейн</em></div>', '', 'pg__in--c']
+    ];
+    var R = [
+      head('Глава 1', 'Зачем этот курс') + '<div class="pg__stats"><div><b>' + ORDER.length + '</b><span>разделов</span></div><div><b>' + words + '</b><span>слов</span></div><div><b>' + TENSES.length + '</b><span>времён</span></div><div><b>' + Object.keys(G).length + '</b><span>уроков грамматики</span></div></div>' + hand('только нужное — без воды!'),
+      head('Глава 2', 'Почему сработает') + '<svg class="pg__memo" viewBox="0 0 200 116" aria-hidden="true"><defs><linearGradient id="why-mg" x1="0" x2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#db2777"/></linearGradient></defs><path d="M14 100C34 98 40 90 54 88S86 70 100 62S132 44 146 38S176 22 188 18" fill="none" stroke="#c4b5fd" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/>' +
+        memo.map(function (m) { return '<circle cx="' + m[0] + '" cy="' + m[1] + '" r="11" fill="url(#why-mg)"/><text x="' + m[0] + '" y="' + (m[1] + 3.6) + '" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">' + m[2] + '</text>'; }).join('') +
+        '<text x="128" y="74" font-size="11" font-weight="700" fill="#6b5d42">дней</text></svg>' + hand('повторил — запомнил надолго'),
+      head('Глава 3', 'Язык бизнеса') + '<ul class="pg__list"><li>переговоры</li><li>письма партнёрам</li><li>созвоны и презентации</li><li>собеседования</li></ul>' + hand('бизнес мирового уровня говорит по-английски'),
+      head('Глава 4', 'Тебя поймут везде') + '<div class="pg__stamps">' + [['London', -9, '#be123c'], ['New York', 7, '#1d4ed8'], ['Sydney', -4, '#047857'], ['Toronto', 9, '#b45309'], ['Dublin', -6, '#7c3aed']].map(function (s) { return '<i style="--r:' + s[1] + 'deg;--c:' + s[2] + '">' + s[0] + '</i>'; }).join('') + '</div>' + hand('весь мир — твой ✈'),
+      head('Глава 5', 'Весь интернет — твой') + '<div class="pg__icons"><span>' + i3d('cap', PAL[0]) + 'курсы</span><span>' + i3d('play', PAL[9]) + 'видео</span><span>' + i3d('bulb', GOLD) + 'наука</span><span>' + i3d('news', PAL[7]) + 'новости</span></div>' + hand('учись у лучших — бесплатно'),
+      head('Глава 6', 'Твоя история начинается здесь') + '<div class="pg__win">' + i3d('trophy', GOLD, 'big') + '</div>' + hand(fresh ? 'Раздел 1 — поехали!' : 'продолжаем, ты молодец!')
+    ];
+    var leaves = '';
+    for (var k = 5; k >= 0; k--) {
+      leaves += '<div class="leaf' + (k ? '' : ' leaf--cover') + '" data-k="' + k + '">' +
+        (k ? face('f', 2 * k - 1, R[k - 1]) : '<div class="lf lf--f bk-cover"><div class="bk-cover__frame"><span class="bk-cover__top">A1 · A2 · B1</span>' + i3d('layers', GOLD, 'big') + '<b class="bk-cover__t">LevelUp<br>English</b><span class="bk-cover__s">Книга твоего английского</span></div><i class="bk-cover__shine"></i></div>') +
+        face('b', k ? 2 * k : 0, L[k][0], L[k][1], L[k][2]) + '</div>';
+    }
+    return '<div class="why__bookwrap" aria-hidden="true" title="Листай страницу — или нажми на книгу"><div class="book"><div class="book__floor"></div><div class="book__body">' +
+      '<i class="bk-back bk-back--r"></i><i class="bk-back bk-back--l"></i>' +
+      '<div class="bk-block bk-block--l"><i class="bk-edge bk-edge--l"></i><i class="bk-edge bk-edge--b"></i><i class="bk-edge bk-edge--t"></i></div>' +
+      '<div class="bk-block bk-block--r"><div class="pg pg--r bk-top" data-bg="#fffaf0"><div class="pg__in">' + R[5] + '</div><span class="pg__n">11</span></div><i class="bk-edge bk-edge--r"></i><i class="bk-edge bk-edge--b"></i><i class="bk-edge bk-edge--t"></i></div>' +
+      '<i class="bk-ribbon"></i><i class="bk-spine"></i>' + leaves + '</div><div class="book__fx"></div></div></div>';
+  }
+  function whyHTML(fresh, cta) {
+    var chs = WHY.map(function (c, s) {
+      return '<div class="why__ch' + (s ? '' : ' is-on') + '" data-s="' + s + '"><span class="why__k">' + (c.icon ? i3d(c.icon, c.pal) : ic('book', 'i--sm')) + esc(c.k) + '</span>' +
+        (s ? '<h3>' + c.t + '</h3>' : '<h2 id="why-h">' + c.t + '</h2>') + '<p>' + esc(c.p) + '</p>' + (c.src ? '<small>' + esc(c.src) + '</small>' : '') +
+        (s ? '' : '<span class="why__hint" aria-hidden="true"><i></i>Листай вниз</span>') + '</div>';
+    }).join('');
+    var dots = WHY.map(function (c, s) { return '<button type="button" data-why-go="' + s + '" aria-label="' + (s ? esc(c.k) + ': ' + c.t.replace(/<[^>]+>/g, '') : 'К началу') + '"' + (s ? '' : ' aria-current="step"') + '></button>'; }).join('');
+    return '<section class="why" id="why" aria-labelledby="why-h" data-s="0"><div class="why__pin"><div class="why__stage" data-bg="#5b21b6">' + deco('why') +
+      '<div class="why__text"><div class="why__chs">' + chs + '</div><div class="why__foot"><div class="why__dots" role="group" aria-label="Главы книги">' + dots + '</div>' + cta + '</div></div>' + whyBook(fresh) + '</div></div></section>';
+  }
+  function initWhy() {
+    var sec = app.querySelector('.why'); if (!sec) return;
+    var pin = sec.querySelector('.why__pin'), bk = sec.querySelector('.book'), body = sec.querySelector('.book__body'), wrap = sec.querySelector('.why__bookwrap'), fx = sec.querySelector('.book__fx');
+    var leaves = [].slice.call(sec.querySelectorAll('.leaf')).sort(function (a, b) { return a.dataset.k - b.dataset.k; });
+    var chs = [].slice.call(sec.querySelectorAll('.why__ch')), dots = [].slice.call(sec.querySelectorAll('[data-why-go]'));
+    var N = leaves.length, SPAN = N + .5, W = 1, T = 1, raf = 0, last = 0, state = 0;
+    var cur = { pos: -.25, enter: 1, mx: 0, my: 0 }, tgt = { pos: -.25, enter: 1, mx: 0, my: 0 };
+    function cl(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+    function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    function geom() {
+      var root = document.documentElement, nav = document.querySelector('.nav');
+      root.style.setProperty('--top-h', Math.round(document.querySelector('.top').getBoundingClientRect().height) + 'px');
+      root.style.setProperty('--nav-h', (nav && getComputedStyle(nav).position === 'fixed' ? Math.round(nav.getBoundingClientRect().height) : 0) + 'px');
+      W = body.offsetWidth || 1; T = W * .075;
+    }
+    function stick() { return parseFloat(getComputedStyle(pin).top) || 0; }
+    function span() { return Math.max(1, sec.offsetHeight - pin.offsetHeight); }
+    function measure() {
+      var r = sec.getBoundingClientRect(), vh = window.innerHeight, s = stick();
+      tgt.pos = -.25 + SPAN * (s - r.top) / span();
+      tgt.enter = cl((vh - r.top) / Math.max(1, vh - s));
+    }
+    function burst(big) {
+      var cols = ['#fde68a', '#fbbf24', '#f9a8d4', '#a5f3fc', '#ffffff', '#c4b5fd'], n = big ? 26 : 12, h = '';
+      for (var i = 0; i < n; i++) {
+        var a = Math.random() * 6.283, d = (big ? 70 : 45) + Math.random() * (big ? 120 : 70);
+        h += '<i style="--x:' + Math.round(Math.cos(a) * d) + 'px;--y:' + Math.round(Math.sin(a) * d - 24) + 'px;--c:' + cols[i % cols.length] + ';--dl:' + (Math.random() * .18).toFixed(2) + 's;--k:' + (.5 + Math.random() * .9).toFixed(2) + '"></i>';
+      }
+      var b = document.createElement('div'); b.className = 'burst'; b.innerHTML = h; fx.appendChild(b);
+      setTimeout(function () { b.remove(); }, 1500);
+    }
+    function setChapter(s) {
+      var fwd = s > state; state = s; sec.dataset.s = s;
+      chs.forEach(function (c, i) { c.classList.toggle('is-on', i === s); c.classList.toggle('is-past', i < s); });
+      dots.forEach(function (d, i) { if (i === s) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current'); });
+      if (fwd && !reduce) burst(s === N);
+    }
+    function render() {
+      var pos = cur.pos, e = 1 - Math.pow(1 - cur.enter, 3), ts = [], k;
+      for (k = 0; k < N; k++) ts.push(ease(cl((pos - k - .2) / .6)));
+      var o = ts[0], drift = cl((pos + .25) / .45), I = [52, 48, -16, .74], C = [18, 27 - 9 * drift, -5, .95], O = [15, 0, 0, 1], q = [];
+      for (k = 0; k < 4; k++) { var c = I[k] + (C[k] - I[k]) * e; q.push(c + (O[k] - c) * o); }
+      body.style.transform = 'translate3d(' + (-W / 2 * (1 - o)).toFixed(1) + 'px,' + ((1 - e) * W * .35).toFixed(1) + 'px,0) scale(' + q[3].toFixed(3) + ') rotateX(' + (q[0] - cur.my * 12).toFixed(2) + 'deg) rotateY(' + (q[1] + cur.mx * 18).toFixed(2) + 'deg) rotateZ(' + q[2].toFixed(2) + 'deg)';
+      bk.style.setProperty('--o', o.toFixed(3)); bk.style.setProperty('--lo', cl((o - .55) / .4).toFixed(3));
+      var d = Math.max(1, W * .006), lift = W * .08;
+      leaves.forEach(function (lf, k) {
+        var t = ts[k], zr = T + (N - k + (k ? 0 : 1)) * d, zl = T + (k + 1) * d, z = zr + (zl - zr) * t + Math.sin(Math.PI * t) * lift;
+        lf.style.transform = 'translateZ(' + z.toFixed(2) + 'px) rotateY(' + (-180 * t).toFixed(2) + 'deg)';
+        lf.style.setProperty('--sh', Math.sin(Math.PI * t).toFixed(3));
+      });
+      var s = Math.max(0, Math.min(N, Math.floor(pos + .5)));
+      if (s !== state) setChapter(s);
+    }
+    function frame(ts) {
+      var dt = last ? Math.min(64, ts - last) : 16, a = 1 - Math.pow(1 - .16, dt / 16.7), done = true; last = ts;
+      ['pos', 'enter', 'mx', 'my'].forEach(function (p) { var dv = tgt[p] - cur[p]; if (Math.abs(dv) > .0006) { cur[p] += dv * a; done = false; } else cur[p] = tgt[p]; });
+      render();
+      if (done) { raf = 0; last = 0; } else raf = requestAnimationFrame(frame);
+    }
+    function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+    function onScroll() { measure(); kick(); }
+    function onResize() { geom(); measure(); kick(); }
+    function goTo(s) {
+      if (reduce) { sec.scrollIntoView(); return; }
+      var top = sec.getBoundingClientRect().top + window.pageYOffset - stick();
+      window.scrollTo({ top: Math.round(top + span() * (s + .25) / SPAN), behavior: 'smooth' });
+    }
+    geom();
+    if (reduce) {
+      // no scroll-driven motion: the book lies open, every chapter is listed, a click turns to the next spread
+      sec.classList.add('why--static'); cur.pos = 1; render();
+      wrap.addEventListener('click', function () { cur.pos = cur.pos >= N ? 1 : cur.pos + 1; render(); });
+      bookCtl = { goTo: goTo, state: function () { return state; }, destroy: function () {} };
+      return;
+    }
+    wrap.addEventListener('click', function () { goTo(state < N ? state + 1 : 0); });
+    wrap.addEventListener('pointermove', function (ev) { if (ev.pointerType !== 'mouse') return; var r = wrap.getBoundingClientRect(); tgt.mx = cl((ev.clientX - r.left) / r.width) - .5; tgt.my = cl((ev.clientY - r.top) / r.height) - .5; kick(); });
+    wrap.addEventListener('pointerleave', function () { tgt.mx = tgt.my = 0; kick(); });
+    sec.addEventListener('click', function (ev) { var b = ev.target.closest('[data-why-go]'); if (b) goTo(+b.dataset.whyGo); });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    measure(); cur.pos = tgt.pos; cur.enter = tgt.enter; render();
+    bookCtl = { goTo: goTo, state: function () { return state; }, destroy: function () { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); if (raf) cancelAnimationFrame(raf); raf = 0; } };
+  }
+  /* XP chip in the header jumps and counts up after a finished practice */
+  function xpBump(n) {
+    var s = $('st-xp'); if (!s || reduce || !n) return;
+    s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump');
+    var f = document.createElement('span'); f.className = 'xp-fly'; f.setAttribute('aria-hidden', 'true'); f.textContent = '+' + n + ' XP'; s.appendChild(f);
+    setTimeout(function () { f.remove(); }, 1500);
+    var el = s.children[1], to = P.xp, from = Math.max(0, to - n), t0 = null;
+    requestAnimationFrame(function step(ts) { if (t0 === null) t0 = ts; var p = Math.min(1, (ts - t0) / 900); el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); });
   }
 
   /* ---------- unit ---------- */
@@ -639,7 +818,7 @@
     if (r.extra) html += r.extra;
     if (r.mistakes && r.mistakes.length) html += '<p class="section-h" style="margin-top:6px">Работа над ошибками</p><ul class="mistakes">' + r.mistakes.map(function (m) { return '<li><div class="q">' + esc(m.q) + '</div><div class="a">' + esc(m.a) + '</div></li>'; }).join('') + '</ul>';
     html += '<p class="quote">' + ic('bulb', 'i--sm') + esc(pick(QUOTES)) + '</p><div class="r-actions">' + (r.actions || '') + '</div></section>';
-    show(html, 'course', r.li);
+    show(html, 'course', r.li); xpBump(r.xp);
     var b = app.querySelector('.r-actions .btn'); if (b) b.focus({ preventScroll: true });
   }
 
@@ -809,5 +988,5 @@
   }
 
   paintStats(); route();
-  window.__lu = { norm: norm, matches: matches, P: function () { return P; }, task: function () { return cur && S ? cur.item.task : null; }, card: function () { return cardState; } }; // for tests
+  window.__lu = { norm: norm, matches: matches, P: function () { return P; }, task: function () { return cur && S ? cur.item.task : null; }, card: function () { return cardState; }, why: function () { return bookCtl ? bookCtl.state() : null; } }; // for tests
 })();
