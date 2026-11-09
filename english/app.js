@@ -97,7 +97,7 @@
     { g: 'linear-gradient(135deg, #6d28d9 0%, #a21caf 52%, #be185d 100%)', bg: '#6d28d9', s: 'rgba(162, 28, 175, .7)', o: ['#fef9c3', '#facc15', '#a16207'] },
     { g: 'linear-gradient(135deg, #1d4ed8 0%, #0369a1 52%, #0e7490 100%)', bg: '#1d4ed8', s: 'rgba(3, 105, 161, .7)', o: ['#fce7f3', '#ec4899', '#9d174d'] },
     { g: 'linear-gradient(135deg, #9a3412 0%, #be123c 52%, #9d174d 100%)', bg: '#9a3412', s: 'rgba(190, 18, 60, .7)', o: ['#cffafe', '#06b6d4', '#155e75'] },
-    { g: 'linear-gradient(135deg, #047857 0%, #0f766e 52%, #155e75 100%)', bg: '#047857', s: 'rgba(15, 118, 110, .7)', o: ['#fef9c3', '#facc15', '#a16207'] }
+    { g: 'linear-gradient(135deg, #065f46 0%, #0f766e 52%, #155e75 100%)', bg: '#065f46', s: 'rgba(15, 118, 110, .7)', o: ['#fef9c3', '#facc15', '#a16207'] }
   ];
   var STEPPAL = { words: PAL[1], text: PAL[7], grammar: PAL[0], write: PAL[2] };
   function palStyle(p) { return '--c1:' + p[0] + ';--c2:' + p[1] + ';--c3:' + p[2]; }
@@ -347,7 +347,7 @@
     var leaves = '';
     for (var k = 5; k >= 0; k--) {
       leaves += '<div class="leaf' + (k ? '' : ' leaf--cover') + '" data-k="' + k + '">' +
-        (k ? face('f', 2 * k - 1, R[k - 1]) : '<div class="lf lf--f bk-cover" data-bg="#1e3a8a"><div class="bk-cover__frame"><span class="bk-cover__top">A1 · A2 · B1</span>' + i3d('layers', GOLD, 'big') + '<b class="bk-cover__t">LevelUp<br>English</b><span class="bk-cover__s">Книга твоего английского</span></div><i class="bk-cover__shine"></i></div>') +
+        (k ? face('f', 2 * k - 1, R[k - 1]) : '<div class="lf lf--f bk-cover" data-bg="#1e3a8a"><div class="bk-cover__frame"><span class="bk-cover__top">' + BOOK[0].code + ' — ' + BOOK[BOOK.length - 1].code + '</span>' + i3d('layers', GOLD, 'big') + '<b class="bk-cover__t">LevelUp<br>English</b><span class="bk-cover__s">Книга твоего английского</span></div><i class="bk-cover__shine"></i></div>') +
         face('b', k ? 2 * k : 0, L[k][0], L[k][1], L[k][2]) + '</div>';
     }
     return '<div class="why__bookwrap" aria-hidden="true" title="Листай страницу — или нажми на книгу"><div class="book"><div class="book__floor"></div><div class="book__body">' +
@@ -501,9 +501,13 @@
       '<button class="btn btn--ghost btn--sm" type="button" id="tr-toggle" aria-pressed="false">' + ic('ru') + 'Перевод</button></div></div>' +
       '<p class="hint">Выделенные слова — из этого раздела: наведи или нажми, чтобы увидеть перевод.</p><div class="reading__text" id="reading">' +
       t.en.map(function (s, i) { return '<p class="sent"><span class="sent__en">' + highlight(s, u.vocab) + '</span><span class="sent__ru">' + esc(t.ru[i] || '') + '</span></p>'; }).join('') +
-      '</div></section><div class="start-bar"><a class="btn" href="#/learn/' + id + '/text">' + ic('play') + 'Ответить на вопросы (' + u.quiz.length + ')</a></div>';
+      '</div></section>' + (u.more ? '<section class="card reading bonus rise"><div class="reading__bar"><div><span class="eyebrow">Бонус · читаем ещё по теме</span><h2>' + esc(u.more.title) + '</h2></div><div class="chip-row">' +
+      (canSpeak ? '<button class="btn btn--ghost btn--sm" type="button" data-say="' + esc(u.more.en.join(' ')) + '">' + ic('vol') + 'Слушать</button>' : '') + '<button class="btn btn--ghost btn--sm" type="button" id="tr-toggle2" aria-pressed="false">' + ic('ru') + 'Перевод</button></div></div>' +
+      '<div class="reading__text" id="reading2">' + u.more.en.map(function (s2, i) { return '<p class="sent"><span class="sent__en">' + highlight(s2, u.vocab) + '</span><span class="sent__ru">' + esc(u.more.ru[i] || '') + '</span></p>'; }).join('') + '</div>' +
+      '<div class="bonus__go"><a class="btn btn--ghost" href="#/learn/' + id + '/more">' + ic('play') + 'Вопросы к бонусному тексту (' + u.more.quiz.length + ')</a>' + (P.bonus[id] !== undefined ? '<span class="muted">Лучший результат: ' + P.bonus[id] + '%</span>' : '<span class="muted">+XP · по желанию</span>') + '</div></section>' : '') +
+      '<div class="start-bar"><a class="btn" href="#/learn/' + id + '/text">' + ic('play') + 'Ответить на вопросы (' + u.quiz.length + ')</a></div>';
     show(html, 'course', x.li);
-    $('tr-toggle').addEventListener('click', function () { var on = this.getAttribute('aria-pressed') !== 'true'; this.setAttribute('aria-pressed', String(on)); $('reading').classList.toggle('show-ru', on); });
+    [['tr-toggle', 'reading'], ['tr-toggle2', 'reading2']].forEach(function (p) { var b = $(p[0]); if (b) b.addEventListener('click', function () { var on = this.getAttribute('aria-pressed') !== 'true'; this.setAttribute('aria-pressed', String(on)); $(p[1]).classList.toggle('show-ru', on); }); });
   }
   function theoryHTML(ls) {
     var h = '';
@@ -973,7 +977,24 @@
       html += '<details class="ref"><summary><span class="code">' + U[id].level.code + '</span>' + esc(U[id].unit.title) + ' <span class="muted" style="font-weight:600">· ' + byUnit[id].length + ' слов</span>' + ic('right') + '</summary><div class="body"><div class="words">' +
         byUnit[id].map(function (k) { var v = map[k] || [k, '']; var bx = P.cards[k].box; return '<div class="word">' + speakBtn(k) + '<div><b>' + esc(k) + '</b><span>' + esc(v[1]) + '</span></div><span class="lvl" role="img" title="Уровень запоминания: ' + Math.min(bx, 5) + ' из 5" aria-label="Уровень запоминания: ' + Math.min(bx, 5) + ' из 5">' + [1, 2, 3, 4, 5].map(function (n) { return '<i' + (n <= bx ? ' class="on"' : '') + '></i>'; }).join('') + '</span></div>'; }).join('') + '</div></div></details>';
     });
+    html += '<section class="card dict" aria-labelledby="dict-h"><div class="dict__head"><h2 id="dict-h">' + i3d('book', PAL[7], 'i3d--sm') + 'Словарь курса · ' + dictAll().length + ' слов</h2><p class="hint">Все слова курса с примерами и озвучкой. Нажми «+», чтобы добавить слово в карточки.</p>' +
+      '<label class="search">' + ic('search') + '<span class="sr-only">Поиск по словарю</span><input id="dict-q" type="search" placeholder="Слово по-английски или по-русски" autocomplete="off"></label>' +
+      '<div class="chip-row" id="dict-lv" role="group" aria-label="Уровень"><button class="chip is-on" type="button" data-lv="" aria-pressed="true">Все</button>' + BOOK.map(function (lv) { return '<button class="chip" type="button" data-lv="' + lv.code + '" aria-pressed="false">' + lv.code + '</button>'; }).join('') + '</div></div>' +
+      '<ul class="dict__list" id="dict-list" aria-live="polite"></ul><p class="hint" id="dict-more"></p></section>';
     show(html, 'words');
+    $('dict-q').addEventListener('input', paintDict);
+    $('dict-lv').addEventListener('click', function (e) { var b = e.target.closest('[data-lv]'); if (!b) return; this.querySelectorAll('.chip').forEach(function (c) { c.classList.toggle('is-on', c === b); c.setAttribute('aria-pressed', String(c === b)); }); paintDict(); });
+    $('dict-list').addEventListener('click', function (e) { var b = e.target.closest('[data-add]'); if (!b) return; var d = dictAll().find(function (x) { return x.w === b.dataset.add; }); if (!d || P.cards[d.w]) return; P.cards[d.w] = { box: 1, due: dayKey(0), unit: d.id }; save(); toast('«' + d.w + '» — в карточках. Повторим сегодня!'); paintDict(); });
+    paintDict();
+  }
+  var dictCache = null;
+  function dictAll() { if (!dictCache) { dictCache = []; ORDER.forEach(function (id) { U[id].unit.vocab.forEach(function (v) { dictCache.push({ w: v[0], ru: v[1], ex: v[2], exru: v[3], lv: U[id].level.code, id: id, t: (v[0] + ' ' + v[1]).toLowerCase() }); }); }); } return dictCache; }
+  function paintDict() {
+    if (!$('dict-list')) return;
+    var q = $('dict-q').value.trim().toLowerCase(), on = app.querySelector('#dict-lv .is-on'), lvc = on ? on.dataset.lv : '';
+    var rows = dictAll().filter(function (d) { return (!lvc || d.lv === lvc) && (!q || d.t.indexOf(q) >= 0); }), shown = rows.slice(0, 60);
+    $('dict-list').innerHTML = shown.map(function (d) { return '<li class="dict__row">' + speakBtn(d.w) + '<div class="dict__main"><div class="dict__top"><b lang="en">' + esc(d.w) + '</b><span class="dict__lv">' + d.lv + '</span></div><span class="dict__ru">' + esc(d.ru) + '</span><p class="dict__ex"><span lang="en">' + esc(d.ex) + '</span> — ' + esc(d.exru) + '</p></div>' + (P.cards[d.w] ? '<span class="dict__in" role="img" aria-label="Уже в карточках" title="Уже в карточках">' + ic('check') + '</span>' : '<button class="dict__add" type="button" data-add="' + esc(d.w) + '" aria-label="Добавить «' + esc(d.w) + '» в карточки">+</button>') + '</li>'; }).join('') || '<li class="dict__none">Ничего не найдено — попробуй другое слово.</li>';
+    $('dict-more').textContent = rows.length > shown.length ? 'Показаны первые ' + shown.length + ' из ' + rows.length + ' — уточни поиск или выбери уровень.' : rows.length ? 'Найдено: ' + rows.length : '';
   }
   function startCards() {
     var keys = dueCards(); if (!keys.length) keys = Object.keys(P.cards).sort(function (a, b) { return P.cards[a].box - P.cards[b].box; });

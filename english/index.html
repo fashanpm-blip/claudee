@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LevelUp English</title>
-<meta name="description" content="Курс английского как учебник: 30 тематических разделов A1–B1 со словами, текстами, грамматикой и письмом, все 13 времён, карточки слов и награды.">
+<meta name="description" content="Курс английского как учебник: 40 тематических разделов A1–B2 со словами, текстами, грамматикой и письмом, все 13 времён, диалоги, аудирование, словарь, карточки слов и награды.">
 <meta name="theme-color" content="#f5f3ff">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -614,8 +614,8 @@ body { background: transparent !important; font-family: var(--font); color: var(
 @keyframes bob { 50% { translate: 0 -3px; } }
 .utile__ok { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: linear-gradient(145deg, #34d399, #059669); box-shadow: inset 0 1px 1px rgba(255, 255, 255, .5), 0 3px 0 #065f46; }
 .utile__ok .i { width: 16px; height: 16px; stroke-width: 3; }
-.world .utile.is-locked { background: rgba(255, 255, 255, .13); color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .28); }
-.world .utile.is-locked .utile__n, .world .utile.is-locked .utile__t, .world .utile.is-locked .utile__en { color: rgba(255, 255, 255, .92); }
+.world .utile.is-locked { background: rgba(255, 255, 255, .08); color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .28); }
+.world .utile.is-locked .utile__n, .world .utile.is-locked .utile__t, .world .utile.is-locked .utile__en { color: #fff; }
 .world .utile.is-locked .dots i { background: rgba(255, 255, 255, .22); }
 .world .utile--test:not(.is-locked) { box-shadow: inset 0 0 0 2px #f59e0b, 0 6px 0 rgba(0, 0, 0, .14), 0 22px 34px -20px rgba(0, 0, 0, .55); }
 .world .utile--test:not(.is-locked) .utile__n { color: #92400e; }
@@ -1169,6 +1169,29 @@ mark { background: linear-gradient(transparent 52%, color-mix(in srgb, #f472b6 4
 .ai__clean { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--ok); }
 .ai__improved { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 16px; background: var(--ok-soft); } .ai__improved p { flex: 1; font-weight: 600; }
 .ai .tip { display: flex; gap: 10px; align-items: flex-start; }
+/* ================= v6c · bonus texts, dictionary ================= */
+.bonus { margin-top: 18px; background: linear-gradient(var(--card), var(--card)) padding-box, linear-gradient(135deg, #fbbf24, #f472b6, #a78bfa) border-box; border: 2px solid transparent; }
+.bonus .eyebrow { color: #a16207; }
+:root[data-theme="dark"] .bonus .eyebrow { color: #fde68a; }
+.bonus__go { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+.dict { display: grid; gap: 12px; margin-top: 22px; }
+.dict__head { display: grid; gap: 10px; }
+.dict__head h2 { display: flex; align-items: center; gap: 10px; font: 700 19px var(--display); }
+.dict__head .chip { cursor: pointer; border: 1.5px solid var(--line-2); background: var(--card); }
+.dict__head .chip.is-on { background: var(--grad); color: #fff; border-color: transparent; }
+.dict__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.dict__row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 16px; background: var(--soft); animation: rise .4s var(--ease) backwards; }
+.dict__main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.dict__top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dict__top b { font-size: 16px; }
+.dict__lv { padding: 1px 7px; border-radius: 999px; font: 700 10.5px var(--display); background: var(--card); color: var(--accent-ink); }
+.dict__ru { font-weight: 700; color: var(--fg); }
+.dict__ex { font-size: 13px; color: var(--muted); }
+.dict__add { flex: none; width: 36px; height: 36px; border-radius: 12px; border: 0; font: 800 22px/1 var(--display); color: #fff; background: var(--grad); box-shadow: 0 3px 0 var(--edge); cursor: pointer; }
+.dict__add:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edge); }
+.dict__in { flex: none; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: #047857; }
+.dict__in .i { width: 18px; height: 18px; stroke-width: 3; }
+.dict__none { padding: 16px; text-align: center; color: var(--muted); font-weight: 700; }
 @media (max-width: 640px) { .nav a { font-size: 10px; padding: 6px 0; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
@@ -1255,6 +1278,8 @@ mark { background: linear-gradient(transparent 52%, color-mix(in srgb, #f472b6 4
 <script src="units.js"></script>
 <script src="tenses.js"></script>
 <script src="extra.js"></script>
+<script src="b2.js"></script>
+<script src="more.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

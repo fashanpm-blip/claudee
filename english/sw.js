@@ -2,7 +2,7 @@
    Own files: network first (updates arrive at once), cached copy when offline.
    Google Fonts: cache first. */
 var CACHE = 'levelup-english-v1';
-var SHELL = ['./', './index.html', './app.js', './course.js', './units.js', './tenses.js', './extra.js', './b2.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+var SHELL = ['./', './index.html', './app.js', './course.js', './units.js', './tenses.js', './extra.js', './b2.js', './more.js', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return Promise.all(SHELL.map(function (u) { return c.add(u).catch(function () { /* optional file */ }); })); }).then(function () { return self.skipWaiting(); }));
