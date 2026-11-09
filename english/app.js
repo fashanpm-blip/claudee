@@ -11,7 +11,7 @@
   };
   var P = store.get(KEY, null);
   if (!P || typeof P !== 'object') P = {};
-  ['units', 'levels', 'days', 'cards', 'tenses', 'badges', 'texts', 'stats'].forEach(function (k) { if (!P[k] || typeof P[k] !== 'object') P[k] = {}; });
+  ['units', 'levels', 'days', 'cards', 'tenses', 'badges', 'texts', 'stats', 'daily', 'dialogs', 'bonus'].forEach(function (k) { if (!P[k] || typeof P[k] !== 'object') P[k] = {}; });
   P.xp = P.xp || 0; P.streak = P.streak || { last: null, count: 0 }; P.review = Array.isArray(P.review) ? P.review : [];
   function save() { store.set(KEY, P); paintStats(); }
 
@@ -96,7 +96,7 @@
   var WORLD = [
     { g: 'linear-gradient(135deg, #6d28d9 0%, #a21caf 52%, #be185d 100%)', bg: '#6d28d9', s: 'rgba(162, 28, 175, .7)', o: ['#fef9c3', '#facc15', '#a16207'] },
     { g: 'linear-gradient(135deg, #1d4ed8 0%, #0369a1 52%, #0e7490 100%)', bg: '#1d4ed8', s: 'rgba(3, 105, 161, .7)', o: ['#fce7f3', '#ec4899', '#9d174d'] },
-    { g: 'linear-gradient(135deg, #c2410c 0%, #be123c 52%, #9d174d 100%)', bg: '#c2410c', s: 'rgba(190, 18, 60, .7)', o: ['#cffafe', '#06b6d4', '#155e75'] },
+    { g: 'linear-gradient(135deg, #9a3412 0%, #be123c 52%, #9d174d 100%)', bg: '#9a3412', s: 'rgba(190, 18, 60, .7)', o: ['#cffafe', '#06b6d4', '#155e75'] },
     { g: 'linear-gradient(135deg, #047857 0%, #0f766e 52%, #155e75 100%)', bg: '#047857', s: 'rgba(15, 118, 110, .7)', o: ['#fef9c3', '#facc15', '#a16207'] }
   ];
   var STEPPAL = { words: PAL[1], text: PAL[7], grammar: PAL[0], write: PAL[2] };
@@ -151,7 +151,11 @@
     { id: 'words50', n: '50 слов в памяти', d: 'Запомни 50 слов (3+ повторения)', icon: 'list', c: '#059669', ok: function () { return learnedWords() >= 50; } },
     { id: 'tenses3', n: 'Время пошло', d: 'Освой 3 времени на 80%+', icon: 'clock', c: '#7c3aed', ok: function () { return tensesMastered() >= 3; } },
     { id: 'tensesAll', n: 'Мастер времён', d: 'Освой все 13 времён на 80%+', icon: 'clock', c: '#be185d', ok: function () { return tensesMastered() >= TENSES.length; } },
-    { id: 'fixer', n: 'Работа над ошибками', d: 'Исправь 10 своих ошибок', icon: 'reset', c: '#2563eb', ok: function () { return (P.stats.fixed || 0) >= 10; } }
+    { id: 'fixer', n: 'Работа над ошибками', d: 'Исправь 10 своих ошибок', icon: 'reset', c: '#2563eb', ok: function () { return (P.stats.fixed || 0) >= 10; } },
+    { id: 'placed', n: 'Знаю свой уровень', d: 'Пройди тест уровня', icon: 'target', c: '#6d28d9', ok: function () { return !!P.placement; } },
+    { id: 'daily3', n: 'Три задания дня', d: 'Выполни задание дня 3 раза', icon: 'target', c: '#0f766e', ok: function () { return (P.stats.daily || 0) >= 3; } },
+    { id: 'ears', n: 'Острый слух', d: 'Пройди аудирование на 80%+', icon: 'vol', c: '#1d4ed8', ok: function () { return (P.stats.listen || 0) >= 1; } },
+    { id: 'talk3', n: 'Разговорчивый', d: 'Пройди 3 диалога', icon: 'chat', c: '#db2777', ok: function () { return Object.keys(P.dialogs || {}).length >= 3; } }
   ];
   function checkBadges() { var fresh = []; BADGES.forEach(function (b) { if (!P.badges[b.id] && b.ok()) { P.badges[b.id] = Date.now(); fresh.push(b); } }); if (fresh.length) save(); return fresh; }
   function medal(b, locked, size) { return svgv(medal0(b, locked, size)); }
@@ -213,6 +217,7 @@
   document.addEventListener('mouseleave', function () { if (tiltEl) { tiltEl.style.transform = ''; tiltEl = null; } });
   function route() {
     if (bookCtl) { bookCtl.destroy(); bookCtl = null; }
+    dlg = null; spk = null;
     var h = location.hash.replace(/^#\/?/, '').split('/');
     document.body.classList.remove('is-practice'); S = null; cardState = null; if (canSpeak) speechSynthesis.cancel();
     if (h[0] === 'u' && U[h[1]]) {
@@ -234,6 +239,12 @@
     if (h[0] === 'words') return viewWords();
     if (h[0] === 'ref') return viewRef();
     if (h[0] === 'me') return viewMe();
+    if (h[0] === 'practice') return viewPractice();
+    if (h[0] === 'placement') return startPlacement();
+    if (h[0] === 'daily') return startDaily();
+    if (h[0] === 'listen') return startListen();
+    if (h[0] === 'speak') return startSpeak();
+    if (h[0] === 'dialog' && DIALOGS[h[1]]) return viewDialog(h[1]);
     viewHome();
   }
   function go(h) { if (location.hash === h) route(); else location.hash = h; }
@@ -263,6 +274,7 @@
       '<div class="goalchip" aria-label="Цель дня: ' + Math.min(tx, GOAL) + ' из ' + GOAL + ' XP">' + ring(tx, GOAL, 54) + '<div><b>' + Math.min(tx, GOAL) + '/' + GOAL + ' XP</b><span>' + (tx >= GOAL ? 'цель дня выполнена!' : 'цель дня') + '</span></div><span class="goalchip__fire" data-bg="#c2410c" title="Дней подряд">' + ic('flame') + streakNow() + '</span></div></div></section>';
     var fresh = !P.xp, cta = !nx ? '<a class="btn why__cta" href="#/tenses">Тренировать' + ic('arrow') + '</a>' : nx.type === 'test' ? '<a class="btn why__cta" href="#/test/' + nx.id + '">К тесту' + ic('arrow') + '</a>' : '<a class="btn why__cta" href="#/u/' + nx.id + '/' + nx.step.k + '">' + (fresh ? 'Начать курс' : 'Продолжить') + ic('arrow') + '</a>';
     var top = html; html = '';
+    top += dailyCard() + (fresh && !P.placement ? '<a class="plban rise" data-tilt href="#/placement">' + lexi('think') + '<div><b>Уже знаешь английский?</b><span>Пройди тест уровня — 20 вопросов — и начни со своего уровня, а не с азов.</span></div>' + ic('right') + '</a>' : '');
     var rv = P.review.length, dc = dueCards().length;
     html += '<div class="quick">' +
       qcard('#/review', 'reset', PAL[9], 'Работа над ошибками', rv ? rv + ' ' + plural(rv, ['задание', 'задания', 'заданий']) + ' ждут' : 'Ошибок нет — красавчик') +
@@ -325,14 +337,14 @@
         memo.map(function (m) { return '<circle cx="' + m[0] + '" cy="' + m[1] + '" r="11" fill="url(#why-mg)"/><text x="' + m[0] + '" y="' + (m[1] + 3.6) + '" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">' + m[2] + '</text>'; }).join('') +
         '<text x="128" y="74" font-size="11" font-weight="700" fill="#6b5d42">дней</text></svg>' + hand('повторил — запомнил надолго'),
       head('Глава 3', 'Язык бизнеса') + '<ul class="pg__list"><li>переговоры</li><li>письма партнёрам</li><li>созвоны и презентации</li><li>собеседования</li></ul>' + hand('бизнес мирового уровня говорит по-английски'),
-      head('Глава 4', 'Тебя поймут везде') + '<div class="pg__stamps">' + [['London', -9, '#be123c'], ['New York', 7, '#1d4ed8'], ['Sydney', -4, '#047857'], ['Toronto', 9, '#b45309'], ['Dublin', -6, '#7c3aed']].map(function (s) { return '<i style="--r:' + s[1] + 'deg;--c:' + s[2] + '">' + s[0] + '</i>'; }).join('') + '</div>' + hand('весь мир — твой ✈'),
+      head('Глава 4', 'Тебя поймут везде') + '<div class="pg__stamps">' + [['London', -9, '#be123c'], ['New York', 7, '#1d4ed8'], ['Sydney', -4, '#047857'], ['Toronto', 9, '#92400e'], ['Dublin', -6, '#7c3aed']].map(function (s) { return '<i style="--r:' + s[1] + 'deg;--c:' + s[2] + '">' + s[0] + '</i>'; }).join('') + '</div>' + hand('весь мир — твой ✈'),
       head('Глава 5', 'Весь интернет — твой') + '<div class="pg__icons"><span>' + i3d('cap', PAL[0]) + 'курсы</span><span>' + i3d('play', PAL[9]) + 'видео</span><span>' + i3d('bulb', GOLD) + 'наука</span><span>' + i3d('news', PAL[7]) + 'новости</span></div>' + hand('учись у лучших — бесплатно'),
       head('Глава 6', 'Твоя история начинается здесь') + '<div class="pg__win">' + i3d('trophy', GOLD, 'big') + '</div>' + hand(fresh ? 'Раздел 1 — поехали!' : 'продолжаем, ты молодец!')
     ];
     var leaves = '';
     for (var k = 5; k >= 0; k--) {
       leaves += '<div class="leaf' + (k ? '' : ' leaf--cover') + '" data-k="' + k + '">' +
-        (k ? face('f', 2 * k - 1, R[k - 1]) : '<div class="lf lf--f bk-cover"><div class="bk-cover__frame"><span class="bk-cover__top">A1 · A2 · B1</span>' + i3d('layers', GOLD, 'big') + '<b class="bk-cover__t">LevelUp<br>English</b><span class="bk-cover__s">Книга твоего английского</span></div><i class="bk-cover__shine"></i></div>') +
+        (k ? face('f', 2 * k - 1, R[k - 1]) : '<div class="lf lf--f bk-cover" data-bg="#1e3a8a"><div class="bk-cover__frame"><span class="bk-cover__top">A1 · A2 · B1</span>' + i3d('layers', GOLD, 'big') + '<b class="bk-cover__t">LevelUp<br>English</b><span class="bk-cover__s">Книга твоего английского</span></div><i class="bk-cover__shine"></i></div>') +
         face('b', k ? 2 * k : 0, L[k][0], L[k][1], L[k][2]) + '</div>';
     }
     return '<div class="why__bookwrap" aria-hidden="true" title="Листай страницу — или нажми на книгу"><div class="book"><div class="book__floor"></div><div class="book__body">' +
@@ -568,6 +580,7 @@
       else { var o2 = shuffle([v].concat(others)); t = { t: 'choice', q: 'Что значит «' + v[0] + '»?', o: o2.map(function (x) { return x[1]; }), a: o2.indexOf(v), why: v[2] + ' — ' + v[3] }; }
       items.push({ key: 'w:' + v[0] + ':' + kind, word: v[0], task: t });
     });
+    if (canSpeak) shuffle(vocab).slice(0, 2).forEach(function (v, i) { items.splice(i ? 8 : 3, 0, { key: 'l:' + v[0], task: listenWord(v, pool) }); });
     return items;
   }
   function allVocab() { var a = []; ORDER.forEach(function (id) { a = a.concat(U[id].unit.vocab); }); return a; }
@@ -580,8 +593,9 @@
   function startStep(id, k) {
     var x = U[id], u = x.unit;
     if (k === 'words') return begin({ mode: 'step', step: 'words', id: id, li: x.li, queue: wordTasks(u.vocab, allVocab()), requeue: true });
-    if (k === 'text') return begin({ mode: 'step', step: 'text', id: id, li: x.li, queue: u.quiz.map(function (q, i) { return { key: 'q:' + i, task: { t: 'choice', q: q.q, o: q.o, a: q.a, why: q.why } }; }), requeue: true });
+    if (k === 'text') return begin({ mode: 'step', step: 'text', id: id, li: x.li, queue: u.quiz.map(function (q, i) { return { key: 'q:' + i, task: { t: 'choice', q: q.q, o: q.o, a: q.a, why: q.why } }; }).concat(textListenItems(u)), requeue: true });
     if (k === 'grammar') return begin({ mode: 'step', step: 'grammar', id: id, li: x.li, queue: grammarItems(u.grammar), requeue: true });
+    if (k === 'more' && u.more) return begin({ mode: 'bonus', id: id, li: x.li, queue: u.more.quiz.map(function (q, i) { return { key: 'b:' + i, task: { t: 'choice', q: q.q, o: q.o, a: q.a, why: q.why } }; }), requeue: true });
     go('#/u/' + id);
   }
   function startTest(lvId) {
@@ -607,12 +621,12 @@
     var items = pickW.filter(function (k) { return !/[…?!]/.test(k); }).map(function (k) { var v = byWord[k]; return { key: 'ww:' + k, word: k, task: { t: 'input', q: '«' + v[1] + '» по-английски: ___', a: k.split(/\s*\/\s*/).concat([k]), why: v[2] + ' — ' + v[3] } }; });
     begin({ mode: 'wordwrite', li: -1, nav: 'words', queue: items, requeue: true });
   }
-  var KIND = { choice: 'Выбери правильный вариант', input: 'Впиши ответ', tr: 'Переведи на английский', order: 'Собери предложение', match: 'Соедини слово и перевод' };
+  var KIND = { choice: 'Выбери правильный вариант', input: 'Впиши ответ', tr: 'Переведи на английский', order: 'Собери предложение', match: 'Соедини слово и перевод', listen: 'Послушай и выбери', dict: 'Послушай и напиши' };
   var cur = null;
   function renderTask() {
     var it = S.queue[S.pos], t = it.task; cur = { item: it, sel: -1, tokens: [], checked: false };
     var pct = S.right / S.total * 100;
-    var prefix = { test: 'Тест · ', review: 'Ошибки · ', tense: 'Времена · ', wordwrite: 'Слова · ' }[S.mode] || '';
+    var prefix = { test: 'Тест · ', review: 'Ошибки · ', tense: 'Времена · ', wordwrite: 'Слова · ', placement: 'Тест уровня · ', daily: 'Задание дня · ', listen: 'Аудирование · ', bonus: 'Бонус · ' }[S.mode] || '';
     var head = '<div class="p-top"><button class="icon-btn" type="button" id="p-exit" aria-label="Выйти">' + ic('x') + '</button><div class="p-bar" role="progressbar" aria-label="Прогресс" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(pct) + '"><span style="width:' + pct + '%"></span></div><span class="p-count">' + S.right + '/' + S.total + '</span></div>';
     var body = '<section class="task" aria-labelledby="task-kind"><p class="task__kind" id="task-kind">' + prefix + KIND[t.t] + '</p>';
     if (t.t === 'choice') {
@@ -624,6 +638,10 @@
     } else if (t.t === 'order') {
       cur.bank = shuffle(t.a.split(' ').concat(t.x || []));
       body += '<div class="task__ru">' + ic('ru') + '<span>' + esc(t.ru) + '</span></div><div class="slot" id="slot" aria-label="Твоё предложение" role="group"></div><div class="bank" id="bank" role="group" aria-label="Слова">' + cur.bank.map(function (w, i) { return '<button class="tok" type="button" data-i="' + i + '">' + esc(w) + '</button>'; }).join('') + '</div>';
+    } else if (t.t === 'listen' || t.t === 'dict') {
+      body += '<div class="hear"><button class="hear__btn" type="button" id="hear" aria-label="Послушать ещё раз">' + ic('vol') + '</button><button class="btn btn--ghost btn--sm" type="button" id="hear-slow">' + ic('reset') + 'Медленнее</button></div>';
+      if (t.t === 'listen') body += '<h2 class="task__q">' + esc(t.q) + '</h2><div class="options" role="radiogroup" aria-labelledby="task-kind">' + t.o.map(function (o, i) { return '<button class="opt" type="button" role="radio" aria-checked="false" data-i="' + i + '"><kbd aria-hidden="true">' + (i + 1) + '</kbd><span>' + esc(o) + '</span></button>'; }).join('') + '</div>';
+      else body += '<label class="sr-only" for="ans">Что ты услышал</label><textarea class="answer" id="ans" autocomplete="off" autocapitalize="sentences" autocorrect="off" spellcheck="false" lang="en" placeholder="Напиши по-английски то, что услышал"></textarea>';
     } else if (t.t === 'match') {
       cur.left = shuffle(t.pairs); cur.right = shuffle(t.pairs); cur.done = 0; cur.wrong = 0; cur.pick = null;
       body += '<div class="match"><div class="match__col" role="group" aria-label="Английский">' + cur.left.map(function (p) { return '<button class="mt" type="button" data-side="l" data-k="' + esc(p[0]) + '" aria-pressed="false">' + esc(p[0]) + '</button>'; }).join('') + '</div><div class="match__col" role="group" aria-label="Перевод">' + cur.right.map(function (p) { return '<button class="mt" type="button" data-side="r" data-k="' + esc(p[0]) + '" aria-pressed="false">' + esc(p[1]) + '</button>'; }).join('') + '</div></div>';
@@ -637,10 +655,14 @@
   }
   function wireTask(t) {
     var chk = $('check');
-    if (t.t === 'choice') {
+    if (t.t === 'listen' || t.t === 'dict') {
+      $('hear').addEventListener('click', function () { speak(t.say); }); $('hear-slow').addEventListener('click', function () { speak(t.say, true); });
+      setTimeout(function () { if (cur && cur.item.task === t && !cur.checked) speak(t.say); }, 350);
+    }
+    if (t.t === 'choice' || t.t === 'listen') {
       app.querySelectorAll('.opt').forEach(function (b) { b.addEventListener('click', function () { if (!cur.checked) pickOpt(+b.dataset.i); }); });
       var first = app.querySelector('.opt'); if (first) first.focus({ preventScroll: true });
-    } else if (t.t === 'input' || t.t === 'tr') {
+    } else if (t.t === 'input' || t.t === 'tr' || t.t === 'dict') {
       var a = $('ans'); a.addEventListener('input', function () { chk.disabled = !a.value.trim(); });
       a.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.stopPropagation(); onMain(); } });
       a.focus({ preventScroll: true });
@@ -672,7 +694,8 @@
     }
   }
   function answerText(t) {
-    if (t.t === 'choice') return t.o[t.a];
+    if (t.t === 'choice' || t.t === 'listen') return t.o[t.a];
+    if (t.t === 'dict') return t.a[0];
     if (t.t === 'order') return t.a;
     if (t.t === 'tr') return t.a[0] + (/^(what|where|when|who|why|how|do|does|did|is|are|was|were|can|could|have|has|had|will|would)\b/i.test(t.a[0]) ? '?' : '.');
     if (t.t === 'input') return t.a[0];
@@ -683,20 +706,22 @@
     if (!S) return;
     if (cur.checked) return nextTask();
     var t = cur.item.task, ok;
-    if (t.t === 'choice') { if (cur.sel < 0) return; ok = cur.sel === t.a; }
+    if (t.t === 'choice' || t.t === 'listen') { if (cur.sel < 0) return; ok = cur.sel === t.a; }
+    else if (t.t === 'dict') { var dv = $('ans').value; if (!dv.trim()) return; ok = dictOk(dv, t.a); cur.exact = matches(dv, t.a); $('ans').readOnly = true; }
     else if (t.t === 'input' || t.t === 'tr') { var v = $('ans').value; if (!v.trim()) return; ok = matches(v, t.a); $('ans').readOnly = true; }
     else if (t.t === 'order') { if (!cur.tokens.length) return; ok = norm(cur.tokens.map(function (i) { return cur.bank[i]; }).join(' ')) === norm(t.a); }
     else if (t.t === 'match') { if (cur.done < cur.left.length) return; ok = cur.matchOk; }
     cur.checked = true;
     var key = cur.item.key, first = !(key in S.firstTry);
     if (first) S.firstTry[key] = ok;
-    if (t.t === 'choice') app.querySelectorAll('.opt').forEach(function (b) { var i = +b.dataset.i; if (i === t.a) b.classList.add('is-right'); else if (i === cur.sel) b.classList.add('is-wrong'); });
+    if (first && S.lvRight && cur.item.lv) S.lvRight[cur.item.lv] = (S.lvRight[cur.item.lv] || 0) + (ok ? 1 : 0);
+    if (t.t === 'choice' || t.t === 'listen') app.querySelectorAll('.opt').forEach(function (b) { var i = +b.dataset.i; if (i === t.a) b.classList.add('is-right'); else if (i === cur.sel) b.classList.add('is-wrong'); });
     if (ok || t.t === 'match' || !S.requeue) S.right++;
     if (cur.item.word && P.cards[cur.item.word] && !ok) { P.cards[cur.item.word].box = 1; P.cards[cur.item.word].due = dayKey(1); save(); }
     if (cur.item.word) speak(cur.item.word);
     if (!ok) {
       if (S.mode !== 'review') addReview(cur.item.ref);
-      if (first && t.t !== 'match') S.mistakes.push({ q: t.q || t.ru, a: answerText(t) });
+      if (first && t.t !== 'match') S.mistakes.push({ q: t.say ? 'Аудио: «' + t.say + '»' : (t.q || t.ru), a: answerText(t) });
       if (S.requeue && t.t !== 'match') S.queue.push(cur.item);
     } else if (S.mode === 'review') {
       P.review = P.review.filter(function (r) { return !(r.l === cur.item.ref.l && r.i === cur.item.ref.i); }); P.stats.fixed = (P.stats.fixed || 0) + 1; save();
@@ -706,6 +731,9 @@
     fb.innerHTML = '<span class="fb__ic">' + ic(ok ? 'check' : 'x') + '</span><div><b>' + (ok ? pick(['Верно!', 'Отлично!', 'Так держать!', 'Правильно!', 'Красиво!']) : (t.t === 'match' ? 'Почти' : 'Неверно — разберём')) + '</b>' +
       (t.t === 'match' ? '<p class="why">' + (ok ? 'Все пары без ошибок!' : 'Ошибок: ' + cur.wrong + '. Слова вернутся в повторении.') + '</p>' : (!ok ? '<p>Правильно: <span class="ans">' + esc(answerText(t)) + '</span></p>' : '') + (t.why ? '<p class="why">' + esc(t.why) + '</p>' : '')) + '</div>';
     fb.setAttribute('role', 'status');
+    if (t.t === 'dict' && ok && !cur.exact) fb.querySelector('div').insertAdjacentHTML('beforeend', '<p>Почти идеально! Точно: <span class="ans">' + esc(t.a[0]) + '</span></p>');
+    fb.insertAdjacentHTML('beforeend', '<span class="fb__lx">' + lexi(ok ? 'happy' : 'sad') + '</span>');
+    if (!ok && t.say) speak(t.say);
     var btn = $('check'); btn.disabled = false; btn.textContent = 'Дальше'; btn.className = 'btn ' + (ok ? 'btn--ok' : 'btn--bad'); btn.focus({ preventScroll: true });
     app.querySelector('.p-bar span').style.width = (S.right / S.total * 100) + '%'; app.querySelector('.p-count').textContent = S.right + '/' + S.total;
     if (ok && (t.t === 'tr' || t.t === 'order')) speak(t.t === 'order' ? t.a : t.a[0]);
@@ -714,15 +742,16 @@
   function exitPractice() {
     if (S && S.pos > 0 && !confirm('Выйти? Прогресс этого занятия не сохранится.')) return;
     var s = S; S = null;
-    go(!s ? '#/' : s.mode === 'step' ? '#/u/' + s.id + '/' + s.step : s.mode === 'review' ? '#/review' : s.mode === 'tense' ? '#/tense/' + s.id : s.mode === 'wordwrite' ? '#/words' : '#/');
+    go(!s ? '#/' : s.mode === 'step' ? '#/u/' + s.id + '/' + s.step : s.mode === 'review' ? '#/review' : s.mode === 'tense' ? '#/tense/' + s.id : s.mode === 'wordwrite' ? '#/words' : s.mode === 'bonus' ? '#/u/' + s.id + '/text' : /^(placement|daily|listen)$/.test(s.mode) ? '#/practice' : '#/');
   }
   document.addEventListener('keydown', function (e) {
     if (cardState && !S) { if (e.key === ' ' || e.key === 'Enter') { if (!cardState.flipped) { e.preventDefault(); flipCard(); } } else if (cardState.flipped && (e.key === '1' || e.key === '2')) gradeCard(e.key === '2'); return; }
+    if (dlg && dlg.cur && !S && /^[1-3]$/.test(e.key) && !e.target.matches('input, textarea')) { dlgPick(+e.key - 1); return; }
     if (!S || !cur) return;
     var t = cur.item.task;
     if (e.key === 'Enter' && e.target.matches('.opt') && !cur.checked) { e.preventDefault(); var oi = +e.target.dataset.i; if (cur.sel === oi) onMain(); else pickOpt(oi); return; }
     if (e.key === 'Enter' && !e.target.matches('textarea, input, button')) { e.preventDefault(); onMain(); return; }
-    if (t.t === 'choice' && !cur.checked && /^[1-4]$/.test(e.key) && +e.key <= t.o.length && !e.target.matches('input, textarea')) pickOpt(+e.key - 1);
+    if ((t.t === 'choice' || t.t === 'listen') && !cur.checked && /^[1-4]$/.test(e.key) && +e.key <= t.o.length && !e.target.matches('input, textarea')) pickOpt(+e.key - 1);
     if (e.key === 'Escape') exitPractice();
   });
 
@@ -753,6 +782,29 @@
     } else if (s.mode === 'wordwrite') {
       xp = firstOk; r.kind = 'words'; r.title = praise(acc); r.sub = 'Ты написал слова по памяти — это самый надёжный способ их выучить.';
       r.actions = '<a class="btn" href="#/words/write">' + ic('reset') + 'Ещё 10 слов</a><a class="btn btn--ghost" href="#/words">Слова</a>';
+    } else if (s.mode === 'placement') {
+      var per = BOOK.map(function (lv) { var n = s.queue.filter(function (it) { return it.lv === lv.code; }).length; return { code: lv.code, r: s.lvRight[lv.code] || 0, n: n }; });
+      var place = 0; while (place < BOOK.length - 1 && per[place].n && per[place].r >= Math.ceil(per[place].n * .8)) place++;
+      P.placement = { lv: BOOK[place].code, at: Date.now() }; xp = 10;
+      r.kind = 'level'; r.title = 'Твой уровень: ' + BOOK[place].code + ' — ' + BOOK[place].name;
+      r.sub = place ? 'Ты уверенно знаешь ' + BOOK.slice(0, place).map(function (l) { return l.code; }).join(', ') + '. Начни с уровня ' + BOOK[place].code + ' — там будет и знакомое, и новое.' : 'Отличная точка старта — уровень A1. Начнём с основ и быстро пойдём дальше!';
+      r.extra = '<div class="plbars">' + per.map(function (x, i) { return '<div class="plbar' + (i < place ? ' ok' : i === place ? ' now' : '') + '"><b>' + x.code + '</b><span><i style="width:' + (x.n ? x.r / x.n * 100 : 0) + '%"></i></span><em>' + x.r + '/' + x.n + '</em></div>'; }).join('') + '</div>';
+      r.actions = place ? '<button class="btn" type="button" data-place="' + place + '">Начать с ' + BOOK[place].code + ic('arrow') + '</button><a class="btn btn--ghost" href="#/">Остаться на A1</a>' : '<a class="btn" href="#/u/' + BOOK[0].units[0].id + '">Начать с A1' + ic('arrow') + '</a>';
+    } else if (s.mode === 'daily') {
+      var firstD = !dailyDone(); P.daily[dayKey(0)] = { acc: acc };
+      Object.keys(P.daily).sort().slice(0, -60).forEach(function (k) { delete P.daily[k]; });
+      if (firstD) P.stats.daily = (P.stats.daily || 0) + 1;
+      xp = (firstD ? 15 : 0) + firstOk; r.kind = 'medal';
+      r.title = firstD ? 'Задание дня выполнено!' : praise(acc); r.sub = 'Завтра будет новое задание — заходи, чтобы не прервать серию.';
+      r.actions = '<a class="btn" href="#/">К курсу' + ic('arrow') + '</a><a class="btn btn--ghost" href="#/practice">Практика</a>';
+    } else if (s.mode === 'listen') {
+      xp = 5 + firstOk; if (acc >= 80) P.stats.listen = (P.stats.listen || 0) + 1;
+      r.kind = acc >= 80 ? 'medal' : 'try'; r.title = praise(acc); r.sub = 'Ты тренировал слух: слова, фразы и диктант. На экзаменах аудирование — отдельная часть, и теперь ты к ней готовее.';
+      r.actions = '<a class="btn" href="#/listen">' + ic('reset') + 'Ещё раз</a><a class="btn btn--ghost" href="#/practice">Практика</a>';
+    } else if (s.mode === 'bonus') {
+      var firstB = !P.bonus[s.id]; P.bonus[s.id] = Math.max(P.bonus[s.id] || 0, acc);
+      xp = (firstB ? 8 : 2) + firstOk; r.kind = 'words'; r.title = praise(acc); r.sub = 'Бонусный текст прочитан — ещё больше английского по теме «' + U[s.id].unit.title + '».';
+      r.actions = nextUnitActions(s.id);
     } else {
       xp = firstOk * 2; r.kind = 'review'; r.title = P.review.length ? praise(acc) : 'Все ошибки исправлены!'; r.sub = P.review.length ? 'Осталось ошибок: ' + P.review.length + '.' : 'Ни одного долга. Красавчик!';
       r.actions = (P.review.length ? '<a class="btn" href="#/review/go">' + ic('reset') + 'Ещё ошибки</a>' : '') + '<a class="btn btn--ghost" href="#/">К курсу</a>';
@@ -817,7 +869,7 @@
     if (fresh.length) html += '<div class="new-badges"><p class="section-h">Новая награда</p>' + fresh.map(function (b) { return '<div class="nb">' + medal(b, false, 72) + '<div><b>' + esc(b.n) + '</b><span>' + esc(b.d) + '</span></div></div>'; }).join('') + '</div>';
     if (r.extra) html += r.extra;
     if (r.mistakes && r.mistakes.length) html += '<p class="section-h" style="margin-top:6px">Работа над ошибками</p><ul class="mistakes">' + r.mistakes.map(function (m) { return '<li><div class="q">' + esc(m.q) + '</div><div class="a">' + esc(m.a) + '</div></li>'; }).join('') + '</ul>';
-    html += '<p class="quote">' + ic('bulb', 'i--sm') + esc(pick(QUOTES)) + '</p><div class="r-actions">' + (r.actions || '') + '</div></section>';
+    html += lexiSay(good ? 'cheer' : 'think', pick(QUOTES), 'say--result') + '<div class="r-actions">' + (r.actions || '') + '</div></section>';
     show(html, 'course', r.li); xpBump(r.xp);
     var b = app.querySelector('.r-actions .btn'); if (b) b.focus({ preventScroll: true });
   }
@@ -914,7 +966,7 @@
     ORDER.forEach(function (id) {
       if (!byUnit[id]) return;
       html += '<details class="ref"><summary><span class="code">' + U[id].level.code + '</span>' + esc(U[id].unit.title) + ' <span class="muted" style="font-weight:600">· ' + byUnit[id].length + ' слов</span>' + ic('right') + '</summary><div class="body"><div class="words">' +
-        byUnit[id].map(function (k) { var v = map[k] || [k, '']; var bx = P.cards[k].box; return '<div class="word">' + speakBtn(k) + '<div><b>' + esc(k) + '</b><span>' + esc(v[1]) + '</span></div><span class="lvl" title="Уровень запоминания">' + '●'.repeat(Math.min(bx, 5)) + '<i>' + '●'.repeat(5 - Math.min(bx, 5)) + '</i></span></div>'; }).join('') + '</div></div></details>';
+        byUnit[id].map(function (k) { var v = map[k] || [k, '']; var bx = P.cards[k].box; return '<div class="word">' + speakBtn(k) + '<div><b>' + esc(k) + '</b><span>' + esc(v[1]) + '</span></div><span class="lvl" role="img" title="Уровень запоминания: ' + Math.min(bx, 5) + ' из 5" aria-label="Уровень запоминания: ' + Math.min(bx, 5) + ' из 5">' + [1, 2, 3, 4, 5].map(function (n) { return '<i' + (n <= bx ? ' class="on"' : '') + '></i>'; }).join('') + '</span></div>'; }).join('') + '</div></div></details>';
     });
     show(html, 'words');
   }
@@ -987,6 +1039,266 @@
     show(html, 'me');
   }
 
+  /* ================= v6: mascot, listening, placement, daily task, practice hub, dialogs, speaking ================= */
+  var EX = window.EXTRA || {}, DIALOGS = {};
+  (EX.dialogs || []).forEach(function (d) { DIALOGS[d.id] = d; });
+  var LX = EX.lexi || { ok: ['Супер!'], bad: ['Не страшно!'], daily: ['Задание ждёт!'], done: ['Готово!'] };
+
+  /* «Лекси» — an original mascot: a little living book */
+  function lexi(mood, cls) {
+    mood = mood || 'happy';
+    var ink = '#1e1550', arm = 'fill="none" stroke="#6d28d9" stroke-width="6" stroke-linecap="round"';
+    var mouth = {
+      cheer: '<path d="M52 73q11 19 22 0z" fill="' + ink + '"/><path d="M57 81q6 6 12 0" fill="#fb7185"/>',
+      sad: '<path d="M55 82q8-7 16 0" fill="none" stroke="' + ink + '" stroke-width="3.6" stroke-linecap="round"/>',
+      think: '<path d="M57 79h12" stroke="' + ink + '" stroke-width="3.6" stroke-linecap="round"/>'
+    }[mood] || '<path d="M54 76q9 9 18 0" fill="none" stroke="' + ink + '" stroke-width="3.6" stroke-linecap="round"/>';
+    var arms = {
+      cheer: '<path d="M25 62q-12-8-12-24M95 62q12-8 12-24" ' + arm + '/>',
+      wave: '<path d="M25 70q-10 6-9 18" ' + arm + '/><path class="lexi__wave" d="M95 62q12-6 12-22" ' + arm + '/>',
+      think: '<path d="M25 70q-10 6-9 18" ' + arm + '/><path d="M95 72q10 8-10 14" ' + arm + '/>'
+    }[mood] || '<path d="M25 70q-10 6-9 18M95 70q10 6 9 18" ' + arm + '/>';
+    var px = mood === 'think' ? 2 : 0, py = mood === 'think' ? -3 : mood === 'sad' ? 2 : 0;
+    var brows = mood === 'sad' ? '<path d="M40 44l13-4M86 44l-13-4" stroke="' + ink + '" stroke-width="3" stroke-linecap="round"/>' : mood === 'think' ? '<path d="M41 39l12 1M73 37l13-2" stroke="' + ink + '" stroke-width="3" stroke-linecap="round"/>' : '';
+    return '<svg class="lexi lexi--' + mood + (cls ? ' ' + cls : '') + '" viewBox="0 0 120 130" aria-hidden="true">' +
+      '<ellipse cx="60" cy="124" rx="30" ry="5" fill="#1e1b4b" opacity=".16"/><g class="lexi__body">' +
+      '<path d="M78 100v22l6-5 6 5v-22z" fill="#e11d48"/>' + arms +
+      '<ellipse cx="44" cy="110" rx="10" ry="6" fill="#4c1d95"/><ellipse cx="76" cy="110" rx="10" ry="6" fill="#4c1d95"/>' +
+      '<rect x="22" y="12" width="76" height="96" rx="18" fill="url(#lx-cover)"/><path d="M33 16v88" stroke="#4c1d95" stroke-opacity=".45" stroke-width="9" stroke-linecap="round"/>' +
+      '<path d="M91 24v74" stroke="#fef3c7" stroke-width="5" stroke-linecap="round"/><rect x="46" y="22" width="36" height="5" rx="2.5" fill="#fbbf24"/>' + brows +
+      '<g class="lexi__eyes"><ellipse cx="51" cy="56" rx="11" ry="12.5" fill="#fff"/><ellipse cx="77" cy="56" rx="11" ry="12.5" fill="#fff"/>' +
+      '<circle cx="' + (53 + px) + '" cy="' + (58 + py) + '" r="5.6" fill="' + ink + '"/><circle cx="' + (79 + px) + '" cy="' + (58 + py) + '" r="5.6" fill="' + ink + '"/>' +
+      '<circle cx="' + (55 + px) + '" cy="' + (55 + py) + '" r="2" fill="#fff"/><circle cx="' + (81 + px) + '" cy="' + (55 + py) + '" r="2" fill="#fff"/></g>' +
+      '<ellipse cx="41" cy="74" rx="6" ry="4" fill="#f9a8d4" opacity=".85"/><ellipse cx="87" cy="74" rx="6" ry="4" fill="#f9a8d4" opacity=".85"/>' + mouth + '</g></svg>';
+  }
+  function lexiSay(mood, text, cls) { return '<div class="say' + (cls ? ' ' + cls : '') + '">' + lexi(mood) + '<p class="say__b">' + esc(text) + '</p></div>'; }
+
+  /* ---------- small helpers ---------- */
+  function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
+  function topLevel() { var t = 0; BOOK.forEach(function (l, i) { if (levelOpen(i)) t = i; }); return t; }
+  function openedUnits() {
+    var ids = ORDER.filter(function (id) { return unitOpen(id) && unitDoneCount(id) > 0; });
+    return ids.length ? ids : BOOK[topLevel()].units.slice(0, 2).map(function (u) { return u.id; });
+  }
+  function hashStr(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function seeded(a) { return function () { a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function sshuffle(a, rnd) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function editDist(a, b) {
+    var m = a.length, n = b.length, d = [], i, j;
+    for (i = 0; i <= m; i++) d[i] = [i];
+    for (j = 1; j <= n; j++) d[0][j] = j;
+    for (i = 1; i <= m; i++) for (j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[m][n];
+  }
+  /* dictation: exact after normalising, or one word off in a longer sentence */
+  function dictOk(v, list) { if (matches(v, list)) return true; var a = norm(v).split(' '), b = norm(list[0]).split(' '); return b.length >= 5 && editDist(a, b) <= 1; }
+
+  /* ---------- listening tasks ---------- */
+  function listenWord(v, pool, rnd) {
+    var sh = rnd ? function (a) { return sshuffle(a, rnd); } : shuffle;
+    var o = sh([v].concat(sh(pool.filter(function (x) { return x[0] !== v[0] && x[1] !== v[1]; })).slice(0, 3)));
+    return { t: 'listen', say: v[0], q: 'Что ты услышал? Выбери перевод', o: o.map(function (x) { return x[1]; }), a: o.indexOf(v), why: v[0] + ' — ' + v[1] };
+  }
+  function textPairs(u) { return u.text.en.map(function (s, i) { return [s, u.text.ru[i] || '']; }); }
+  function listenSentence(s, all) {
+    var o = shuffle([s].concat(shuffle(all.filter(function (p) { return p[0] !== s[0]; })).slice(0, 2)));
+    return { t: 'listen', say: s[0], q: 'Что ты услышал? Выбери перевод', o: o.map(function (p) { return p[1]; }), a: o.indexOf(s), why: s[0] };
+  }
+  function dictTask(s) { return { t: 'dict', say: s[0], a: [s[0]], why: s[1] }; }
+  function shortSent(pairs) { var s = pairs.filter(function (p) { var n = p[0].split(/\s+/).length; return n >= 4 && n <= 9; }); return s.length ? s : pairs; }
+  function textListenItems(u) {
+    if (!canSpeak) return [];
+    var pairs = textPairs(u), d = pick(shortSent(pairs)), rest = pairs.filter(function (p) { return p !== d; });
+    return [{ key: 'td:' + d[0], task: dictTask(d) }, { key: 'tl:' + u.id, task: listenSentence(pick(rest.length ? rest : pairs), pairs) }];
+  }
+  function startListen() {
+    if (!canSpeak) { toast('В этом браузере нет озвучки — открой сайт в Chrome, Edge или Safari'); return go('#/practice'); }
+    var vocab = [], pairs = [], pool = allVocab();
+    openedUnits().forEach(function (id) { vocab = vocab.concat(U[id].unit.vocab); pairs = pairs.concat(textPairs(U[id].unit)); });
+    var items = shuffle(vocab).slice(0, 5).map(function (v) { return { key: 'lw:' + v[0], task: listenWord(v, pool) }; });
+    shuffle(pairs).slice(0, 3).forEach(function (p) { items.push({ key: 'ls:' + p[0], task: listenSentence(p, pairs) }); });
+    shuffle(shortSent(pairs)).slice(0, 2).forEach(function (p) { items.push({ key: 'ld:' + p[0], task: dictTask(p) }); });
+    begin({ mode: 'listen', li: -1, nav: 'practice', queue: items, requeue: true });
+  }
+
+  /* ---------- placement test ---------- */
+  function startPlacement() {
+    var items = (EX.placement || []).map(function (q, i) { return { key: 'pl:' + i, lv: q.lv, task: q }; });
+    begin({ mode: 'placement', li: -1, nav: 'practice', queue: items, requeue: false, lvRight: {} });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-place]'); if (!b) return;
+    var place = +b.dataset.place;
+    for (var i = 0; i < place; i++) { var lv = BOOK[i], was = P.levels[lv.id] || {}; if (!was.passed) P.levels[lv.id] = { passed: true, best: was.best || 0, placed: true }; }
+    save(); toast('Готово! Открыт уровень ' + BOOK[place].code);
+    go('#/u/' + BOOK[place].units[0].id);
+  });
+
+  /* ---------- daily task: the same 5 tasks for the whole day ---------- */
+  function dailyDone() { return !!(P.daily && P.daily[dayKey(0)]); }
+  function dailyItems() {
+    var rnd = seeded(hashStr('daily:' + dayKey(0))), vocab = [], gids = [], items = [], pool = allVocab();
+    openedUnits().forEach(function (id) { vocab = vocab.concat(U[id].unit.vocab); gids = gids.concat(U[id].unit.grammar); });
+    sshuffle(vocab.filter(function (v) { return !/[…?!]/.test(v[0]); }), rnd).slice(0, 3).forEach(function (v, i) {
+      var o = sshuffle([v].concat(sshuffle(pool.filter(function (x) { return x[0] !== v[0] && x[1] !== v[1]; }), rnd).slice(0, 3)), rnd);
+      if (i === 0 && canSpeak) items.push({ key: 'dl:' + v[0], task: listenWord(v, pool, rnd) });
+      else if (i < 2) items.push({ key: 'dc:' + v[0], task: { t: 'choice', q: 'Как по-английски «' + v[1] + '»?', o: o.map(function (x) { return x[0]; }), a: o.indexOf(v), why: v[2] + ' — ' + v[3] } });
+      else items.push({ key: 'di:' + v[0], task: { t: 'input', q: '«' + v[1] + '» по-английски: ___', a: v[0].split(/\s*\/\s*/).concat([v[0]]), why: v[2] + ' — ' + v[3] } });
+    });
+    var g = sshuffle(grammarItems(uniq(gids)), rnd)[0]; if (g) items.push(g);
+    var ts = TENSES.filter(function (t) { return LV_I[t.level] <= topLevel(); }), tt = ts[Math.floor(rnd() * ts.length)], ti = Math.floor(rnd() * tt.tasks.length);
+    items.push({ key: 't:' + tt.id + ':' + ti, ref: { l: 't:' + tt.id, i: ti }, task: tt.tasks[ti] });
+    return items;
+  }
+  function startDaily() { begin({ mode: 'daily', li: -1, nav: 'practice', queue: dailyItems(), requeue: true }); }
+  function dailyCard() {
+    var done = dailyDone(), when = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' }).format(new Date());
+    return '<section class="daily rise' + (done ? ' is-done' : '') + '" data-bg="#0f766e">' + lexi(done ? 'cheer' : 'wave') +
+      '<div class="daily__main"><span class="eyebrow">Задание дня · ' + when + '</span><h2>' + (done ? 'Выполнено! Возвращайся завтра' : '5 заданий · 2 минуты · +15 XP') + '</h2><p>' + esc(pick(done ? LX.done : LX.daily)) + '</p></div>' +
+      (done ? '<a class="daily__ok" href="#/daily" aria-label="Пройти задание дня ещё раз">' + ic('check') + '</a>' : '<a class="btn daily__btn" href="#/daily">' + ic('play') + 'Начать</a>') + '</section>';
+  }
+
+  /* ---------- practice hub ---------- */
+  function pcard(href, icon, pal, t, sub) { return '<a class="pcard rise" data-tilt href="' + href + '">' + i3d(icon, pal, 'i3d--lg') + '<div><b>' + t + '</b><span>' + sub + '</span></div>' + ic('right') + '</a>'; }
+  function viewPractice() {
+    var dl = EX.dialogs || [], dn = dl.filter(function (d) { return P.dialogs && P.dialogs[d.id]; }).length, rv = P.review.length;
+    var html = pageHead('target', PAL[3], 'Практика', 'Тренируй то, что нужно и на экзамене, и в жизни: слух, произношение и живые диалоги. Плюс задание дня и тест уровня.') + dailyCard() +
+      '<div class="pgrid">' +
+      pcard('#/placement', 'target', PAL[0], 'Тест уровня', P.placement ? 'Твой уровень: ' + P.placement.lv + ' · пройти ещё раз' : '20 вопросов · узнай, с чего начать') +
+      pcard('#/listen', 'vol', PAL[7], 'Аудирование', canSpeak ? 'Послушай и выбери · диктант' : 'В этом браузере нет озвучки') +
+      pcard('#/speak', 'mic', PAL[1], 'Произношение', 'Скажи слово — сайт проверит') +
+      pcard('#/review', 'reset', PAL[9], 'Работа над ошибками', rv ? rv + ' ' + plural(rv, ['задание ждёт', 'задания ждут', 'заданий ждут']) : 'Ошибок нет — красавчик') + '</div>' +
+      '<p class="section-h" style="margin:26px 0 12px">Диалоги · пройдено ' + dn + ' из ' + dl.length + '</p><div class="dgrid">' +
+      dl.map(function (d) { var st = P.dialogs && P.dialogs[d.id]; return '<a class="dcard rise' + (st ? ' is-done' : '') + '" data-tilt href="#/dialog/' + d.id + '">' + i3d(d.icon, PAL[d.pal]) + '<div><span class="dcard__lv">' + d.lv + '</span><b>' + esc(d.title) + '</b><span>' + esc(d.en) + '</span></div>' + (st ? '<span class="dcard__ok" aria-label="пройден">' + ic('check') + '</span>' : '') + '</a>'; }).join('') + '</div>';
+    show(html, 'practice');
+  }
+
+  /* ---------- dialogs ---------- */
+  var dlg = null;
+  function viewDialog(id) {
+    var d = DIALOGS[id], li = LV_I[d.lv];
+    var html = '<a class="back" href="#/practice">' + ic('left', 'i--sm') + 'Практика</a><header class="banner banner4 rise" data-bg="' + WORLD[li].bg + '">' + deco('banner') + i3d(d.icon, PAL[d.pal], 'i3d--lg float') +
+      '<div><span class="eyebrow">Диалог · ' + d.lv + ' · собеседник: ' + esc(d.who) + '</span><h1>' + esc(d.title) + '</h1><p>' + esc(d.en) + '</p></div></header>' +
+      '<section class="card chat"><p class="chat__intro">' + ic('bulb', 'i--sm') + '<span>' + esc(d.intro) + '</span></p><div class="chat__log" id="chat"></div><div class="chat__opts" id="chat-opts" role="group" aria-label="Варианты ответа"></div><div id="chat-coach" aria-live="polite"></div></section>';
+    show(html, 'practice', li);
+    dlg = { d: d, i: 0, wrong: 0, tok: Math.random() };
+    $('chat-opts').addEventListener('click', function (e) { var b = e.target.closest('.chat__opt'); if (b) dlgPick(+b.dataset.j); });
+    dlgNext();
+  }
+  function bubble(side, en, ru) {
+    var log = $('chat'); if (!log) return;
+    var el = document.createElement('div'); el.className = 'msg msg--' + side;
+    el.innerHTML = (side === 'npc' ? '<span class="msg__who">' + esc(dlg.d.who) + '</span>' : '<span class="msg__who">Ты</span>') + '<p class="msg__en" lang="en">' + esc(en) + '</p>' + (ru ? '<p class="msg__ru">' + esc(ru) + '</p>' : '') + speakBtn(en);
+    log.appendChild(el);
+    el.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+  }
+  function dlgNext() {
+    if (!dlg || !$('chat')) return;
+    var st = dlg.d.steps[dlg.i], tok = dlg.tok;
+    $('chat-opts').innerHTML = '';
+    if (!st) return dlgEnd();
+    if (st.npc) {
+      var typing = document.createElement('div'); typing.className = 'msg msg--npc msg--typing'; typing.setAttribute('aria-label', dlg.d.who + ' печатает'); typing.innerHTML = '<i></i><i></i><i></i>';
+      $('chat').appendChild(typing);
+      setTimeout(function () {
+        if (!dlg || dlg.tok !== tok || !$('chat')) return;
+        typing.remove(); bubble('npc', st.npc, st.ru); speak(st.npc); dlg.i++; dlgNext();
+      }, reduce ? 0 : 800);
+      return;
+    }
+    dlg.cur = shuffle(st.me); dlg.tries = 0;
+    $('chat-opts').innerHTML = '<p class="chat__ask">Что ответишь?</p>' + dlg.cur.map(function (o, j) { return '<button class="opt chat__opt" type="button" data-j="' + j + '"><kbd aria-hidden="true">' + (j + 1) + '</kbd><span lang="en">' + esc(o[0]) + '</span></button>'; }).join('');
+    var f = app.querySelector('.chat__opt'); if (f) f.focus({ preventScroll: true });
+  }
+  function dlgPick(j) {
+    if (!dlg || !dlg.cur) return;
+    var o = dlg.cur[j], btn = app.querySelector('.chat__opt[data-j="' + j + '"]');
+    if (!o || !btn || btn.disabled) return;
+    if (o[1]) {
+      $('chat-opts').innerHTML = ''; dlg.cur = null;
+      bubble('me', o[0]);
+      $('chat-coach').innerHTML = '<div class="coach coach--ok">' + lexi('happy') + '<p><b>' + esc(pick(LX.ok)) + '</b> ' + esc(o[2]) + '</p></div>';
+      dlg.i++;
+      var tok = dlg.tok; setTimeout(function () { if (dlg && dlg.tok === tok) dlgNext(); }, reduce ? 0 : 700);
+    } else {
+      dlg.tries++; dlg.wrong++; btn.disabled = true; btn.classList.add('is-wrong');
+      $('chat-coach').innerHTML = '<div class="coach coach--bad">' + lexi('sad') + '<p><b>Не совсем.</b> ' + esc(o[2]) + '</p></div>';
+    }
+  }
+  function dlgEnd() {
+    var d = dlg.d, prev = (P.dialogs || {})[d.id], xp = prev ? 3 : 12;
+    P.dialogs = P.dialogs || {}; P.dialogs[d.id] = { at: Date.now(), wrong: prev ? Math.min(prev.wrong, dlg.wrong) : dlg.wrong };
+    addXP(xp); save(); xpBump(xp);
+    var fresh = checkBadges(); if (fresh.length) toast('Новая награда: ' + fresh[0].n);
+    $('chat-coach').innerHTML = '';
+    var box = document.createElement('div'); box.className = 'chat__end';
+    box.innerHTML = lexiSay('cheer', dlg.wrong ? 'Диалог пройден! Ошибок: ' + dlg.wrong + '. Пройди ещё раз — и будет чисто. +' + xp + ' XP' : 'Ни одной ошибки — ты говоришь как местный! +' + xp + ' XP') +
+      '<p class="section-h">Полезные фразы</p><ul class="examples">' + d.phrases.map(function (p) { return '<li>' + speakBtn(p[0]) + '<div><div class="en">' + esc(p[0]) + '</div><div class="ru">' + esc(p[1]) + '</div></div></li>'; }).join('') + '</ul>' +
+      '<div class="r-actions"><a class="btn" href="#/dialog/' + d.id + '">' + ic('reset') + 'Ещё раз</a><a class="btn btn--ghost" href="#/practice">Все диалоги</a></div>';
+    $('chat').parentNode.appendChild(box);
+    dlg.done = true;
+  }
+
+  /* ---------- pronunciation: speech recognition where the browser allows it, self-check otherwise ---------- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition, spk = null;
+  function startSpeak() {
+    var vocab = []; openedUnits().forEach(function (id) { vocab = vocab.concat(U[id].unit.vocab); });
+    spk = { list: shuffle(vocab.filter(function (v) { return !/[…?!\/]/.test(v[0]); })).slice(0, 8), pos: 0, good: 0, self: !SR, note: SR ? '' : 'Этот браузер не умеет распознавать речь — включена самопроверка. Для проверки микрофоном открой сайт в Chrome.' };
+    renderSpeak();
+  }
+  function renderSpeak() {
+    var s = spk, v = s.list[s.pos], pct = s.pos / s.list.length * 100;
+    document.body.classList.add('is-practice'); setNav('practice'); app.style.setProperty('--lc', 'var(--accent)');
+    app.innerHTML = '<div class="p-top"><a class="icon-btn" href="#/practice" aria-label="Выйти">' + ic('x') + '</a><div class="p-bar"><span style="width:' + pct + '%"></span></div><span class="p-count">' + s.pos + '/' + s.list.length + '</span></div>' +
+      '<section class="speak-card"><p class="task__kind">Произношение · скажи слово вслух</p><div class="speak-word"><b lang="en">' + esc(v[0]) + '</b><span>' + esc(v[1]) + '</span><p lang="en">' + esc(v[2]) + '</p></div>' +
+      '<div class="speak-btns">' + (canSpeak ? '<button class="btn btn--ghost" type="button" id="sp-hear">' + ic('vol') + 'Послушать</button><button class="btn btn--ghost" type="button" id="sp-slow">' + ic('reset') + 'Медленно</button>' : '') +
+      (s.self ? '' : '<button class="btn mic" type="button" id="sp-mic">' + ic('mic') + '<span>Сказать</span></button>') + '</div>' + (s.self ? '' : '<button class="linkbtn" type="button" id="sp-self">Нет микрофона? Включить самопроверку</button>') +
+      '<div id="sp-res" class="speak-res" aria-live="polite">' + (s.self ? '<div class="coach coach--ok">' + lexi('think') + '<p>Послушай образец и скажи слово вслух 2–3 раза. Похоже получилось?</p></div><div class="r-actions"><button class="btn btn--ok" type="button" id="sp-yes">' + ic('check') + 'Получилось</button><button class="btn btn--ghost" type="button" id="sp-again">' + ic('reset') + 'Ещё раз послушать</button></div>' : '') + '</div>' +
+      (s.note ? '<p class="note">' + ic('alert', 'i--sm') + esc(s.note) + '</p>' : '') + '</section>';
+    if ($('sp-hear')) $('sp-hear').addEventListener('click', function () { speak(v[0]); });
+    if ($('sp-slow')) $('sp-slow').addEventListener('click', function () { speak(v[0], true); });
+    if ($('sp-mic')) $('sp-mic').addEventListener('click', micListen);
+    if ($('sp-self')) $('sp-self').addEventListener('click', function () { toSelf('Включена самопроверка: послушай образец и повтори вслух.'); });
+    if ($('sp-yes')) $('sp-yes').addEventListener('click', function () { spk.good++; speakNext(); });
+    if ($('sp-again')) $('sp-again').addEventListener('click', function () { speak(v[0], true); });
+    if (canSpeak) setTimeout(function () { if (spk === s) speak(v[0]); }, 300);
+  }
+  function micListen() {
+    var btn = $('sp-mic'), r;
+    try { r = new SR(); } catch (e) { return toSelf('Распознавание речи недоступно в этом браузере — включена самопроверка.'); }
+    r.lang = 'en-US'; r.interimResults = false; r.maxAlternatives = 5;
+    btn.classList.add('is-on'); btn.querySelector('span').textContent = 'Слушаю…';
+    var alive = false, me = spk, wd = setTimeout(function () { if (!alive && spk === me && $('sp-mic')) { try { r.abort(); } catch (e) { /* ignore */ } toSelf('Микрофон не ответил — включена самопроверка. Проверь, разрешён ли микрофон в браузере.'); } }, 8000);
+    r.onstart = r.onaudiostart = function () { alive = true; };
+    r.onresult = function (e) { alive = true; clearTimeout(wd); var alts = []; for (var i = 0; i < e.results[0].length; i++) alts.push(e.results[0][i].transcript); judge(alts); };
+    r.onerror = function (e) {
+      alive = true; clearTimeout(wd);
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'audio-capture') toSelf('Нет доступа к микрофону. На claude.ai микрофон недоступен — для проверки голосом открой сайт по обычной ссылке в Chrome. Пока работает самопроверка.');
+      else if (e.error === 'network') toSelf('Для распознавания речи нужен интернет. Пока работает самопроверка.');
+      else if (e.error === 'no-speech' && $('sp-res')) $('sp-res').innerHTML = '<div class="coach coach--bad">' + lexi('think') + '<p>Ничего не услышал — нажми «Сказать» и произнеси слово погромче.</p></div>';
+    };
+    r.onend = function () { var b = $('sp-mic'); if (b) { b.classList.remove('is-on'); b.querySelector('span').textContent = 'Сказать'; } };
+    try { r.start(); } catch (e) { toSelf('Не удалось включить микрофон — включена самопроверка.'); }
+  }
+  function similarity(a, b) { a = norm(a); b = norm(b); if (!a || !b) return 0; return 1 - editDist(a, b) / Math.max(a.length, b.length); }
+  function judge(alts) {
+    if (!spk || !$('sp-res')) return;
+    var target = spk.list[spk.pos][0].split(/\s*\/\s*/)[0], best = 0, heard = alts[0] || '';
+    alts.forEach(function (a) { var s = similarity(a, target); if (s > best) { best = s; heard = a; } });
+    var lvl = best >= .85 ? 'ok' : best >= .6 ? 'mid' : 'bad';
+    if (lvl === 'ok' && !spk.scored) { spk.scored = true; spk.good++; }
+    $('sp-res').innerHTML = '<div class="coach coach--' + (lvl === 'bad' ? 'bad' : 'ok') + '">' + lexi(lvl === 'ok' ? 'cheer' : lvl === 'mid' ? 'think' : 'sad') + '<p><b>' + (lvl === 'ok' ? 'Отлично! ' : lvl === 'mid' ? 'Почти! ' : 'Не совсем. ') + '</b>Я услышал: «' + esc(heard) + '» · совпадение ' + Math.round(best * 100) + '%' + (lvl === 'ok' ? '' : '. Послушай образец и скажи ещё раз.') + '</p></div>' +
+      '<div class="r-actions"><button class="btn" type="button" id="sp-next">' + (spk.pos + 1 < spk.list.length ? 'Дальше' : 'Готово') + ic('arrow') + '</button></div>';
+    $('sp-next').addEventListener('click', speakNext);
+  }
+  function toSelf(note) { if (!spk) return; spk.self = true; spk.note = note; renderSpeak(); }
+  function speakNext() { spk.pos++; spk.scored = false; if (spk.pos >= spk.list.length) return speakEnd(); renderSpeak(); }
+  function speakEnd() {
+    var n = spk.list.length, xp = 4 + spk.good, acc = Math.round(spk.good / n * 100), self = spk.self;
+    P.stats.spoken = (P.stats.spoken || 0) + n; addXP(xp); save(); spk = null; document.body.classList.remove('is-practice');
+    celebrate({ kind: acc >= 60 ? 'medal' : 'try', title: praise(acc), sub: self ? 'Ты проговорил вслух ' + n + ' слов. Говорить вслух — лучший способ перестать бояться английского.' : 'Чисто произнесено: ' + Math.round(acc / 100 * n) + ' из ' + n + '. Повторяй вслух каждый день — и произношение станет увереннее.', acc: acc, score: Math.round(acc / 100 * n) + '/' + n, xp: xp, li: -1, actions: '<a class="btn" href="#/speak">' + ic('reset') + 'Ещё 8 слов</a><a class="btn btn--ghost" href="#/practice">Практика</a>' });
+  }
+
   paintStats(); route();
-  window.__lu = { norm: norm, matches: matches, P: function () { return P; }, task: function () { return cur && S ? cur.item.task : null; }, card: function () { return cardState; }, why: function () { return bookCtl ? bookCtl.state() : null; } }; // for tests
+  window.__lu = { norm: norm, matches: matches, P: function () { return P; }, task: function () { return cur && S ? cur.item.task : null; }, card: function () { return cardState; }, why: function () { return bookCtl ? bookCtl.state() : null; }, dialog: function () { return dlg && dlg.cur ? dlg.cur.map(function (o) { return !!o[1]; }) : null; }, dialogDone: function () { return !!(dlg && dlg.done); }, speak: function () { return spk ? { pos: spk.pos, n: spk.list.length, self: spk.self } : null; } }; // for tests
 })();
